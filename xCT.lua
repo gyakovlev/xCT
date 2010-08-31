@@ -7,7 +7,7 @@ Thanks ALZA and Shestak for making this mod possible.
 ]]--
 
 -- config here --
-local configmode=true -- change to true to move frames. false to settle down.
+local configmode=false -- change to true to move frames. false to settle down.
 local damagestyle=true -- change to true to change default damage/healing font above mobs/player heads
 local ctfont,ctfontsize,ctfontstyle = "Interface\\Addons\\xCT\\HOOGE.TTF", 12, "OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 local damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
@@ -257,6 +257,7 @@ for i=1,3 do
 		f:SetWidth(256)
 		f:SetPoint("CENTER", 0, 192)
 	end
+	-- awesome config mode =D
 	if(configmode)then
 	f:SetBackdrop({
 		bgFile="Interface/Tooltips/UI-Tooltip-Background",
@@ -265,25 +266,9 @@ for i=1,3 do
 		})
 	f:SetBackdropColor(.1,.1,.1,.8)
 	f:SetBackdropBorderColor(.1,.1,.1,.5)
-	
-	-- dragging button
-	f.b=CreateFrame("Button", nil,f,"UIPanelButtonTemplate")
-	f.b:SetPoint("BOTTOM",f,"TOP",0,0)
-	f.b:SetWidth(128)
-	f.b:SetHeight(25)
-	f.b:SetMovable(true)
-	f.b.t=f.b:CreateFontString(nil,"OVERLAY")
-	f.b.t:SetFont(ctfont,ctfontsize-2,ctfontstyle)
-	f.b.t:SetTextColor(1,.1,.1,.9)
-	f.b.t:SetText(DAMAGE.." (drag me)")
-	f.b.t:SetPoint"CENTER"
-	f.b:EnableMouse(true)
-	f.b:RegisterForDrag("LeftButton")
-	f.b:SetScript("OnDragStart", f.StartMoving)
-	f.b:SetScript("OnDragStop", f.StopMovingOrSizing)
-	
---[[	f.fs=f:CreateFontString(nil,"OVERLAY")
+	f.fs=f:CreateFontString(nil,"OVERLAY")
 	f.fs:SetFont(ctfont,ctfontsize,ctfontstyle)
+	f.fs:SetPoint("BOTTOM",f,"TOP",0,0)
 	if(i==1)then
 		f.fs:SetText(DAMAGE.." (drag me)")
 		f.fs:SetTextColor(1,.1,.1,.9)
@@ -295,31 +280,27 @@ for i=1,3 do
 		f.fs:SetTextColor(.1,.1,1,.9)
 	end
 
-	f.fs:SetPoint("BOTTOM",f,"TOP",0,0)
-]]
+	f.t=f:CreateTexture("ARTWORK")
+	f.t:SetPoint("TOPLEFT", f, "TOPLEFT", 1, 0)
+	f.t:SetPoint("TOPRIGHT", f, "TOPRIGHT",-2 , -20)
+	f.t:SetHeight(20)
+	f.t:SetTexture(.5, .5, .5)
+	f.t:SetAlpha(0.5)
+
+	f.tr=f:CreateTitleRegion()
+	f.tr:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
+	f.tr:SetPoint("TOPRIGHT", f, "TOPRIGHT",0 , 0)
+	f.tr:SetHeight(20)
+
 	f:EnableMouse(true)
 	f:RegisterForDrag("LeftButton")
---	f:SetScript("OnDragStart", f.StartSizing)
-	f:SetScript("OnDragStart", f.StartMoving)
+	f:SetScript("OnDragStart", f.StartSizing)
 	f:SetScript("OnDragStop", f.StopMovingOrSizing)
---	f.b=f:CreateTexture(nil,"ARTWORK")
---	f.b:SetHeight(16)
---	f.b:SetWidth(16)
---	f.b:SetTexture("Interface/Tooltips/UI-Tooltip-Background")
---	f.b:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT")
-	f.fsh=CreateFrame("Button","Move",f)
-	f.fsh:SetNormalTexture("Interface/Tooltips/UI-Tooltip-Background")
-	f.fsh:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT")
-	f.fsh:SetHeight(16)
-	f.fsh:SetWidth(16)
---	f.fsh:SetAllPoints(f.b)
-	f.fsh:EnableMouse(true)
-	f.fsh:RegisterForDrag("LeftButton")
-	f.fsh:SetScript("OnDragStart", f.StartMoving)
-	f.fsh:SetScript("OnDragStop", f.StopMovingOrSizing)
-	frames[i] = f
+
 	end
+	frames[i] = f
 end
+
 -- register events
 local xCT=CreateFrame"Frame"
 xCT:RegisterEvent"COMBAT_TEXT_UPDATE"
