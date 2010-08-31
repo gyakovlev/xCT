@@ -7,8 +7,8 @@ Thanks ALZA and Shestak for making this mod possible.
 ]]--
 
 -- config starts --
-local configmode=true -- set to true to move and resize text frames.
-local damagestyle=true -- set to true to change default damage/healing font above mobs/player heads
+local configmode=false -- set to true to move and resize text frames.
+local damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 local ctfont,ctfontsize,ctfontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 local damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
 -- config ends   --
