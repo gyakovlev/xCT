@@ -6,32 +6,31 @@ Thanks ALZA and Shestak for making this mod possible.
 
 ]]--
 
--- config here --
-local configmode=false -- change to true to move frames. false to settle down.
-local damagestyle=true -- change to true to change default damage/healing font above mobs/player heads
-local ctfont,ctfontsize,ctfontstyle = "Interface\\Addons\\xCT\\HOOGE.TTF", 12, "OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
+-- config starts --
+local configmode=true -- set to true to move and resize text frames.
+local damagestyle=true -- set to true to change default damage/healing font above mobs/player heads
+local ctfont,ctfontsize,ctfontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 local damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
--- end config  --
+-- config ends   --
 
---[[ 
-do not edit below unless you know what you are doing
-]]--
 
+
+--do not edit below unless you know what you are doing--
 -- code starts --
-local ct = {}
+local ct={}
 -- detect vechile --
 local function SetUnit()
-	if ( UnitHasVehicleUI("player") ) then
-		ct.unit = "vehicle"
+	if (UnitHasVehicleUI("player"))then
+		ct.unit="vehicle"
 	else
-		ct.unit = "player"
+		ct.unit="player"
 	end
 end
 -- partial resists styler --
-local part = "-%s (%s %s)"
+local part="-%s (%s %s)"
 -- the function, handles everything --
-local function OnEvent(self, event, subevent, ...)
-if (event == "COMBAT_TEXT_UPDATE") then
+local function OnEvent(self,event,subevent,...)
+if (event=="COMBAT_TEXT_UPDATE")then
 	if ( SHOW_COMBAT_TEXT == "0" ) then
 		return
 	else
@@ -281,11 +280,11 @@ for i=1,3 do
 	end
 
 	f.t=f:CreateTexture("ARTWORK")
-	f.t:SetPoint("TOPLEFT", f, "TOPLEFT", 1, 0)
-	f.t:SetPoint("TOPRIGHT", f, "TOPRIGHT",-2 , -20)
+	f.t:SetPoint("TOPLEFT", f, "TOPLEFT", 1, -1)
+	f.t:SetPoint("TOPRIGHT", f, "TOPRIGHT",-1 , -19)
 	f.t:SetHeight(20)
 	f.t:SetTexture(.5, .5, .5)
-	f.t:SetAlpha(0.5)
+	f.t:SetAlpha(.3)
 
 	f.tr=f:CreateTitleRegion()
 	f.tr:SetPoint("TOPLEFT", f, "TOPLEFT", 0, 0)
@@ -296,6 +295,12 @@ for i=1,3 do
 	f:RegisterForDrag("LeftButton")
 	f:SetScript("OnDragStart", f.StartSizing)
 	f:SetScript("OnDragStop", f.StopMovingOrSizing)
+	f.d=f:CreateTexture"ARTWORK"
+	f.d:SetHeight(16)
+	f.d:SetWidth(16)
+	f.d:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT",-1,1)
+	f.d:SetTexture(.5, .5, .5)
+	f.d:SetAlpha(.3)
 
 	end
 	frames[i] = f
