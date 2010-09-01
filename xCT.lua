@@ -7,7 +7,7 @@ Thanks ALZA and Shestak for making this mod possible.
 ]]--
 
 -- config starts --
-local configmode=false -- set to true to move and resize text frames.
+local configmode=true -- set to true to move and resize text frames.
 local damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 local ctfont,ctfontsize,ctfontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 local damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
@@ -272,10 +272,10 @@ for i=1,3 do
 		f.fs:SetText(DAMAGE.." (drag me)")
 		f.fs:SetTextColor(1,.1,.1,.9)
 	elseif(i==2)then
-		f.fs:SetText("healing (drag me)")
+		f.fs:SetText(SHOW_COMBAT_HEALING.."(drag me)")
 		f.fs:SetTextColor(.1,1,.1,.9)
 	else
-		f.fs:SetText("combat text (drag me)")
+		f.fs:SetText(COMBATTEXT_LABEL.."(drag me)")
 		f.fs:SetTextColor(.1,.1,1,.9)
 	end
 
