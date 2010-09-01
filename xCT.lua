@@ -20,7 +20,7 @@ local damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" i
 local ct={}
 -- detect vechile --
 local function SetUnit()
-	if (UnitHasVehicleUI("player"))then
+	if(UnitHasVehicleUI("player"))then
 		ct.unit="vehicle"
 	else
 		ct.unit="player"
@@ -30,35 +30,35 @@ end
 local part="-%s (%s %s)"
 -- the function, handles everything --
 local function OnEvent(self,event,subevent,...)
-if (event=="COMBAT_TEXT_UPDATE")then
-	if ( SHOW_COMBAT_TEXT == "0" ) then
+if(event=="COMBAT_TEXT_UPDATE")then
+	if (SHOW_COMBAT_TEXT=="0")then
 		return
 	else
-	if subevent == "DAMAGE" then
+	if subevent=="DAMAGE"then
 		xCT1:AddMessage("-"..arg2,.75,.1,.1)
-	elseif subevent == "DAMAGE_CRIT" then
+	elseif subevent=="DAMAGE_CRIT" then
 		xCT1:AddMessage("c-"..arg2,1,.1,.1)
-	elseif subevent == "SPELL_DAMAGE" then
+	elseif subevent=="SPELL_DAMAGE" then
 		xCT1:AddMessage("-"..arg2,.75,.3,.85)
-	elseif subevent == "SPELL_DAMAGE_CRIT" then
+	elseif subevent=="SPELL_DAMAGE_CRIT" then
 		xCT1:AddMessage("c-"..arg2,1,.3,.5)
 
-	elseif subevent == "HEAL" then
+	elseif subevent=="HEAL" then
 		xCT2:AddMessage("+"..arg3,.1,.75,.1)
-	elseif subevent == "HEAL_CRIT" then
+	elseif subevent=="HEAL_CRIT" then
 		xCT2:AddMessage("c+"..arg3,.1,1,.1)
-	elseif subevent == "PERIODIC_HEAL" then
+	elseif subevent=="PERIODIC_HEAL" then
 		xCT2:AddMessage("+"..arg3,.1,.5,.1)
 
-	elseif subevent == "SPELL_CAST" then
+	elseif subevent=="SPELL_CAST" then
 		xCT3:AddMessage(arg2,1,.82,0)
 
 	
-	elseif subevent == "MISS" and ( COMBAT_TEXT_SHOW_DODGE_PARRY_MISS == "1") then
+	elseif subevent=="MISS"and(COMBAT_TEXT_SHOW_DODGE_PARRY_MISS == "1")then
 		xCT1:AddMessage(MISS,.5,.5,.5)
-	elseif subevent == "DODGE" and ( COMBAT_TEXT_SHOW_DODGE_PARRY_MISS == "1") then
+	elseif subevent=="DODGE"and(COMBAT_TEXT_SHOW_DODGE_PARRY_MISS == "1")then
 		xCT1:AddMessage(DODGE,.5,.5,.5)
-	elseif subevent == "PARRY" and ( COMBAT_TEXT_SHOW_DODGE_PARRY_MISS == "1")then
+	elseif subevent=="PARRY" and (COMBAT_TEXT_SHOW_DODGE_PARRY_MISS == "1")then
 		xCT1:AddMessage(PARRY,.5,.5,.5)
 	elseif subevent == "EVADE" and ( COMBAT_TEXT_SHOW_DODGE_PARRY_MISS == "1")then
 		xCT1:AddMessage(EVADE,.5,.5,.5)
@@ -126,22 +126,22 @@ if (event=="COMBAT_TEXT_UPDATE")then
 	elseif subevent == "PERIODIC_ENERGIZE" and (COMBAT_TEXT_SHOW_PERIODIC_ENERGIZE == "1") then
 		xCT3:AddMessage("+"..arg2,.1,.1,.75)
 
-	elseif subevent == "SPELL_AURA_START" and (COMBAT_TEXT_SHOW_AURAS == "1") then
+	elseif subevent=="SPELL_AURA_START"and(COMBAT_TEXT_SHOW_AURAS=="1")then
 		xCT3:AddMessage("+"..arg2,1,.5,.5)
-	elseif subevent == "SPELL_AURA_END" and (COMBAT_TEXT_SHOW_AURAS == "1")then
+	elseif subevent=="SPELL_AURA_END"and(COMBAT_TEXT_SHOW_AURAS=="1")then
 		xCT3:AddMessage("-"..arg2,.5,.5,.5)
-	elseif subevent == "SPELL_AURA_START_HARMFUL" and (COMBAT_TEXT_SHOW_AURAS == "1")then
+	elseif subevent=="SPELL_AURA_START_HARMFUL"and(COMBAT_TEXT_SHOW_AURAS=="1")then
 		xCT3:AddMessage("+"..arg2,1,.1,.1)
-	elseif subevent == "SPELL_AURA_END_HARMFUL" and (COMBAT_TEXT_SHOW_AURAS == "1")then
+	elseif subevent=="SPELL_AURA_END_HARMFUL"and(COMBAT_TEXT_SHOW_AURAS=="1")then
 		xCT3:AddMessage("-"..arg2,.1,1,.1)
 
-	elseif subevent == "HONOR_GAINED" and (COMBAT_TEXT_SHOW_HONOR_GAINED == "1")then
+	elseif subevent=="HONOR_GAINED"and(COMBAT_TEXT_SHOW_HONOR_GAINED=="1")then
 		xCT3:AddMessage(HONOR.." +"..arg2,.1,.1,1)
 
-	elseif subevent == "FACTION" and (COMBAT_TEXT_SHOW_REPUTATION == "1") then
+	elseif subevent=="FACTION"and(COMBAT_TEXT_SHOW_REPUTATION=="1")then
 		xCT3:AddMessage(arg2.." +"..arg3,.1,.1,1)
 
-	elseif subevent == "SPELL_ACTIVE" and (COMBAT_TEXT_SHOW_REACTIVES == "1") then
+	elseif subevent=="SPELL_ACTIVE"and(COMBAT_TEXT_SHOW_REACTIVES=="1")then
 		xCT3:AddMessage(arg2,1,.82,0)
 	end
 end
