@@ -319,12 +319,12 @@ xCT:RegisterEvent"RUNE_POWER_UPDATE"
 xCT:RegisterEvent"UNIT_ENTERED_VEHICLE"
 xCT:RegisterEvent"UNIT_EXITING_VEHICLE"
 xCT:RegisterEvent"PLAYER_ENTERING_WORLD"
-xCT:SetScript("OnEvent", OnEvent)
+xCT:SetScript("OnEvent",OnEvent)
 -- turn off blizz ct
 CombatText:UnregisterAllEvents()
-CombatText:SetScript("OnLoad", nil)
-CombatText:SetScript("OnEvent", nil)
-CombatText:SetScript("OnUpdate", nil)
+CombatText:SetScript("OnLoad",nil)
+CombatText:SetScript("OnEvent",nil)
+CombatText:SetScript("OnUpdate",nil)
 -- hide some blizz options
 InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
 InterfaceOptionsCombatTextPanelFCTDropDown:Hide()
