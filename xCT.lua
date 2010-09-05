@@ -7,7 +7,7 @@ Thanks ALZA and Shestak for making this mod possible.
 ]]--
 
 -- config starts --
-local configmode=true -- set to true to move and resize text frames.
+local configmode=false -- set to true to move and resize text frames.
 local damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 local ctfont,ctfontsize,ctfontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 local damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
@@ -320,11 +320,19 @@ xCT:RegisterEvent"UNIT_ENTERED_VEHICLE"
 xCT:RegisterEvent"UNIT_EXITING_VEHICLE"
 xCT:RegisterEvent"PLAYER_ENTERING_WORLD"
 xCT:SetScript("OnEvent",OnEvent)
+
 -- turn off blizz ct
 CombatText:UnregisterAllEvents()
 CombatText:SetScript("OnLoad",nil)
 CombatText:SetScript("OnEvent",nil)
 CombatText:SetScript("OnUpdate",nil)
+
+-- steal external messages sent by other addons using CombatText_AddMessage
+Blizzard_CombatText_AddMessage = CombatText_AddMessage
+function CombatText_AddMessage(message, scrollFunction, r, g, b, displayType, isStaggered)
+xCT3:AddMessage(message,r,g,b)
+end
+
 -- hide some blizz options
 InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
 InterfaceOptionsCombatTextPanelFCTDropDown:Hide()
