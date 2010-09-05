@@ -328,8 +328,8 @@ CombatText:SetScript("OnEvent",nil)
 CombatText:SetScript("OnUpdate",nil)
 
 -- steal external messages sent by other addons using CombatText_AddMessage
-Blizzard_CombatText_AddMessage = CombatText_AddMessage
-function CombatText_AddMessage(message, scrollFunction, r, g, b, displayType, isStaggered)
+Blizzard_CombatText_AddMessage=CombatText_AddMessage
+function CombatText_AddMessage(message,scrollFunction,r,g,b,displayType,isStaggered)
 xCT3:AddMessage(message,r,g,b)
 end
 
