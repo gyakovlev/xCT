@@ -26,8 +26,25 @@ local function SetUnit()
 		ct.unit="player"
 	end
 end
+-- msg flow direction
+local function ScrollDirection()
+	if (COMBAT_TEXT_FLOAT_MODE=="2") then
+		ct.mode="TOP"
+	else
+		ct.mode="BOTTOM"
+	end
+	for i=1,3 do
+		frames[i]:Clear()
+		frames[i]:SetInsertMode(ct.mode)
+	end
+end
 -- partial resists styler --
 local part="-%s (%s %s)"
+--[[ message tosser --
+local function AddMSG(frame,r,g,b,prefix,ispartial, ...)
+	local msg=prefix..arg2
+		frames[frame]:AddMessage(msg,r,g,b)
+end]]
 -- the function, handles everything --
 local function OnEvent(self,event,subevent,...)
 if(event=="COMBAT_TEXT_UPDATE")then
@@ -122,6 +139,7 @@ if(event=="COMBAT_TEXT_UPDATE")then
 
 	elseif subevent=="ENERGIZE"and(COMBAT_TEXT_SHOW_ENERGIZE=="1")then
 		xCT3:AddMessage("+"..arg2,.1,.1,1)
+	--	AddMSG(3,.1,.1,1,"+",msg)
 
 	elseif subevent=="PERIODIC_ENERGIZE"and(COMBAT_TEXT_SHOW_PERIODIC_ENERGIZE=="1")then
 		xCT3:AddMessage("+"..arg2,.1,.1,.75)
@@ -218,6 +236,7 @@ elseif event=="UNIT_ENTERED_VEHICLE"or event=="UNIT_EXITING_VEHICLE"then
 
 elseif event=="PLAYER_ENTERING_WORLD"then
 	SetUnit()
+	ScrollDirection()
 end
 end
 -- change damage font (if desired)
@@ -232,7 +251,6 @@ for i=1,3 do
 	f:SetFont(ctfont,ctfontsize,ctfontstyle)
 	f:SetShadowColor(0,0,0,0)
 	f:SetFadeDuration(0.2)
-	f:SetInsertMode"TOP"
 	f:SetTimeVisible(3)
 	f:SetMaxLines(128)
 	f:SetSpacing(1)
@@ -335,4 +353,7 @@ end
 
 -- hide some blizz options
 InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
-InterfaceOptionsCombatTextPanelFCTDropDown:Hide()
+DropDownList1Button3:SetScale(0.05)
+DropDownList1Button3:SetAlpha(0)
+--hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
+hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
