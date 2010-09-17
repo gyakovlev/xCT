@@ -5,19 +5,20 @@ All rights reserved.
 Thanks ALZA and Shestak for making this mod possible.
 
 ]]--
-
+local ct={}
 -- config starts --
-local configmode=false -- set to true to move and resize text frames.
-local damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
-local ctfont,ctfontsize,ctfontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
-local damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
+ct.configmode=false -- set to true to move and resize text frames.
+ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
+ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
+ct.damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
+ct.vehealsmapoff=true -- automaticly turns off healing for priests in shadowform and Vampiric Embrace up. HIDE THOSE GREEN NUMBERS PLX!
 -- config ends   --
 
 
 
 --do not edit below unless you know what you are doing--
 -- code starts --
-local ct={}
+_, ct.class = UnitClass("player")
 -- detect vechile --
 local function SetUnit()
 	if(UnitHasVehicleUI("player"))then
@@ -240,15 +241,15 @@ elseif event=="PLAYER_ENTERING_WORLD"then
 end
 end
 -- change damage font (if desired)
-if(damagestyle)then
-	DAMAGE_TEXT_FONT=damagefont
+if(ct.damagestyle)then
+	DAMAGE_TEXT_FONT=ct.damagefont
 end
 
 -- the three frames
 frames={}
 for i=1,3 do
 	local f=CreateFrame("ScrollingMessageFrame","xCT"..i,UIParent)
-	f:SetFont(ctfont,ctfontsize,ctfontstyle)
+	f:SetFont(ct.font,ct.fontsize,ct.fontstyle)
 	f:SetShadowColor(0,0,0,0)
 	f:SetFadeDuration(0.2)
 	f:SetTimeVisible(3)
@@ -275,7 +276,7 @@ for i=1,3 do
 		f:SetPoint("CENTER",0,192)
 	end
 	-- awesome config mode =D
-	if(configmode)then
+	if(ct.configmode)then
 	f:SetBackdrop({
 		bgFile="Interface/Tooltips/UI-Tooltip-Background",
 		edgeFile="Interface/Tooltips/UI-Tooltip-Border",
@@ -285,7 +286,7 @@ for i=1,3 do
 	f:SetBackdropBorderColor(.1,.1,.1,.5)
 
 	f.fs=f:CreateFontString(nil,"OVERLAY")
-	f.fs:SetFont(ctfont,ctfontsize,ctfontstyle)
+	f.fs:SetFont(ct.font,ct.fontsize,ct.fontstyle)
 	f.fs:SetPoint("BOTTOM",f,"TOP",0,0)
 	if(i==1)then
 		f.fs:SetText(DAMAGE.." (drag me)")
@@ -357,3 +358,20 @@ InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
 --DropDownList1Button3:SetAlpha(0)
 --hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
 hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
+
+-- awesome shadow priest helper 
+if(ct.class=="PRIEST")then
+	if(ct.vehealsmapoff)then
+		local sp=CreateFrame("Frame")
+		local function spOnEvent(...)
+			if(GetShapeshiftForm()==1)then
+				SetCVar('CombatHealing',0)
+			else
+				SetCVar('CombatHealing',1)
+			end
+		end	
+		sp:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+		sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
+		sp:SetScript("OnEvent",spOnEvent)
+	end
+end
