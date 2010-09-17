@@ -353,7 +353,7 @@ end
 
 -- hide some blizz options
 InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
-DropDownList1Button3:SetScale(0.05)
-DropDownList1Button3:SetAlpha(0)
+--DropDownList1Button3:SetScale(0.05)
+--DropDownList1Button3:SetAlpha(0)
 --hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
 hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
