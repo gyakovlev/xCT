@@ -7,18 +7,16 @@ Thanks ALZA and Shestak for making this mod possible.
 ]]--
 local ct={}
 -- config starts --
-ct.configmode=false -- set to true to move and resize text frames.
 ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 ct.damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
-ct.vehealsmapoff=true -- automaticly turns off healing for priests in shadowform and Vampiric Embrace up. HIDE THOSE GREEN NUMBERS PLX!
+ct.stopvespam=true -- automaticly turns off healing for priests in shadowform and Vampiric Embrace up. HIDE THOSE GREEN NUMBERS PLX!
 -- config ends   --
 
 
 
 --do not edit below unless you know what you are doing--
 -- code starts --
-_, ct.class = UnitClass("player")
 -- detect vechile --
 local function SetUnit()
 	if(UnitHasVehicleUI("player"))then
@@ -27,6 +25,7 @@ local function SetUnit()
 		ct.unit="player"
 	end
 end
+
 -- msg flow direction
 local function ScrollDirection()
 	if (COMBAT_TEXT_FLOAT_MODE=="2") then
@@ -35,17 +34,13 @@ local function ScrollDirection()
 		ct.mode="BOTTOM"
 	end
 	for i=1,3 do
-		frames[i]:Clear()
-		frames[i]:SetInsertMode(ct.mode)
+		ct.frames[i]:Clear()
+		ct.frames[i]:SetInsertMode(ct.mode)
 	end
 end
 -- partial resists styler --
 local part="-%s (%s %s)"
---[[ message tosser --
-local function AddMSG(frame,r,g,b,prefix,ispartial, ...)
-	local msg=prefix..arg2
-		frames[frame]:AddMessage(msg,r,g,b)
-end]]
+
 -- the function, handles everything --
 local function OnEvent(self,event,subevent,...)
 if(event=="COMBAT_TEXT_UPDATE")then
@@ -246,7 +241,8 @@ if(ct.damagestyle)then
 end
 
 -- the three frames
-frames={}
+ct.locked=true
+ct.frames={}
 for i=1,3 do
 	local f=CreateFrame("ScrollingMessageFrame","xCT"..i,UIParent)
 	f:SetFont(ct.font,ct.fontsize,ct.fontstyle)
@@ -275,8 +271,55 @@ for i=1,3 do
 		f:SetWidth(256)
 		f:SetPoint("CENTER",0,192)
 	end
-	-- awesome config mode =D
-	if(ct.configmode)then
+	ct.frames[i] = f
+end
+
+-- register events
+local xCT=CreateFrame"Frame"
+xCT:RegisterEvent"COMBAT_TEXT_UPDATE"
+xCT:RegisterEvent"UNIT_HEALTH"
+xCT:RegisterEvent"UNIT_MANA"
+xCT:RegisterEvent"PLAYER_REGEN_DISABLED"
+xCT:RegisterEvent"PLAYER_REGEN_ENABLED"
+xCT:RegisterEvent"UNIT_COMBO_POINTS"
+xCT:RegisterEvent"RUNE_POWER_UPDATE"
+xCT:RegisterEvent"UNIT_ENTERED_VEHICLE"
+xCT:RegisterEvent"UNIT_EXITING_VEHICLE"
+xCT:RegisterEvent"PLAYER_ENTERING_WORLD"
+xCT:SetScript("OnEvent",OnEvent)
+
+-- turn off blizz ct
+CombatText:UnregisterAllEvents()
+CombatText:SetScript("OnLoad",nil)
+CombatText:SetScript("OnEvent",nil)
+CombatText:SetScript("OnUpdate",nil)
+
+-- steal external messages sent by other addons using CombatText_AddMessage
+Blizzard_CombatText_AddMessage=CombatText_AddMessage
+function CombatText_AddMessage(message,scrollFunction,r,g,b,displayType,isStaggered)
+xCT3:AddMessage(message,r,g,b)
+end
+
+-- hide some blizz options
+InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
+COMBAT_TEXT_SCROLL_ARC=nil --may cause unexpected bugs, use with caution!
+
+-- hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
+hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
+
+-- modify blizz ct options title lol
+InterfaceOptionsCombatTextPanelTitle:SetText(COMBATTEXT_LABEL.." (powered by |cffFF0000x|rCT)")
+
+-- color printer
+local pr = function(msg)
+    print("|cffFF0000x|rCT:", tostring(msg))
+end
+
+-- awesome configmode and testmode
+local StartConfigmode=function()
+
+for i=1,3 do
+	f=ct.frames[i]
 	f:SetBackdrop({
 		bgFile="Interface/Tooltips/UI-Tooltip-Background",
 		edgeFile="Interface/Tooltips/UI-Tooltip-Border",
@@ -322,46 +365,104 @@ for i=1,3 do
 	f:RegisterForDrag"LeftButton"
 	f:SetScript("OnDragStart",f.StartSizing)
 	f:SetScript("OnDragStop",f.StopMovingOrSizing)
+	ct.locked=false
 	end
-	frames[i] = f
 end
 
--- register events
-local xCT=CreateFrame"Frame"
-xCT:RegisterEvent"COMBAT_TEXT_UPDATE"
-xCT:RegisterEvent"UNIT_HEALTH"
-xCT:RegisterEvent"UNIT_MANA"
-xCT:RegisterEvent"PLAYER_REGEN_DISABLED"
-xCT:RegisterEvent"PLAYER_REGEN_ENABLED"
-xCT:RegisterEvent"UNIT_COMBO_POINTS"
-xCT:RegisterEvent"RUNE_POWER_UPDATE"
-xCT:RegisterEvent"UNIT_ENTERED_VEHICLE"
-xCT:RegisterEvent"UNIT_EXITING_VEHICLE"
-xCT:RegisterEvent"PLAYER_ENTERING_WORLD"
-xCT:SetScript("OnEvent",OnEvent)
-
--- turn off blizz ct
-CombatText:UnregisterAllEvents()
-CombatText:SetScript("OnLoad",nil)
-CombatText:SetScript("OnEvent",nil)
-CombatText:SetScript("OnUpdate",nil)
-
--- steal external messages sent by other addons using CombatText_AddMessage
-Blizzard_CombatText_AddMessage=CombatText_AddMessage
-function CombatText_AddMessage(message,scrollFunction,r,g,b,displayType,isStaggered)
-xCT3:AddMessage(message,r,g,b)
+local function EndConfigmode()
+		for i=1,3 do
+		f=ct.frames[i]
+		f:SetBackdropColor(.1,.1,.1,0)
+		f:SetBackdropBorderColor(.1,.1,.1,0)
+		f.fs:SetText""
+		f.fs=nil
+		f.t:SetAlpha(0)
+		f.t=nil
+		f.d:SetAlpha(0)
+		f.d=nil
+		f.tr=nil
+		f:EnableMouse(false)
+		f:SetScript("OnDragStart",nil)
+		f:SetScript("OnDragStop",nil)
+		
+	end
+	ct.locked=true
+	pr("Window positions unsaved, don't forget to reload UI.")
 end
 
--- hide some blizz options
-InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
---DropDownList1Button3:SetScale(0.05)
---DropDownList1Button3:SetAlpha(0)
---hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
-hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
+local function StartTestMode()
+	local UpdateInterval=.5
+	local TimeSinceLastUpdate=0
+	xCT:SetScript("OnUpdate", function(self,elapsed)
+		TimeSinceLastUpdate = TimeSinceLastUpdate + elapsed
+		if (TimeSinceLastUpdate > UpdateInterval) then
+			xCT1:AddMessage("-"..math.random(100000),1,math.random(255)/255,math.random(255)/255)
+			xCT2:AddMessage("+"..math.random(50000),.1,math.random(128,255)/255,.1)
+			xCT3:AddMessage(COMBAT_TEXT_LABEL,math.random(255)/255,math.random(255)/255,math.random(255)/255)
+			TimeSinceLastUpdate = 0
+		end
+		
+	end)
+	ct.testmode=true
+end
 
--- awesome shadow priest helper 
-if(ct.class=="PRIEST")then
-	if(ct.vehealsmapoff)then
+local function EndTestMode()
+	xCT:SetScript("OnUpdate",nil)
+	for i=1,3 do
+		ct.frames[i]:Clear()
+	end
+	ct.testmode=false
+	end
+
+-- /xct lock popup dialog
+StaticPopupDialogs["XCT_LOCK"] = {
+	text = "To save |cffFF0000x|rCT window positions you need to reload your UI.\n Click "..ACCEPT.." to reload UI.\nClick "..CANCEL.." to do it later.",
+	button1 = ACCEPT,
+	button2 = CANCEL,
+	OnAccept = ReloadUI,
+	OnCancel = EndConfigmode,
+	timeout = 0,
+	whileDead = 1,
+	hideOnEscape = true,
+	showAlert = true,
+}
+
+-- slash commands
+SLASH_XCT1="/xct"
+SlashCmdList["XCT"]=function(input)
+	input=string.lower(input)
+	if(input=="unlock")then
+		if (ct.locked)then
+			StartConfigmode()
+			pr("unlocked.")
+		else
+			pr("already unlocked.")
+		end
+	elseif(input=="lock")then
+		if (ct.locked) then
+			pr("already locked.")
+		else
+			StaticPopup_Show("XCT_LOCK")
+		end
+	elseif(input=="testmode")then
+		if (ct.testmode) then
+			EndTestMode()
+			pr("test mode disabled.")
+		else
+			StartTestMode()
+			pr("test mode enabled.")
+		end
+
+	else
+		pr("use |cffFF0000/xct unlock|r to move and resize frames.")
+		pr("use |cffFF0000/xct lock|r to lock frames.")
+		pr("use |cffFF0000/xct testmode|r to toggle testmode (sample xCT output).")
+	end
+end
+
+-- awesome shadow priest helper
+if(select(2,UnitClass"player")=="PRIEST")then
+	if(ct.stopvespam)then
 		local sp=CreateFrame("Frame")
 		local function spOnEvent(...)
 			if(GetShapeshiftForm()==1)then
@@ -375,3 +476,4 @@ if(ct.class=="PRIEST")then
 		sp:SetScript("OnEvent",spOnEvent)
 	end
 end
+
