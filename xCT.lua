@@ -227,7 +227,7 @@ elseif event=="RUNE_POWER_UPDATE"then
 
 elseif event=="UNIT_ENTERED_VEHICLE"or event=="UNIT_EXITING_VEHICLE"then
 	if(arg1=="player")then
-	SetUnit()
+		SetUnit()
 	end
 
 elseif event=="PLAYER_ENTERING_WORLD"then
@@ -317,60 +317,59 @@ end
 
 -- awesome configmode and testmode
 local StartConfigmode=function()
+	for i=1,3 do
+		f=ct.frames[i]
+		f:SetBackdrop({
+			bgFile="Interface/Tooltips/UI-Tooltip-Background",
+			edgeFile="Interface/Tooltips/UI-Tooltip-Border",
+			tile=false,tileSize=0,edgeSize=2,
+			insets={left=0,right=0,top=0,bottom=0}})
+		f:SetBackdropColor(.1,.1,.1,.8)
+		f:SetBackdropBorderColor(.1,.1,.1,.5)
 
-for i=1,3 do
-	f=ct.frames[i]
-	f:SetBackdrop({
-		bgFile="Interface/Tooltips/UI-Tooltip-Background",
-		edgeFile="Interface/Tooltips/UI-Tooltip-Border",
-		tile=false,tileSize=0,edgeSize=2,
-		insets={left=0,right=0,top=0,bottom=0}})
-	f:SetBackdropColor(.1,.1,.1,.8)
-	f:SetBackdropBorderColor(.1,.1,.1,.5)
+		f.fs=f:CreateFontString(nil,"OVERLAY")
+		f.fs:SetFont(ct.font,ct.fontsize,ct.fontstyle)
+		f.fs:SetPoint("BOTTOM",f,"TOP",0,0)
+		if(i==1)then
+			f.fs:SetText(DAMAGE.." (drag me)")
+			f.fs:SetTextColor(1,.1,.1,.9)
+		elseif(i==2)then
+			f.fs:SetText(SHOW_COMBAT_HEALING.."(drag me)")
+			f.fs:SetTextColor(.1,1,.1,.9)
+		else
+			f.fs:SetText(COMBATTEXT_LABEL.."(drag me)")
+			f.fs:SetTextColor(.1,.1,1,.9)
+		end
 
-	f.fs=f:CreateFontString(nil,"OVERLAY")
-	f.fs:SetFont(ct.font,ct.fontsize,ct.fontstyle)
-	f.fs:SetPoint("BOTTOM",f,"TOP",0,0)
-	if(i==1)then
-		f.fs:SetText(DAMAGE.." (drag me)")
-		f.fs:SetTextColor(1,.1,.1,.9)
-	elseif(i==2)then
-		f.fs:SetText(SHOW_COMBAT_HEALING.."(drag me)")
-		f.fs:SetTextColor(.1,1,.1,.9)
-	else
-		f.fs:SetText(COMBATTEXT_LABEL.."(drag me)")
-		f.fs:SetTextColor(.1,.1,1,.9)
-	end
+		f.t=f:CreateTexture"ARTWORK"
+		f.t:SetPoint("TOPLEFT",f,"TOPLEFT",1,-1)
+		f.t:SetPoint("TOPRIGHT",f,"TOPRIGHT",-1,-19)
+		f.t:SetHeight(20)
+		f.t:SetTexture(.5,.5,.5)
+		f.t:SetAlpha(.3)
 
-	f.t=f:CreateTexture"ARTWORK"
-	f.t:SetPoint("TOPLEFT",f,"TOPLEFT",1,-1)
-	f.t:SetPoint("TOPRIGHT",f,"TOPRIGHT",-1,-19)
-	f.t:SetHeight(20)
-	f.t:SetTexture(.5,.5,.5)
-	f.t:SetAlpha(.3)
+		f.d=f:CreateTexture"ARTWORK"
+		f.d:SetHeight(16)
+		f.d:SetWidth(16)
+		f.d:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT",-1,1)
+		f.d:SetTexture(.5,.5,.5)
+		f.d:SetAlpha(.3)
 
-	f.d=f:CreateTexture"ARTWORK"
-	f.d:SetHeight(16)
-	f.d:SetWidth(16)
-	f.d:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT",-1,1)
-	f.d:SetTexture(.5,.5,.5)
-	f.d:SetAlpha(.3)
+		f.tr=f:CreateTitleRegion()
+		f.tr:SetPoint("TOPLEFT",f,"TOPLEFT",0,0)
+		f.tr:SetPoint("TOPRIGHT",f,"TOPRIGHT",0,0)
+		f.tr:SetHeight(20)
 
-	f.tr=f:CreateTitleRegion()
-	f.tr:SetPoint("TOPLEFT",f,"TOPLEFT",0,0)
-	f.tr:SetPoint("TOPRIGHT",f,"TOPRIGHT",0,0)
-	f.tr:SetHeight(20)
-
-	f:EnableMouse(true)
-	f:RegisterForDrag"LeftButton"
-	f:SetScript("OnDragStart",f.StartSizing)
-	f:SetScript("OnDragStop",f.StopMovingOrSizing)
-	ct.locked=false
+		f:EnableMouse(true)
+		f:RegisterForDrag"LeftButton"
+		f:SetScript("OnDragStart",f.StartSizing)
+		f:SetScript("OnDragStop",f.StopMovingOrSizing)
+		ct.locked=false
 	end
 end
 
 local function EndConfigmode()
-		for i=1,3 do
+	for i=1,3 do
 		f=ct.frames[i]
 		f:SetBackdropColor(.1,.1,.1,0)
 		f:SetBackdropBorderColor(.1,.1,.1,0)
@@ -393,9 +392,9 @@ end
 local function StartTestMode()
 	local UpdateInterval=.5
 	local TimeSinceLastUpdate=0
-	xCT:SetScript("OnUpdate", function(self,elapsed)
-		TimeSinceLastUpdate = TimeSinceLastUpdate + elapsed
-		if (TimeSinceLastUpdate > UpdateInterval) then
+	xCT:SetScript("OnUpdate",function(self,elapsed)
+		TimeSinceLastUpdate=TimeSinceLastUpdate+elapsed
+		if(TimeSinceLastUpdate>UpdateInterval)then
 			xCT1:AddMessage("-"..math.random(100000),1,math.random(255)/255,math.random(255)/255)
 			xCT2:AddMessage("+"..math.random(50000),.1,math.random(128,255)/255,.1)
 			xCT3:AddMessage(COMBAT_TEXT_LABEL,math.random(255)/255,math.random(255)/255,math.random(255)/255)
@@ -476,4 +475,3 @@ if(select(2,UnitClass"player")=="PRIEST")then
 		sp:SetScript("OnEvent",spOnEvent)
 	end
 end
-
