@@ -6,19 +6,23 @@ Thanks ALZA and Shestak for making this mod possible.
 
 ]]--
 ct={}
--- config starts --
+-- config starts
+ct.damage=true
 ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 ct.damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
+ct.timevisible=3 -- time (seconds) a single message will be visible.
 ct.stopvespam=true -- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
 ct.showdkrunes=true -- show deatchknight rune recharge.
--- config ends   --
+ct.iconsize=30 -- icon size of spells in outgoing damage frame
+ct.treshold=1 -- minimum damage to show in damage frame
+-- config ends
 
 
 
---do not edit below unless you know what you are doing--
--- code starts --
--- detect vechile --
+--do not edit below unless you know what you are doing
+-- code starts
+-- detect vechile
 local function SetUnit()
 	if(UnitHasVehicleUI("player"))then
 		ct.unit="vehicle"
@@ -40,10 +44,10 @@ local function ScrollDirection()
 		ct.frames[i]:SetInsertMode(ct.mode)
 	end
 end
--- partial resists styler --
+-- partial resists styler
 local part="-%s (%s %s)"
 
--- the function, handles everything --
+-- the function, handles everything
 local function OnEvent(self,event,subevent,...)
 if(event=="COMBAT_TEXT_UPDATE")then
 	if (SHOW_COMBAT_TEXT=="0")then
@@ -137,7 +141,6 @@ if(event=="COMBAT_TEXT_UPDATE")then
 
 	elseif subevent=="ENERGIZE"and(COMBAT_TEXT_SHOW_ENERGIZE=="1")then
 		xCT3:AddMessage("+"..arg2,.1,.1,1)
-	--	AddMSG(3,.1,.1,1,"+",msg)
 
 	elseif subevent=="PERIODIC_ENERGIZE"and(COMBAT_TEXT_SHOW_PERIODIC_ENERGIZE=="1")then
 		xCT3:AddMessage("+"..arg2,.1,.1,.75)
@@ -249,8 +252,8 @@ for i=1,3 do
 	local f=CreateFrame("ScrollingMessageFrame","xCT"..i,UIParent)
 	f:SetFont(ct.font,ct.fontsize,ct.fontstyle)
 	f:SetShadowColor(0,0,0,0)
-	f:SetFadeDuration(0.2)
-	f:SetTimeVisible(3)
+	f:SetFadeDuration(0.5)
+	f:SetTimeVisible(ct.timevisible)
 	f:SetMaxLines(128)
 	f:SetSpacing(1)
 	f:SetWidth(128)
@@ -367,6 +370,11 @@ local StartConfigmode=function()
 		f:EnableMouse(true)
 		f:RegisterForDrag"LeftButton"
 		f:SetScript("OnDragStart",f.StartSizing)
+--[[		f:SetScript("OnSizeChanged",function(self)
+			self:SetMaxLines(self:GetHeight()/ct.fontsize)
+			self:Clear()
+		end)
+]]
 		f:SetScript("OnDragStop",f.StopMovingOrSizing)
 		ct.locked=false
 	end
@@ -393,9 +401,13 @@ local function EndConfigmode()
 end
 
 local function StartTestMode()
-	local UpdateInterval=.5
+--init really random number generator.
+--	math.randomseed(time())
+	math.random(time()); math.random(); math.random(time())
+	
 	local TimeSinceLastUpdate=0
 	xCT:SetScript("OnUpdate",function(self,elapsed)
+		local UpdateInterval=math.random(.2,.5)
 		TimeSinceLastUpdate=TimeSinceLastUpdate+elapsed
 		if(TimeSinceLastUpdate>UpdateInterval)then
 			xCT1:AddMessage("-"..math.random(100000),1,math.random(255)/255,math.random(255)/255)
@@ -475,4 +487,74 @@ if(ct.stopvespam and select(2,UnitClass"player")=="PRIEST")then
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 	sp:SetScript("OnEvent",spOnEvent)
+end
+if (ct.damage) then
+InterfaceOptionsCombatTextPanelTargetDamage:Hide()
+InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
+InterfaceOptionsCombatTextPanelPetDamage:Hide()
+local xCT4=CreateFrame("ScrollingMessageFrame","xCT4",UIParent)
+
+	xCT4:SetFont(ct.font,ct.fontsize,ct.fontstyle)
+	xCT4:SetShadowColor(0,0,0,0)
+	xCT4:SetFadeDuration(0.2)
+	xCT4:SetTimeVisible(3)
+	xCT4:SetMaxLines(128)
+	xCT4:SetSpacing(1)
+	xCT4:SetJustifyH"LEFT"
+	xCT4:SetPoint("CENTER",0,0)
+	xCT4:SetMovable(true)
+	xCT4:SetResizable(true)
+	xCT4:SetMinResize(128,128)
+	xCT4:SetMaxResize(768,768)
+	xCT4:SetJustifyH"RIGHT"
+	xCT4:SetHeight(768)
+	xCT4:SetWidth(128)
+	xCT4:SetPoint("CENTER",0,192)
+--	TukuiDB.SetTemplate(xCT4)
+	xCT4:EnableMouse(true)
+	xCT4:RegisterForDrag"LeftButton"
+	xCT4:SetScript("OnDragStart",xCT4.StartMoving)
+	xCT4:SetScript("OnDragStop",xCT4.StopMovingOrSizing)
+xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
+local dmgcolor={}
+dmgcolor[1]={1,1,0} -- physical
+dmgcolor[2]={1,.9,.5} -- holy
+dmgcolor[4]={1,.5,0} -- fire
+dmgcolor[8]={.3,1,.3} -- nature
+dmgcolor[16]={.5,1,1} -- frost
+dmgcolor[32]={.5,.5,1} -- shadow
+dmgcolor[64]={1,.5,1} -- arcane
+
+local clu=function(self,event,...)
+	if (arg3==UnitGUID"player")or(arg3==UnitGUID"pet")then
+		if(arg2=="SWING_DAMAGE")then
+			xCT4:AddMessage(arg9)
+		elseif(arg2=="SPELL_DAMAGE")or(arg2=="SPELL_PERIODIC_DAMAGE")then
+			if(arg12>=ct.treshold)then
+				local _,_,icon=GetSpellInfo(arg10)
+				if (icon) then
+					msg=arg12.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:64:4:64\124t"
+				else
+					msg=arg12
+				end
+			--	if (arg18) then
+			--		msg=msg.."!"
+			--	end
+				xCT4:AddMessage(msg,unpack(dmgcolor[arg11]))
+			end
+		elseif(arg2=="SWING_MISSED")then
+			xCT4:AddMessage(arg9)
+
+		elseif(arg2=="SPELL_MISSED")then
+			xCT4:AddMessage(arg12)
+
+
+
+
+
+
+		end
+	end
+end
+xCT4:SetScript("OnEvent",clu)
 end
