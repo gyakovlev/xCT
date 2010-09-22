@@ -5,12 +5,13 @@ All rights reserved.
 Thanks ALZA and Shestak for making this mod possible.
 
 ]]--
-local ct={}
+ct={}
 -- config starts --
 ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 ct.damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
-ct.stopvespam=true -- automaticly turns off healing for priests in shadowform and Vampiric Embrace up. HIDE THOSE GREEN NUMBERS PLX!
+ct.stopvespam=true -- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
+ct.showdkrunes=true -- show deatchknight rune recharge.
 -- config ends   --
 
 
@@ -24,6 +25,7 @@ local function SetUnit()
 	else
 		ct.unit="player"
 	end
+	CombatTextSetActiveUnit(ct.unit)
 end
 
 -- msg flow direction
@@ -282,7 +284,9 @@ xCT:RegisterEvent"UNIT_MANA"
 xCT:RegisterEvent"PLAYER_REGEN_DISABLED"
 xCT:RegisterEvent"PLAYER_REGEN_ENABLED"
 xCT:RegisterEvent"UNIT_COMBO_POINTS"
-xCT:RegisterEvent"RUNE_POWER_UPDATE"
+if(ct.showdkrunes and select(2,UnitClass"player")=="DEATHKNIGHT")then
+	xCT:RegisterEvent"RUNE_POWER_UPDATE"
+end
 xCT:RegisterEvent"UNIT_ENTERED_VEHICLE"
 xCT:RegisterEvent"UNIT_EXITING_VEHICLE"
 xCT:RegisterEvent"PLAYER_ENTERING_WORLD"
@@ -302,7 +306,7 @@ end
 
 -- hide some blizz options
 InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
-COMBAT_TEXT_SCROLL_ARC=nil --may cause unexpected bugs, use with caution!
+COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
 
 -- hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
 hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
@@ -371,13 +375,12 @@ end
 local function EndConfigmode()
 	for i=1,3 do
 		f=ct.frames[i]
-		f:SetBackdropColor(.1,.1,.1,0)
-		f:SetBackdropBorderColor(.1,.1,.1,0)
-		f.fs:SetText""
+		f:SetBackdrop(nil)
+		f.fs:Hide()
 		f.fs=nil
-		f.t:SetAlpha(0)
+		f.t:Hide()
 		f.t=nil
-		f.d:SetAlpha(0)
+		f.d:Hide()
 		f.d=nil
 		f.tr=nil
 		f:EnableMouse(false)
@@ -414,16 +417,16 @@ local function EndTestMode()
 	end
 
 -- /xct lock popup dialog
-StaticPopupDialogs["XCT_LOCK"] = {
-	text = "To save |cffFF0000x|rCT window positions you need to reload your UI.\n Click "..ACCEPT.." to reload UI.\nClick "..CANCEL.." to do it later.",
-	button1 = ACCEPT,
-	button2 = CANCEL,
-	OnAccept = ReloadUI,
-	OnCancel = EndConfigmode,
-	timeout = 0,
-	whileDead = 1,
-	hideOnEscape = true,
-	showAlert = true,
+StaticPopupDialogs["XCT_LOCK"]={
+	text="To save |cffFF0000x|rCT window positions you need to reload your UI.\n Click "..ACCEPT.." to reload UI.\nClick "..CANCEL.." to do it later.",
+	button1=ACCEPT,
+	button2=CANCEL,
+	OnAccept=ReloadUI,
+	OnCancel=EndConfigmode,
+	timeout=0,
+	whileDead=1,
+	hideOnEscape=true,
+	showAlert=true,
 }
 
 -- slash commands
@@ -443,7 +446,7 @@ SlashCmdList["XCT"]=function(input)
 		else
 			StaticPopup_Show("XCT_LOCK")
 		end
-	elseif(input=="testmode")then
+	elseif(input=="test")then
 		if (ct.testmode) then
 			EndTestMode()
 			pr("test mode disabled.")
@@ -455,23 +458,21 @@ SlashCmdList["XCT"]=function(input)
 	else
 		pr("use |cffFF0000/xct unlock|r to move and resize frames.")
 		pr("use |cffFF0000/xct lock|r to lock frames.")
-		pr("use |cffFF0000/xct testmode|r to toggle testmode (sample xCT output).")
+		pr("use |cffFF0000/xct test|r to toggle testmode (sample xCT output).")
 	end
 end
 
 -- awesome shadow priest helper
-if(select(2,UnitClass"player")=="PRIEST")then
-	if(ct.stopvespam)then
-		local sp=CreateFrame("Frame")
-		local function spOnEvent(...)
-			if(GetShapeshiftForm()==1)then
-				SetCVar('CombatHealing',0)
-			else
-				SetCVar('CombatHealing',1)
-			end
-		end	
-		sp:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
-		sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
-		sp:SetScript("OnEvent",spOnEvent)
-	end
+if(ct.stopvespam and select(2,UnitClass"player")=="PRIEST")then
+	local sp=CreateFrame("Frame")
+	local function spOnEvent(...)
+		if(GetShapeshiftForm()==1)then
+			SetCVar('CombatHealing',0)
+		else
+			SetCVar('CombatHealing',1)
+		end
+	end	
+	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
+	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
+	sp:SetScript("OnEvent",spOnEvent)
 end
