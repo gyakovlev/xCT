@@ -5,10 +5,10 @@ All rights reserved.
 Thanks ALZA and Shestak for making this mod possible.
 
 ]]--
-ct={}
+local ct={}
 -- config starts
 ct.damage=false -- show outgoing damage in it's own frame
-ct.icons=false -- show outgoing damage icons
+ct.icons=true -- show outgoing damage icons
 ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 ct.damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
@@ -16,7 +16,7 @@ ct.timevisible=3 -- time (seconds) a single message will be visible.
 ct.stopvespam=true -- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
 ct.showdkrunes=true -- show deatchknight rune recharge.
 ct.iconsize=30 -- icon size of spells in outgoing damage frame
-ct.treshold=1 -- minimum damage to show in damage frame
+ct.treshold=500 -- minimum damage to show in damage frame
 -- config ends
 
 
@@ -24,6 +24,7 @@ ct.treshold=1 -- minimum damage to show in damage frame
 --do not edit below unless you know what you are doing
 -- code starts
 -- detect vechile
+
 local numf
 if(ct.damage)then
 	 numf=4
@@ -270,7 +271,7 @@ for i=1,numf do
 	f:SetShadowColor(0,0,0,0)
 	f:SetFadeDuration(0.5)
 	f:SetTimeVisible(ct.timevisible)
-	f:SetMaxLines(1)
+	f:SetMaxLines(16)
 	f:SetSpacing(2)
 	f:SetWidth(128)
 	f:SetHeight(128)
@@ -293,9 +294,9 @@ for i=1,numf do
 	else
 		f:SetJustifyH"RIGHT"
 		f:SetPoint("CENTER",320,0)
-		if (ct.icons)then
-			f:SetSpacing(ct.iconsize)
-		end
+	--	if (ct.icons)then
+	--		f:SetSpacing(ct.iconsize)
+	--	end
 	end
 	ct.frames[i] = f
 end
@@ -443,12 +444,16 @@ local function StartTestMode()
 			elseif(i==3)then
 			ct.frames[i]:AddMessage(COMBAT_TEXT_LABEL,math.random(255)/255,math.random(255)/255,math.random(255)/255)
 			elseif(i==4)then
+				local msg
+				local icon
 				msg=math.random(40000)
-				local _,_,icon=GetSpellInfo(msg)
+				if(ct.icons)then
+					_,_,icon=GetSpellInfo(msg)
+				end
 				if(icon)then
 					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
 				end
-				ct.frames[i]:AddMessage(msg,unpack(dmgcolor[dmindex[math.random(#dmindex)]]))
+				ct.frames[i]:AddMessage(msg,unpack(ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]))
 			end
 			TimeSinceLastUpdate = 0
 		end
@@ -527,31 +532,17 @@ if(ct.stopvespam and select(2,UnitClass"player")=="PRIEST")then
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 	sp:SetScript("OnEvent",spOnEvent)
 end
-dmgcolor={}
-dmgcolor[1]={1,1,0} -- physical
-dmgcolor[2]={1,.9,.5} -- holy
-dmgcolor[4]={1,.5,0} -- fire
-dmgcolor[8]={.3,1,.3} -- nature
-dmgcolor[16]={.5,1,1} -- frost
-dmgcolor[32]={.5,.5,1} -- shadow
-dmgcolor[64]={1,.5,1} -- arcane
-dmindex={}
-dmindex[1]=1
-dmindex[2]=2
-dmindex[3]=4
-dmindex[4]=8
-dmindex[5]=16
-dmindex[6]=32
-dmindex[7]=64
+
 --print( myTable[ math.random( #myTable ) ] )
 --print(dmgcolor[dmindex[math.random(#dmindex)]])
 --unpack(dmgcolor[dmindex[math.random(#dmindex)]])
---[[
+--
+
 if (ct.damage) then
 InterfaceOptionsCombatTextPanelTargetDamage:Hide()
 InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
 InterfaceOptionsCombatTextPanelPetDamage:Hide()
-local xCT4=CreateFrame("ScrollingMessageFrame","xCT4",UIParent)
+--[[local xCT4=CreateFrame("ScrollingMessageFrame","xCT4",UIParent)
 
 	xCT4:SetFont(ct.font,ct.fontsize,ct.fontstyle)
 	xCT4:SetShadowColor(0,0,0,0)
@@ -573,24 +564,40 @@ local xCT4=CreateFrame("ScrollingMessageFrame","xCT4",UIParent)
 	xCT4:EnableMouse(true)
 	xCT4:RegisterForDrag"LeftButton"
 	xCT4:SetScript("OnDragStart",xCT4.StartMoving)
-	xCT4:SetScript("OnDragStop",xCT4.StopMovingOrSizing)
+	xCT4:SetScript("OnDragStop",xCT4.StopMovingOrSizing)]]
 xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
-local dmgcolor={}
-dmgcolor[1]={1,1,0} -- physical
-dmgcolor[2]={1,.9,.5} -- holy
-dmgcolor[4]={1,.5,0} -- fire
-dmgcolor[8]={.3,1,.3} -- nature
-dmgcolor[16]={.5,1,1} -- frost
-dmgcolor[32]={.5,.5,1} -- shadow
-dmgcolor[64]={1,.5,1} -- arcane
+
+ct.dmgcolor={}
+ct.dmgcolor[1]={1,1,0} -- physical
+ct.dmgcolor[2]={1,.9,.5} -- holy
+ct.dmgcolor[4]={1,.5,0} -- fire
+ct.dmgcolor[8]={.3,1,.3} -- nature
+ct.dmgcolor[16]={.5,1,1} -- frost
+ct.dmgcolor[32]={.5,.5,1} -- shadow
+ct.dmgcolor[64]={1,.5,1} -- arcane
+ct.dmindex={}
+ct.dmindex[1]=1
+ct.dmindex[2]=2
+ct.dmindex[3]=4
+ct.dmindex[4]=8
+ct.dmindex[5]=16
+ct.dmindex[6]=32
+ct.dmindex[7]=64
+
 
 local clu=function(self,event,...)
 	if (arg3==UnitGUID"player")or(arg3==UnitGUID"pet")then
 		if(arg2=="SWING_DAMAGE")then
-			xCT4:AddMessage(arg9)
+			if(arg9>=ct.treshold)then
+				xCT4:AddMessage(arg9)
+			end
 		elseif(arg2=="SPELL_DAMAGE")or(arg2=="SPELL_PERIODIC_DAMAGE")then
+			local icon
+			local msg
 			if(arg12>=ct.treshold)then
-				local _,_,icon=GetSpellInfo(arg10)
+				if(ct.icons)then
+					_,_,icon=GetSpellInfo(arg10)
+				end
 				if (icon) then
 					msg=arg12.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
 				else
@@ -599,7 +606,7 @@ local clu=function(self,event,...)
 			--	if (arg18) then
 			--		msg=msg.."!"
 			--	end
-				xCT4:AddMessage(msg,unpack(dmgcolor[arg11]))
+				xCT4:AddMessage(msg,unpack(ct.dmgcolor[arg11]))
 			end
 		elseif(arg2=="SWING_MISSED")then
 			xCT4:AddMessage(arg9)
@@ -617,4 +624,4 @@ local clu=function(self,event,...)
 end
 xCT4:SetScript("OnEvent",clu)
 end
-]]
+
