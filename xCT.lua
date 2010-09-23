@@ -7,7 +7,7 @@ Thanks ALZA and Shestak for making this mod possible.
 ]]--
 ct={}
 -- config starts
-ct.damage=true -- show outgoing damage in it's own frame
+ct.damage=false -- show outgoing damage in it's own frame
 ct.icons=false -- show outgoing damage icons
 ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
@@ -345,7 +345,7 @@ end
 
 -- awesome configmode and testmode
 local StartConfigmode=function()
-	for i=1,numf do
+	for i=1,#ct.frames do
 		f=ct.frames[i]
 		f:SetBackdrop({
 			bgFile="Interface/Tooltips/UI-Tooltip-Background",
@@ -405,7 +405,7 @@ local StartConfigmode=function()
 end
 
 local function EndConfigmode()
-	for i=1,numf do
+	for i=1,#ct.frames do
 		f=ct.frames[i]
 		f:SetBackdrop(nil)
 		f.fs:Hide()
@@ -430,6 +430,7 @@ local function StartTestMode()
 	
 	local TimeSinceLastUpdate=0
 	local UpdateInterval
+	
 	for i=1,#ct.frames do
 	ct.frames[i]:SetScript("OnUpdate",function(self,elapsed)
 		UpdateInterval=math.random(65,1000)/250
@@ -441,8 +442,7 @@ local function StartTestMode()
 			ct.frames[i]:AddMessage("+"..math.random(50000),.1,math.random(128,255)/255,.1)
 			elseif(i==3)then
 			ct.frames[i]:AddMessage(COMBAT_TEXT_LABEL,math.random(255)/255,math.random(255)/255,math.random(255)/255)
-			else
-			if(#ct.frames==4)then
+			elseif(i==4)then
 				msg=math.random(40000)
 				local _,_,icon=GetSpellInfo(msg)
 				if(icon)then
@@ -452,9 +452,9 @@ local function StartTestMode()
 			end
 			TimeSinceLastUpdate = 0
 		end
-		end
+		end)
 		
-	end)
+	--end)
 	ct.testmode=true
 end
 end
