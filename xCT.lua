@@ -7,7 +7,8 @@ Thanks ALZA and Shestak for making this mod possible.
 ]]--
 ct={}
 -- config starts
-ct.damage=true
+ct.damage=true -- show outgoing damage in it's own frame
+ct.icons=false -- show outgoing damage icons
 ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 ct.damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
@@ -23,6 +24,13 @@ ct.treshold=1 -- minimum damage to show in damage frame
 --do not edit below unless you know what you are doing
 -- code starts
 -- detect vechile
+local numf
+if(ct.damage)then
+	 numf=4
+else
+	 numf=3
+end
+
 local function SetUnit()
 	if(UnitHasVehicleUI("player"))then
 		ct.unit="vehicle"
@@ -32,6 +40,13 @@ local function SetUnit()
 	CombatTextSetActiveUnit(ct.unit)
 end
 
+--limit lines
+local function LimitLines()
+	for i=1,#ct.frames do
+		f=ct.frames[i]
+		f:SetMaxLines(f:GetHeight()/ct.fontsize)
+	end
+end
 -- msg flow direction
 local function ScrollDirection()
 	if (COMBAT_TEXT_FLOAT_MODE=="2") then
@@ -238,6 +253,7 @@ elseif event=="UNIT_ENTERED_VEHICLE"or event=="UNIT_EXITING_VEHICLE"then
 elseif event=="PLAYER_ENTERING_WORLD"then
 	SetUnit()
 	ScrollDirection()
+	LimitLines()
 end
 end
 -- change damage font (if desired)
@@ -245,17 +261,17 @@ if(ct.damagestyle)then
 	DAMAGE_TEXT_FONT=ct.damagefont
 end
 
--- the three frames
+-- the frames
 ct.locked=true
 ct.frames={}
-for i=1,3 do
+for i=1,numf do
 	local f=CreateFrame("ScrollingMessageFrame","xCT"..i,UIParent)
 	f:SetFont(ct.font,ct.fontsize,ct.fontstyle)
 	f:SetShadowColor(0,0,0,0)
 	f:SetFadeDuration(0.5)
 	f:SetTimeVisible(ct.timevisible)
-	f:SetMaxLines(128)
-	f:SetSpacing(1)
+	f:SetMaxLines(1)
+	f:SetSpacing(2)
 	f:SetWidth(128)
 	f:SetHeight(128)
 	f:SetJustifyH"LEFT"
@@ -270,11 +286,16 @@ for i=1,3 do
 	elseif(i==2)then
 		f:SetJustifyH"RIGHT"
 		f:SetPoint("CENTER",192,-32)
-	else
+	elseif(i==3)then
 		f:SetJustifyH"CENTER"
-		f:SetHeight(128)
 		f:SetWidth(256)
 		f:SetPoint("CENTER",0,192)
+	else
+		f:SetJustifyH"RIGHT"
+		f:SetPoint("CENTER",320,0)
+		if (ct.icons)then
+			f:SetSpacing(ct.iconsize)
+		end
 	end
 	ct.frames[i] = f
 end
@@ -324,7 +345,7 @@ end
 
 -- awesome configmode and testmode
 local StartConfigmode=function()
-	for i=1,3 do
+	for i=1,numf do
 		f=ct.frames[i]
 		f:SetBackdrop({
 			bgFile="Interface/Tooltips/UI-Tooltip-Background",
@@ -343,9 +364,12 @@ local StartConfigmode=function()
 		elseif(i==2)then
 			f.fs:SetText(SHOW_COMBAT_HEALING.."(drag me)")
 			f.fs:SetTextColor(.1,1,.1,.9)
-		else
+		elseif(i==3)then
 			f.fs:SetText(COMBATTEXT_LABEL.."(drag me)")
 			f.fs:SetTextColor(.1,.1,1,.9)
+		else
+			f.fs:SetText(DAMAGE)
+			f.fs:SetTextColor(1,1,0,.9)
 		end
 
 		f.t=f:CreateTexture"ARTWORK"
@@ -370,18 +394,18 @@ local StartConfigmode=function()
 		f:EnableMouse(true)
 		f:RegisterForDrag"LeftButton"
 		f:SetScript("OnDragStart",f.StartSizing)
---[[		f:SetScript("OnSizeChanged",function(self)
+		f:SetScript("OnSizeChanged",function(self)
 			self:SetMaxLines(self:GetHeight()/ct.fontsize)
 			self:Clear()
 		end)
-]]
+
 		f:SetScript("OnDragStop",f.StopMovingOrSizing)
 		ct.locked=false
 	end
 end
 
 local function EndConfigmode()
-	for i=1,3 do
+	for i=1,numf do
 		f=ct.frames[i]
 		f:SetBackdrop(nil)
 		f.fs:Hide()
@@ -402,27 +426,42 @@ end
 
 local function StartTestMode()
 --init really random number generator.
---	math.randomseed(time())
 	math.random(time()); math.random(); math.random(time())
 	
 	local TimeSinceLastUpdate=0
-	xCT:SetScript("OnUpdate",function(self,elapsed)
-		local UpdateInterval=math.random(.2,.5)
+	local UpdateInterval
+	for i=1,#ct.frames do
+	ct.frames[i]:SetScript("OnUpdate",function(self,elapsed)
+		UpdateInterval=math.random(65,1000)/250
 		TimeSinceLastUpdate=TimeSinceLastUpdate+elapsed
 		if(TimeSinceLastUpdate>UpdateInterval)then
-			xCT1:AddMessage("-"..math.random(100000),1,math.random(255)/255,math.random(255)/255)
-			xCT2:AddMessage("+"..math.random(50000),.1,math.random(128,255)/255,.1)
-			xCT3:AddMessage(COMBAT_TEXT_LABEL,math.random(255)/255,math.random(255)/255,math.random(255)/255)
+			if(i==1)then
+			ct.frames[i]:AddMessage("-"..math.random(100000),1,math.random(255)/255,math.random(255)/255)
+			elseif(i==2)then
+			ct.frames[i]:AddMessage("+"..math.random(50000),.1,math.random(128,255)/255,.1)
+			elseif(i==3)then
+			ct.frames[i]:AddMessage(COMBAT_TEXT_LABEL,math.random(255)/255,math.random(255)/255,math.random(255)/255)
+			else
+			if(#ct.frames==4)then
+				msg=math.random(40000)
+				local _,_,icon=GetSpellInfo(msg)
+				if(icon)then
+					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
+				end
+				ct.frames[i]:AddMessage(msg,unpack(dmgcolor[dmindex[math.random(#dmindex)]]))
+			end
 			TimeSinceLastUpdate = 0
+		end
 		end
 		
 	end)
 	ct.testmode=true
 end
+end
 
 local function EndTestMode()
-	xCT:SetScript("OnUpdate",nil)
-	for i=1,3 do
+	for i=1,#ct.frames do
+		ct.frames[i]:SetScript("OnUpdate",nil)
 		ct.frames[i]:Clear()
 	end
 	ct.testmode=false
@@ -488,6 +527,26 @@ if(ct.stopvespam and select(2,UnitClass"player")=="PRIEST")then
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 	sp:SetScript("OnEvent",spOnEvent)
 end
+dmgcolor={}
+dmgcolor[1]={1,1,0} -- physical
+dmgcolor[2]={1,.9,.5} -- holy
+dmgcolor[4]={1,.5,0} -- fire
+dmgcolor[8]={.3,1,.3} -- nature
+dmgcolor[16]={.5,1,1} -- frost
+dmgcolor[32]={.5,.5,1} -- shadow
+dmgcolor[64]={1,.5,1} -- arcane
+dmindex={}
+dmindex[1]=1
+dmindex[2]=2
+dmindex[3]=4
+dmindex[4]=8
+dmindex[5]=16
+dmindex[6]=32
+dmindex[7]=64
+--print( myTable[ math.random( #myTable ) ] )
+--print(dmgcolor[dmindex[math.random(#dmindex)]])
+--unpack(dmgcolor[dmindex[math.random(#dmindex)]])
+--[[
 if (ct.damage) then
 InterfaceOptionsCombatTextPanelTargetDamage:Hide()
 InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
@@ -533,7 +592,7 @@ local clu=function(self,event,...)
 			if(arg12>=ct.treshold)then
 				local _,_,icon=GetSpellInfo(arg10)
 				if (icon) then
-					msg=arg12.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:64:4:64\124t"
+					msg=arg12.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
 				else
 					msg=arg12
 				end
@@ -558,3 +617,4 @@ local clu=function(self,event,...)
 end
 xCT4:SetScript("OnEvent",clu)
 end
+]]
