@@ -7,7 +7,7 @@ Thanks ALZA and Shestak for making this mod possible.
 ]]--
 local ct={}
 -- config starts
-ct.damage=false -- show outgoing damage in it's own frame
+ct.damage=true -- show outgoing damage in it's own frame
 ct.icons=true -- show outgoing damage icons
 ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
@@ -538,35 +538,11 @@ end
 --unpack(dmgcolor[dmindex[math.random(#dmindex)]])
 --
 
-if (ct.damage) then
+if(ct.damage)then
 InterfaceOptionsCombatTextPanelTargetDamage:Hide()
 InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
 InterfaceOptionsCombatTextPanelPetDamage:Hide()
---[[local xCT4=CreateFrame("ScrollingMessageFrame","xCT4",UIParent)
-
-	xCT4:SetFont(ct.font,ct.fontsize,ct.fontstyle)
-	xCT4:SetShadowColor(0,0,0,0)
-	xCT4:SetFadeDuration(0.2)
-	xCT4:SetTimeVisible(3)
-	xCT4:SetMaxLines(128)
-	xCT4:SetSpacing(1)
-	xCT4:SetJustifyH"LEFT"
-	xCT4:SetPoint("CENTER",0,0)
-	xCT4:SetMovable(true)
-	xCT4:SetResizable(true)
-	xCT4:SetMinResize(128,128)
-	xCT4:SetMaxResize(768,768)
-	xCT4:SetJustifyH"RIGHT"
-	xCT4:SetHeight(768)
-	xCT4:SetWidth(128)
-	xCT4:SetPoint("CENTER",0,192)
---	TukuiDB.SetTemplate(xCT4)
-	xCT4:EnableMouse(true)
-	xCT4:RegisterForDrag"LeftButton"
-	xCT4:SetScript("OnDragStart",xCT4.StartMoving)
-	xCT4:SetScript("OnDragStop",xCT4.StopMovingOrSizing)]]
 xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
-
 ct.dmgcolor={}
 ct.dmgcolor[1]={1,1,0} -- physical
 ct.dmgcolor[2]={1,.9,.5} -- holy
@@ -585,7 +561,7 @@ ct.dmindex[6]=32
 ct.dmindex[7]=64
 
 
-local clu=function(self,event,...)
+local dmg=function(self,event,...)
 	if (arg3==UnitGUID"player")or(arg3==UnitGUID"pet")then
 		if(arg2=="SWING_DAMAGE")then
 			if(arg9>=ct.treshold)then
@@ -622,6 +598,6 @@ local clu=function(self,event,...)
 		end
 	end
 end
-xCT4:SetScript("OnEvent",clu)
+xCT4:SetScript("OnEvent",dmg)
 end
 
