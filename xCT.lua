@@ -9,6 +9,7 @@ local ct={}
 -- config starts
 ct.damage=true -- show outgoing damage in it's own frame
 ct.icons=true -- show outgoing damage icons
+ct.damagecolor=false -- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 ct.damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
@@ -446,6 +447,7 @@ local function StartTestMode()
 			elseif(i==4)then
 				local msg
 				local icon
+				local color={}
 				msg=math.random(40000)
 				if(ct.icons)then
 					_,_,icon=GetSpellInfo(msg)
@@ -453,7 +455,17 @@ local function StartTestMode()
 				if(icon)then
 					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
 				end
-				ct.frames[i]:AddMessage(msg,unpack(ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]))
+				if(ct.damagecolor)then
+					color=ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]
+				else
+					local c={}
+					c[1]={1,1,0}
+					c[2]={1,1,1}
+					color=c[math.random(1,2)]
+				end
+				--ct.frames[i]:AddMessage(msg,unpack(ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]))
+				ct.frames[i]:AddMessage(msg,unpack(color))
+				
 			end
 			TimeSinceLastUpdate = 0
 		end
@@ -542,7 +554,12 @@ if(ct.damage)then
 InterfaceOptionsCombatTextPanelTargetDamage:Hide()
 InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
 InterfaceOptionsCombatTextPanelPetDamage:Hide()
+SetCVar("CombatLogPeriodicSpells",0)
+SetCVar("PetMeleeDamage",0)
+SetCVar("CombatDamage",0)
+
 xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
+if(ct.damagecolor)then
 ct.dmgcolor={}
 ct.dmgcolor[1]={1,1,0} -- physical
 ct.dmgcolor[2]={1,.9,.5} -- holy
@@ -559,7 +576,7 @@ ct.dmindex[4]=8
 ct.dmindex[5]=16
 ct.dmindex[6]=32
 ct.dmindex[7]=64
-
+end
 
 local dmg=function(self,event,...)
 	if (arg3==UnitGUID"player")or(arg3==UnitGUID"pet")then
@@ -570,9 +587,19 @@ local dmg=function(self,event,...)
 		elseif(arg2=="SPELL_DAMAGE")or(arg2=="SPELL_PERIODIC_DAMAGE")then
 			local icon
 			local msg
+			local color={}
 			if(arg12>=ct.treshold)then
 				if(ct.icons)then
 					_,_,icon=GetSpellInfo(arg10)
+				end
+				if(ct.damagecolor)then
+					if(ct.dmgcolor[arg11])then
+						color=ct.dmgcolor[arg11]
+					else
+						color=ct.dmgcolor[1]
+					end
+				else
+					color={1,1,0}
 				end
 				if (icon) then
 					msg=arg12.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
@@ -582,7 +609,7 @@ local dmg=function(self,event,...)
 			--	if (arg18) then
 			--		msg=msg.."!"
 			--	end
-				xCT4:AddMessage(msg,unpack(ct.dmgcolor[arg11]))
+				xCT4:AddMessage(msg,unpack(color))
 			end
 		elseif(arg2=="SWING_MISSED")then
 			xCT4:AddMessage(arg9)
