@@ -9,7 +9,7 @@ local ct={}
 -- config starts
 ct.damage=true -- show outgoing damage in it's own frame
 ct.icons=true -- show outgoing damage icons
-ct.damagecolor=false -- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
+ct.damagecolor=true -- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
 ct.damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
@@ -454,14 +454,13 @@ local function StartTestMode()
 				end
 				if(icon)then
 					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
-				end
-				if(ct.damagecolor)then
-					color=ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]
+					if(ct.damagecolor)then
+						color=ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]
+					else
+						color={1,1,0}
+					end
 				else
-					local c={}
-					c[1]={1,1,0}
-					c[2]={1,1,1}
-					color=c[math.random(1,2)]
+					color={1,1,1}
 				end
 				--ct.frames[i]:AddMessage(msg,unpack(ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]))
 				ct.frames[i]:AddMessage(msg,unpack(color))
