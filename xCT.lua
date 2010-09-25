@@ -15,6 +15,7 @@ local ct={
 -- options
 	["damage"] = true,		-- show outgoing damage in it's own frame
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
+	["critprefix"] = "*",		-- symbol that will be added before amount, if you deal critical strike. leave "" for empty.
 	["icons"] = true,		-- show outgoing damage icons
 	["iconsize"] = 30,		-- icon size of spells in outgoing damage frame
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
@@ -628,11 +629,20 @@ local dmg=function(self,event,...)
 	if (arg3==UnitGUID"player")or(arg3==UnitGUID"pet")then
 		if(arg2=="SWING_DAMAGE")then
 			if(arg9>=ct.treshold)then
-				xCT4:AddMessage(arg9)
+				local msg=arg9
+				if (arg15) then
+					msg=ct.critprefix..msg
+				end
+
+				xCT4:AddMessage(msg)
 			end
 		elseif(arg2=="RANGE_DAMAGE")then
 			if(arg12>=ct.treshold)then
-				xCT4:AddMessage(arg12)
+				msg=arg12
+				if (arg18) then
+					msg=ct.critprefix..msg
+				end
+				xCT4:AddMessage(msg)
 			end
 
 		elseif(arg2=="SPELL_DAMAGE")or(arg2=="SPELL_PERIODIC_DAMAGE")then
@@ -652,15 +662,15 @@ local dmg=function(self,event,...)
 				else
 					color={1,1,0}
 				end
-			--	if (arg18) then
-			--		msg=msg.."!"
-			--	end
-
 				if (icon) then
 					msg=arg12.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
 				else
 					msg=arg12
 				end
+				if (arg18) then
+					msg=ct.critprefix..msg
+				end
+
 				xCT4:AddMessage(msg,unpack(color))
 			end
 		elseif(arg2=="SWING_MISSED")then
