@@ -685,22 +685,3 @@ local dmg=function(self,event,...)
 end
 xCT4:SetScript("OnEvent",dmg)
 end
-
---[[ EavesDrop mode
-xCT:UnregisterAllEvents()
-xCT1:Hide()
-xCT2:Hide()
-xCT3:Hide()
-xCT4:SetMaxLines(10000)
-xCT4:SetTimeVisible(300)
-xCT4:SetFading(false)
-xCT4:SetFadeDuration(300)
-xCT4:EnableMouseWheel(true)
-xCT4:SetScript("OnMouseWheel", function(self,delta)
-	if delta >0 then
-		xCT4:PageDown()
-	elseif delta <0 then
-		xCT4:PageUp()
-	end
-end)
-]]
