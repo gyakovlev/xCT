@@ -15,6 +15,8 @@ local ct={
 	["iconsize"] = 30,		-- icon size of spells in outgoing damage frame
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 	["treshold"] = 1,		-- minimum damage to show in damage frame
+	["scrollable"] = true,		-- allows you to scroll frame lines with mousewheel.
+	["maxlines"] = 128,		-- max lines to keep in scrollable mode. more lines=more memory.
 -- appearence
 	["font"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	-- "Fonts\\ARIALN.ttf" is default WoW font.
 	["fontsize"] = 12,
@@ -53,6 +55,21 @@ local function LimitLines()
 		f:SetMaxLines(f:GetHeight()/ct.fontsize)
 	end
 end
+
+-- scrollable frames
+local function SetScroll()
+	for i=1,#ct.frames do
+		ct.frames[i]:EnableMouseWheel(true)
+		ct.frames[i]:SetScript("OnMouseWheel", function(self,delta)
+			if delta >0 then
+				self:ScrollUp()
+			elseif delta <0 then
+				self:ScrollDown()
+			end
+		end)
+	end
+end
+	
 -- msg flow direction
 local function ScrollDirection()
 	if (COMBAT_TEXT_FLOAT_MODE=="2") then
@@ -259,7 +276,12 @@ elseif event=="UNIT_ENTERED_VEHICLE"or event=="UNIT_EXITING_VEHICLE"then
 elseif event=="PLAYER_ENTERING_WORLD"then
 	SetUnit()
 	ScrollDirection()
-	LimitLines()
+	
+	if(ct.scrollable)then
+		SetScroll()
+	else
+		LimitLines()
+	end
 end
 end
 -- change damage font (if desired)
@@ -274,9 +296,10 @@ for i=1,numf do
 	local f=CreateFrame("ScrollingMessageFrame","xCT"..i,UIParent)
 	f:SetFont(ct.font,ct.fontsize,ct.fontstyle)
 	f:SetShadowColor(0,0,0,0)
+	f:SetFading(true)
 	f:SetFadeDuration(0.5)
 	f:SetTimeVisible(ct.timevisible)
-	f:SetMaxLines(16)
+	f:SetMaxLines(ct.maxlines)
 	f:SetSpacing(2)
 	f:SetWidth(128)
 	f:SetHeight(128)
@@ -286,6 +309,8 @@ for i=1,numf do
 	f:SetResizable(true)
 	f:SetMinResize(128,128)
 	f:SetMaxResize(768,768)
+	f:SetClampedToScreen(true)
+	f:SetClampRectInsets(0,0,ct.fontsize,0)
 	if(i==1)then
 		f:SetJustifyH"LEFT"
 		f:SetPoint("CENTER",-192,-32)
@@ -400,10 +425,12 @@ local StartConfigmode=function()
 		f:EnableMouse(true)
 		f:RegisterForDrag"LeftButton"
 		f:SetScript("OnDragStart",f.StartSizing)
+		if not(ct.scrollable)then
 		f:SetScript("OnSizeChanged",function(self)
 			self:SetMaxLines(self:GetHeight()/ct.fontsize)
 			self:Clear()
 		end)
+		end
 
 		f:SetScript("OnDragStop",f.StopMovingOrSizing)
 		ct.locked=false
@@ -549,9 +576,9 @@ end
 
 -- damage
 if(ct.damage)then
-	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
-	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
-	InterfaceOptionsCombatTextPanelPetDamage:Hide()
+--	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
+--	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
+--	InterfaceOptionsCombatTextPanelPetDamage:Hide()
 	SetCVar("CombatLogPeriodicSpells",0)
 	SetCVar("PetMeleeDamage",0)
 	SetCVar("CombatDamage",0)
@@ -583,6 +610,11 @@ local dmg=function(self,event,...)
 			if(arg9>=ct.treshold)then
 				xCT4:AddMessage(arg9)
 			end
+		elseif(arg2=="RANGE_DAMAGE")then
+			if(arg12>=ct.treshold)then
+				xCT4:AddMessage(arg12)
+			end
+
 		elseif(arg2=="SPELL_DAMAGE")or(arg2=="SPELL_PERIODIC_DAMAGE")then
 			local icon
 			local msg
@@ -614,13 +646,8 @@ local dmg=function(self,event,...)
 		elseif(arg2=="SWING_MISSED")then
 			xCT4:AddMessage(arg9)
 
-		elseif(arg2=="SPELL_MISSED")then
+		elseif(arg2=="SPELL_MISSED")or(arg2=="RANGE_MISSED")then
 			xCT4:AddMessage(arg12)
-
-
-
-
-
 
 		end
 	end
@@ -628,3 +655,21 @@ end
 xCT4:SetScript("OnEvent",dmg)
 end
 
+--[[ EavesDrop mode
+xCT:UnregisterAllEvents()
+xCT1:Hide()
+xCT2:Hide()
+xCT3:Hide()
+xCT4:SetMaxLines(10000)
+xCT4:SetTimeVisible(300)
+xCT4:SetFading(false)
+xCT4:SetFadeDuration(300)
+xCT4:EnableMouseWheel(true)
+xCT4:SetScript("OnMouseWheel", function(self,delta)
+	if delta >0 then
+		xCT4:PageDown()
+	elseif delta <0 then
+		xCT4:PageUp()
+	end
+end)
+]]
