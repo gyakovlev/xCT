@@ -17,11 +17,11 @@ local ct={
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 	["critprefix"] = "*",		-- symbol that will be added before amount, if you deal critical strike. leave "" for empty.
 	["icons"] = true,		-- show outgoing damage icons
-	["iconsize"] = 30,		-- icon size of spells in outgoing damage frame
+	["iconsize"] = 30,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size.
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 	["treshold"] = 1,		-- minimum damage to show in damage frame
 	["scrollable"] = true,		-- allows you to scroll frame lines with mousewheel.
-	["maxlines"] = 128,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
+	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
 
 -- appearence
 	["font"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	-- "Fonts\\ARIALN.ttf" is default WoW font.
@@ -345,9 +345,10 @@ for i=1,numf do
 	else
 		f:SetJustifyH"RIGHT"
 		f:SetPoint("CENTER",320,0)
-	--	if (ct.icons)then
-	--		f:SetSpacing(ct.iconsize)
-	--	end
+		if (ct.icons)then
+			a,_,c=f:GetFont()
+			f:SetFont(a,ct.iconsize/2,c)
+		end
 	end
 	ct.frames[i] = f
 end
@@ -505,7 +506,7 @@ local function StartTestMode()
 					_,_,icon=GetSpellInfo(msg)
 				end
 				if(icon)then
-					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
+					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					if(ct.damagecolor)then
 						color=ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]
 					else
@@ -663,7 +664,7 @@ local dmg=function(self,event,...)
 					color={1,1,0}
 				end
 				if (icon) then
-					msg=arg12.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
+					msg=arg12.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				else
 					msg=arg12
 				end
