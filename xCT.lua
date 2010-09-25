@@ -5,21 +5,27 @@ All rights reserved.
 Thanks ALZA and Shestak for making this mod possible.
 
 ]]--
-local ct={}
--- config starts
-ct.damage=true -- show outgoing damage in it's own frame
-ct.icons=true -- show outgoing damage icons
-ct.damagecolor=true -- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
-ct.damagestyle=true -- set to true to change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
-ct.font,ct.fontsize,ct.fontstyle="Interface\\Addons\\xCT\\HOOGE.TTF",12,"OUTLINE" -- "Fonts\\ARIALN.ttf" is default WoW font.
-ct.damagefont="Interface\\Addons\\xCT\\HOOGE.TTF"  -- "Fonts\\FRIZQT__.ttf" is default WoW damage font.
-ct.timevisible=3 -- time (seconds) a single message will be visible.
-ct.stopvespam=true -- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
-ct.showdkrunes=true -- show deatchknight rune recharge.
-ct.iconsize=30 -- icon size of spells in outgoing damage frame
-ct.treshold=500 -- minimum damage to show in damage frame
--- config ends
 
+-- config
+local ct={
+-- options
+	["damage"] = true,		-- show outgoing damage in it's own frame
+	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
+	["icons"] = true,		-- show outgoing damage icons
+	["iconsize"] = 30,		-- icon size of spells in outgoing damage frame
+	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
+	["treshold"] = 1,		-- minimum damage to show in damage frame
+-- appearence
+	["font"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	-- "Fonts\\ARIALN.ttf" is default WoW font.
+	["fontsize"] = 12,
+	["fontstyle"] = "OUTLINE",	-- valid options are "OUTLINE", "MONOCHROME", "THICKOUTLINE", "OUTLINE,MONOCHROME", "THICKOUTLINE,MONOCHROME"
+	["damagefont"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	 -- "Fonts\\FRIZQT__.ttf" is default WoW damage font
+	["timevisible"] = 3, 		-- time (seconds) a single message will be visible. 3 is a good value.
+
+-- class modules and goodies
+	["stopvespam"] = false,		-- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
+	["dkrunes"] = true,		-- show deatchknight rune recharge
+}
 
 
 --do not edit below unless you know what you are doing
@@ -310,7 +316,7 @@ xCT:RegisterEvent"UNIT_MANA"
 xCT:RegisterEvent"PLAYER_REGEN_DISABLED"
 xCT:RegisterEvent"PLAYER_REGEN_ENABLED"
 xCT:RegisterEvent"UNIT_COMBO_POINTS"
-if(ct.showdkrunes and select(2,UnitClass"player")=="DEATHKNIGHT")then
+if(ct.dkrunes and select(2,UnitClass"player")=="DEATHKNIGHT")then
 	xCT:RegisterEvent"RUNE_POWER_UPDATE"
 end
 xCT:RegisterEvent"UNIT_ENTERED_VEHICLE"
@@ -459,8 +465,10 @@ local function StartTestMode()
 					else
 						color={1,1,0}
 					end
-				else
-					color={1,1,1}
+				elseif(ct.damagecolor) and not(ct.icons)then
+					color=ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]
+				elseif not(ct.damagecolor)then
+					color={1,1,math.random(0,1)}
 				end
 				--ct.frames[i]:AddMessage(msg,unpack(ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]))
 				ct.frames[i]:AddMessage(msg,unpack(color))
