@@ -2,12 +2,16 @@
 
 xCT by affli @ RU-Howling Fjord
 All rights reserved.
-Thanks ALZA and Shestak for making this mod possible.
+Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonderful style of coding.
 
 ]]--
-
--- config
+local myname, _ = UnitName("player")
 local ct={
+
+	["myclass"] = select(2,UnitClass("player")),
+	["myname"] = myname,
+------------------------------
+-- config
 -- options
 	["damage"] = true,		-- show outgoing damage in it's own frame
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
@@ -16,7 +20,8 @@ local ct={
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 	["treshold"] = 1,		-- minimum damage to show in damage frame
 	["scrollable"] = true,		-- allows you to scroll frame lines with mousewheel.
-	["maxlines"] = 128,		-- max lines to keep in scrollable mode. more lines=more memory.
+	["maxlines"] = 128,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
+
 -- appearence
 	["font"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	-- "Fonts\\ARIALN.ttf" is default WoW font.
 	["fontsize"] = 12,
@@ -28,6 +33,21 @@ local ct={
 	["stopvespam"] = false,		-- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
 	["dkrunes"] = true,		-- show deatchknight rune recharge
 }
+
+--------------------------------
+-- class config, overrides general
+if myclass == "PRIEST" then
+	ct["stopvespam"] = false
+end
+--------------------------------
+-- character config, overrides general and class
+if myname == "Affli" then
+	ct["treshold"] = 500
+end
+--------------------------------
+
+
+
 
 
 --do not edit below unless you know what you are doing
@@ -576,9 +596,9 @@ end
 
 -- damage
 if(ct.damage)then
---	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
---	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
---	InterfaceOptionsCombatTextPanelPetDamage:Hide()
+	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
+	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
+	InterfaceOptionsCombatTextPanelPetDamage:Hide()
 	SetCVar("CombatLogPeriodicSpells",0)
 	SetCVar("PetMeleeDamage",0)
 	SetCVar("CombatDamage",0)
