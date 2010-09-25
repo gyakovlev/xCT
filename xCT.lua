@@ -30,15 +30,13 @@ local ct={
 
 --do not edit below unless you know what you are doing
 -- code starts
--- detect vechile
-
 local numf
 if(ct.damage)then
 	 numf=4
 else
 	 numf=3
 end
-
+-- detect vechile
 local function SetUnit()
 	if(UnitHasVehicleUI("player"))then
 		ct.unit="vehicle"
@@ -470,15 +468,12 @@ local function StartTestMode()
 				elseif not(ct.damagecolor)then
 					color={1,1,math.random(0,1)}
 				end
-				--ct.frames[i]:AddMessage(msg,unpack(ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]))
 				ct.frames[i]:AddMessage(msg,unpack(color))
 				
 			end
 			TimeSinceLastUpdate = 0
 		end
-		end)
-		
-	--end)
+		end)		
 	ct.testmode=true
 end
 end
@@ -552,38 +547,35 @@ if(ct.stopvespam and select(2,UnitClass"player")=="PRIEST")then
 	sp:SetScript("OnEvent",spOnEvent)
 end
 
---print( myTable[ math.random( #myTable ) ] )
---print(dmgcolor[dmindex[math.random(#dmindex)]])
---unpack(dmgcolor[dmindex[math.random(#dmindex)]])
---
-
+-- damage
 if(ct.damage)then
-InterfaceOptionsCombatTextPanelTargetDamage:Hide()
-InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
-InterfaceOptionsCombatTextPanelPetDamage:Hide()
-SetCVar("CombatLogPeriodicSpells",0)
-SetCVar("PetMeleeDamage",0)
-SetCVar("CombatDamage",0)
+	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
+	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
+	InterfaceOptionsCombatTextPanelPetDamage:Hide()
+	SetCVar("CombatLogPeriodicSpells",0)
+	SetCVar("PetMeleeDamage",0)
+	SetCVar("CombatDamage",0)
 
-xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
-if(ct.damagecolor)then
-ct.dmgcolor={}
-ct.dmgcolor[1]={1,1,0} -- physical
-ct.dmgcolor[2]={1,.9,.5} -- holy
-ct.dmgcolor[4]={1,.5,0} -- fire
-ct.dmgcolor[8]={.3,1,.3} -- nature
-ct.dmgcolor[16]={.5,1,1} -- frost
-ct.dmgcolor[32]={.5,.5,1} -- shadow
-ct.dmgcolor[64]={1,.5,1} -- arcane
-ct.dmindex={}
-ct.dmindex[1]=1
-ct.dmindex[2]=2
-ct.dmindex[3]=4
-ct.dmindex[4]=8
-ct.dmindex[5]=16
-ct.dmindex[6]=32
-ct.dmindex[7]=64
-end
+	xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
+
+	if(ct.damagecolor)then
+		ct.dmgcolor={}
+		ct.dmgcolor[1]={1,1,0} -- physical
+		ct.dmgcolor[2]={1,.9,.5} -- holy
+		ct.dmgcolor[4]={1,.5,0} -- fire
+		ct.dmgcolor[8]={.3,1,.3} -- nature
+		ct.dmgcolor[16]={.5,1,1} -- frost
+		ct.dmgcolor[32]={.5,.5,1} -- shadow
+		ct.dmgcolor[64]={1,.5,1} -- arcane
+		ct.dmindex={}
+		ct.dmindex[1]=1
+		ct.dmindex[2]=2
+		ct.dmindex[3]=4
+		ct.dmindex[4]=8
+		ct.dmindex[5]=16
+		ct.dmindex[6]=32
+		ct.dmindex[7]=64
+	end
 
 local dmg=function(self,event,...)
 	if (arg3==UnitGUID"player")or(arg3==UnitGUID"pet")then
@@ -608,14 +600,15 @@ local dmg=function(self,event,...)
 				else
 					color={1,1,0}
 				end
+			--	if (arg18) then
+			--		msg=msg.."!"
+			--	end
+
 				if (icon) then
 					msg=arg12.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:4:60:4:60\124t"
 				else
 					msg=arg12
 				end
-			--	if (arg18) then
-			--		msg=msg.."!"
-			--	end
 				xCT4:AddMessage(msg,unpack(color))
 			end
 		elseif(arg2=="SWING_MISSED")then
