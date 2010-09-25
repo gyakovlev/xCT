@@ -60,7 +60,7 @@ local function ScrollDirection()
 	else
 		ct.mode="BOTTOM"
 	end
-	for i=1,3 do
+	for i=1,#ct.frames do
 		ct.frames[i]:Clear()
 		ct.frames[i]:SetInsertMode(ct.mode)
 	end
