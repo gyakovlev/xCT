@@ -119,11 +119,11 @@ if(event=="COMBAT_TEXT_UPDATE")then
 	if subevent=="DAMAGE"then
 		xCT1:AddMessage("-"..arg2,.75,.1,.1)
 	elseif subevent=="DAMAGE_CRIT"then
-		xCT1:AddMessage(ct.critprefix.."-"..arg..ct.critpostfix,1,.1,.1)
+		xCT1:AddMessage(ct.critprefix.."-"..arg2..ct.critpostfix,1,.1,.1)
 	elseif subevent=="SPELL_DAMAGE"then
 		xCT1:AddMessage("-"..arg2,.75,.3,.85)
 	elseif subevent=="SPELL_DAMAGE_CRIT"then
-		xCT1:AddMessage(ct.critprefix.."-"..arg..ct.critpostfix,1,.3,.5)
+		xCT1:AddMessage(ct.critprefix.."-"..arg2..ct.critpostfix,1,.3,.5)
 
 	elseif subevent=="HEAL"then
 		if(arg3>=ct.healtreshold)then
@@ -131,7 +131,7 @@ if(event=="COMBAT_TEXT_UPDATE")then
 		end
 	elseif subevent=="HEAL_CRIT"then
 		if(arg3>=ct.healtreshold)then
-			xCT2:AddMessage(ct.critprefix.."+"..arg..critpostfix,.1,1,.1)
+			xCT2:AddMessage(ct.critprefix.."+"..arg3..ct.critpostfix,.1,1,.1)
 		end
 	elseif subevent=="PERIODIC_HEAL"then
 		if(arg3>=ct.healtreshold)then
