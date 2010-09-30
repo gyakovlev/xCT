@@ -16,6 +16,7 @@ local ct={
 	["damage"] = true,		-- show outgoing damage in it's own frame
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 	["critprefix"] = "*",		-- symbol that will be added before amount, if you deal critical strike. leave "" for empty.
+	["critpostfix"] = "*",		-- postfix symbol
 	["icons"] = true,		-- show outgoing damage icons
 	["iconsize"] = 30,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size.
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
@@ -109,6 +110,7 @@ local part="-%s (%s %s)"
 -- the function, handles everything
 local function OnEvent(self,event,subevent,...)
 if(event=="COMBAT_TEXT_UPDATE")then
+	local arg2,arg3 = ...
 	if (SHOW_COMBAT_TEXT=="0")then
 		return
 	else
@@ -225,7 +227,7 @@ if(event=="COMBAT_TEXT_UPDATE")then
 end
 
 elseif event=="UNIT_HEALTH"and(COMBAT_TEXT_SHOW_LOW_HEALTH_MANA=="1")then
-	if arg1==ct.unit then
+	if subevent==ct.unit then
 		if(UnitHealth(ct.unit)/UnitHealthMax(ct.unit)<=COMBAT_TEXT_LOW_HEALTH_THRESHOLD)then
 			if (not lowHealth) then
 				xCT3:AddMessage(HEALTH_LOW,1,.1,.1)
@@ -237,7 +239,7 @@ elseif event=="UNIT_HEALTH"and(COMBAT_TEXT_SHOW_LOW_HEALTH_MANA=="1")then
 	end
 
 elseif event=="UNIT_MANA"and(COMBAT_TEXT_SHOW_LOW_HEALTH_MANA=="1")then
-	if arg1==ct.unit then
+	if subevent==ct.unit then
 		local _,powerToken=UnitPowerType(ct.unit)
 		if (powerToken=="MANA"and(UnitPower(ct.unit)/UnitPowerMax(ct.unit))<=COMBAT_TEXT_LOW_MANA_THRESHOLD)then
 			if (not lowMana)then
@@ -256,7 +258,7 @@ elseif event=="PLAYER_REGEN_DISABLED"and(COMBAT_TEXT_SHOW_COMBAT_STATE=="1")then
 		xCT3:AddMessage("+"..ENTERING_COMBAT,1,.1,.1)
 
 elseif event=="UNIT_COMBO_POINTS"and(COMBAT_TEXT_SHOW_COMBO_POINTS=="1")then
-	if(arg1==ct.unit)then
+	if(subevent==ct.unit)then
 		local cp=GetComboPoints(ct.unit,"target")
 			if(cp>0)then
 				r,g,b=1,.82,.0
@@ -268,6 +270,7 @@ elseif event=="UNIT_COMBO_POINTS"and(COMBAT_TEXT_SHOW_COMBO_POINTS=="1")then
 	end
 
 elseif event=="RUNE_POWER_UPDATE"then
+	local arg1,arg2 = subevent,...
 	if(arg2==true)then
 		local rune=GetRuneType(arg1);
 		local msg=COMBAT_TEXT_RUNE[rune];
@@ -627,36 +630,46 @@ if(ct.damage)then
 	end
 
 local dmg=function(self,event,...)
-	if (arg3==UnitGUID"player")or(arg3==UnitGUID"pet")then
-		if(arg2=="SWING_DAMAGE")then
-			if(arg9>=ct.treshold)then
-				local msg=arg9
-				if (arg15) then
-					msg=ct.critprefix..msg
+	local msg
+	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
+	if (sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet")then
+		if(eventType=="SWING_DAMAGE")then
+			local amount,_,_,_,_,_,critical=select(9,...)
+			if(amount>=ct.treshold)then
+				msg=amount
+				if (critical) then
+					msg=ct.critprefix..msg..ct.critpostfix
 				end
 
 				xCT4:AddMessage(msg)
 			end
-		elseif(arg2=="RANGE_DAMAGE")then
-			if(arg12>=ct.treshold)then
-				msg=arg12
-				if (arg18) then
-					msg=ct.critprefix..msg
+		elseif(eventType=="RANGE_DAMAGE")then
+			local spellId,_,_,amount,_,_,_,_,_,critical=select(9,...)
+			if(amount>=ct.treshold)then
+				msg=amount
+				if (critical) then
+					msg=ct.critprefix..msg..ct.critpostfix
 				end
 				xCT4:AddMessage(msg)
 			end
 
-		elseif(arg2=="SPELL_DAMAGE")or(arg2=="SPELL_PERIODIC_DAMAGE")then
+		elseif(eventType=="SPELL_DAMAGE")or(arg2=="SPELL_PERIODIC_DAMAGE")then
+			local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
 			local icon
-			local msg
 			local color={}
-			if(arg12>=ct.treshold)then
+			if(amount>=ct.treshold)then
+				if (critical) then
+					msg=ct.critprefix..amount..ct.critpostfix
+				else
+					msg=amount
+				end
+
 				if(ct.icons)then
-					_,_,icon=GetSpellInfo(arg10)
+					_,_,icon=GetSpellInfo(spellId)
 				end
 				if(ct.damagecolor)then
-					if(ct.dmgcolor[arg11])then
-						color=ct.dmgcolor[arg11]
+					if(ct.dmgcolor[spellSchool])then
+						color=ct.dmgcolor[spellSchool]
 					else
 						color=ct.dmgcolor[1]
 					end
@@ -664,21 +677,41 @@ local dmg=function(self,event,...)
 					color={1,1,0}
 				end
 				if (icon) then
-					msg=arg12.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
-				else
-					msg=arg12
+					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end
-				if (arg18) then
-					msg=ct.critprefix..msg
-				end
-
+				
 				xCT4:AddMessage(msg,unpack(color))
 			end
 		elseif(arg2=="SWING_MISSED")then
-			xCT4:AddMessage(arg9)
+			local missType,_=select(9,...)
+			xCT4:AddMessage(missType)
 
 		elseif(arg2=="SPELL_MISSED")or(arg2=="RANGE_MISSED")then
-			xCT4:AddMessage(arg12)
+			local _,_,_,missType,_ = select(9,...) 
+			xCT4:AddMessage(missType)
+
+		elseif(eventType=='SPELL_HEAL' or eventType=='SPELL_PERIODIC_HEAL')then 
+			local spellId,_,spellSchool,amount,_,_,critical = select(9,...) 
+			local icon 
+			local color={}
+			if(amount>=ct.treshold)then
+				if (critical) then 
+					msg=ct.critprefix..amount..ct.critpostfix
+					color={.1,1,.1}
+				else
+					msg=amount
+					color={.1,.75,.1}
+				end 
+				if(ct.icons)then
+					_,_,icon=GetSpellInfo(spellId)
+				end
+               			if (icon) then 
+                			msg=msg..' \124T'..icon..':16:16:0:0:64:64:5:59:5:59\124t' 
+                		end 
+                
+                xCT4:AddMessage(msg,unpack(color))
+		end
+		
 
 		end
 	end
