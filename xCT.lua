@@ -2,7 +2,7 @@
 
 xCT by affli @ RU-Howling Fjord
 All rights reserved.
-Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonderful style of coding.
+Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonderful style of coding. Thanks Rostok for some fixes and healing code.
 
 ]]--
 local myname, _ = UnitName("player")
@@ -22,8 +22,8 @@ local ct={
 	["iconsize"] = 27,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size.
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 	["treshold"] = 1,		-- minimum damage to show in damage frame
-	["healtreshold"] = 5000,		-- minimum healing to show in incoming/outgoing healing messages.
-	["scrollable"] = true,		-- allows you to scroll frame lines with mousewheel.
+	["healtreshold"] = 1,		-- minimum healing to show in incoming/outgoing healing messages.
+	["scrollable"] = false,		-- allows you to scroll frame lines with mousewheel.
 	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
 
 -- appearence
@@ -630,7 +630,7 @@ if(ct.damage)then
 --	SetCVar("PetMeleeDamage",0)
 --	SetCVar("CombatDamage",0)
 
-	xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
+	
 
 	if(ct.damagecolor)then
 		ct.dmgcolor={}
@@ -730,5 +730,6 @@ local dmg=function(self,event,...)
 		end
 	end
 end
+xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 xCT4:SetScript("OnEvent",dmg)
 end
