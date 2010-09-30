@@ -14,13 +14,15 @@ local ct={
 -- config
 -- options
 	["damage"] = true,		-- show outgoing damage in it's own frame
+	["healing"] = true,		-- show outgoing healing in it's own frame
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 	["critprefix"] = "*",		-- symbol that will be added before amount, if you deal critical strike. leave "" for empty.
-	["critpostfix"] = "*",		-- postfix symbol
+	["critpostfix"] = "*",		-- postfix symbol, "" for empty.
 	["icons"] = true,		-- show outgoing damage icons
-	["iconsize"] = 30,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size.
+	["iconsize"] = 27,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size.
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 	["treshold"] = 1,		-- minimum damage to show in damage frame
+	["healtreshold"] = 1,		-- minimum healing to show in incoming/outgoing healing messages.
 	["scrollable"] = true,		-- allows you to scroll frame lines with mousewheel.
 	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
 
@@ -117,18 +119,24 @@ if(event=="COMBAT_TEXT_UPDATE")then
 	if subevent=="DAMAGE"then
 		xCT1:AddMessage("-"..arg2,.75,.1,.1)
 	elseif subevent=="DAMAGE_CRIT"then
-		xCT1:AddMessage("c-"..arg2,1,.1,.1)
+		xCT1:AddMessage(ct.critprefix.."-"..arg..ct.critpostfix,1,.1,.1)
 	elseif subevent=="SPELL_DAMAGE"then
 		xCT1:AddMessage("-"..arg2,.75,.3,.85)
 	elseif subevent=="SPELL_DAMAGE_CRIT"then
-		xCT1:AddMessage("c-"..arg2,1,.3,.5)
+		xCT1:AddMessage(ct.critprefix.."-"..arg..ct.critpostfix,1,.3,.5)
 
 	elseif subevent=="HEAL"then
-		xCT2:AddMessage("+"..arg3,.1,.75,.1)
+		if(arg3>=ct.healtreshold)then
+			xCT2:AddMessage("+"..arg3,.1,.75,.1)
+		end
 	elseif subevent=="HEAL_CRIT"then
-		xCT2:AddMessage("c+"..arg3,.1,1,.1)
+		if(arg3>=ct.healtreshold)then
+			xCT2:AddMessage(ct.critprefix.."+"..arg..critpostfix,.1,1,.1)
+		end
 	elseif subevent=="PERIODIC_HEAL"then
-		xCT2:AddMessage("+"..arg3,.1,.5,.1)
+		if(arg3>=ct.healtreshold)then
+			xCT2:AddMessage("+"..arg3,.1,.5,.1)
+		end
 
 	elseif subevent=="SPELL_CAST"then
 		xCT3:AddMessage(arg2,1,.82,0)
@@ -183,19 +191,19 @@ if(event=="COMBAT_TEXT_UPDATE")then
 		end
 	elseif subevent=="SPELL_RESIST"and(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
 		if(arg3)then
-			xCT1:AddMessage(part:format(arg2,RESIST,arg3),.75,.5,.5)
+			xCT1:AddMessage(part:format(arg2,RESIST,arg3),.5,.3,.5)
 		else
 			xCT1:AddMessage(RESIST,.5,.5,.5)
 		end
 	elseif subevent=="SPELL_BLOCK"and(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
 		if (arg3)then
-			xCT1:AddMessage(part:format(arg2,BLOCK,arg3),.75,.5,.5)
+			xCT1:AddMessage(part:format(arg2,BLOCK,arg3),.5,.3,.5)
 		else
 			xCT1:AddMessage(BLOCK,.5,.5,.5)
 		end
 	elseif subevent=="SPELL_ABSORB"and(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
 		if(arg3)then
-			xCT1:AddMessage(part:format(arg2,ABSORB,arg3),.75,.5,.5)
+			xCT1:AddMessage(part:format(arg2,ABSORB,arg3),.5,.3,.5)
 		else
 			xCT1:AddMessage(ABSORB,.5,.5,.5)
 		end
@@ -488,6 +496,17 @@ local function StartTestMode()
 	
 	local TimeSinceLastUpdate=0
 	local UpdateInterval
+	if(ct.damagecolor)then
+		ct.dmindex={}
+		ct.dmindex[1]=1
+		ct.dmindex[2]=2
+		ct.dmindex[3]=4
+		ct.dmindex[4]=8
+		ct.dmindex[5]=16
+		ct.dmindex[6]=32
+		ct.dmindex[7]=64
+	end
+
 	
 	for i=1,#ct.frames do
 	ct.frames[i]:SetScript("OnUpdate",function(self,elapsed)
@@ -534,6 +553,9 @@ local function EndTestMode()
 	for i=1,#ct.frames do
 		ct.frames[i]:SetScript("OnUpdate",nil)
 		ct.frames[i]:Clear()
+	end
+	if(ct.damagecolor)then
+		ct.dmindex=nil
 	end
 	ct.testmode=false
 	end
@@ -601,12 +623,12 @@ end
 
 -- damage
 if(ct.damage)then
-	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
-	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
-	InterfaceOptionsCombatTextPanelPetDamage:Hide()
-	SetCVar("CombatLogPeriodicSpells",0)
-	SetCVar("PetMeleeDamage",0)
-	SetCVar("CombatDamage",0)
+--	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
+--	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
+--	InterfaceOptionsCombatTextPanelPetDamage:Hide()
+--	SetCVar("CombatLogPeriodicSpells",0)
+--	SetCVar("PetMeleeDamage",0)
+--	SetCVar("CombatDamage",0)
 
 	xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 
@@ -619,14 +641,6 @@ if(ct.damage)then
 		ct.dmgcolor[16]={.5,1,1} -- frost
 		ct.dmgcolor[32]={.5,.5,1} -- shadow
 		ct.dmgcolor[64]={1,.5,1} -- arcane
-		ct.dmindex={}
-		ct.dmindex[1]=1
-		ct.dmindex[2]=2
-		ct.dmindex[3]=4
-		ct.dmindex[4]=8
-		ct.dmindex[5]=16
-		ct.dmindex[6]=32
-		ct.dmindex[7]=64
 	end
 
 local dmg=function(self,event,...)
@@ -653,7 +667,7 @@ local dmg=function(self,event,...)
 				xCT4:AddMessage(msg)
 			end
 
-		elseif(eventType=="SPELL_DAMAGE")or(arg2=="SPELL_PERIODIC_DAMAGE")then
+		elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE")then
 			local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
 			local icon
 			local color={}
@@ -682,36 +696,36 @@ local dmg=function(self,event,...)
 				
 				xCT4:AddMessage(msg,unpack(color))
 			end
-		elseif(arg2=="SWING_MISSED")then
+		elseif(eventType=="SWING_MISSED")then
 			local missType,_=select(9,...)
 			xCT4:AddMessage(missType)
 
-		elseif(arg2=="SPELL_MISSED")or(arg2=="RANGE_MISSED")then
+		elseif(eventType=="SPELL_MISSED")or(eventType=="RANGE_MISSED")then
 			local _,_,_,missType,_ = select(9,...) 
 			xCT4:AddMessage(missType)
 
-		elseif(eventType=='SPELL_HEAL' or eventType=='SPELL_PERIODIC_HEAL')then 
-			local spellId,_,spellSchool,amount,_,_,critical = select(9,...) 
-			local icon 
-			local color={}
-			if(amount>=ct.treshold)then
-				if (critical) then 
-					msg=ct.critprefix..amount..ct.critpostfix
-					color={.1,1,.1}
-				else
-					msg=amount
-					color={.1,.75,.1}
-				end 
-				if(ct.icons)then
-					_,_,icon=GetSpellInfo(spellId)
+		elseif(eventType=='SPELL_HEAL' or eventType=='SPELL_PERIODIC_HEAL')then
+			if(ct.healing)then
+				local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(9,...) 
+				local icon 
+				local color={}
+				if(amount>=ct.healtreshold)then
+					if (critical) then 
+						msg=ct.critprefix..amount..ct.critpostfix
+						color={.1,1,.1}
+					else
+						msg=amount
+						color={.1,.75,.1}
+					end 
+					if(ct.icons)then
+						_,_,icon=GetSpellInfo(spellId)
+					end
+               				if (icon) then 
+                				msg=msg..' \124T'..icon..':'..ct.iconsize..':'..ct.iconsize..':0:0:64:64:5:59:5:59\124t' 
+                			end 
+					xCT4:AddMessage(msg,unpack(color))
 				end
-               			if (icon) then 
-                			msg=msg..' \124T'..icon..':16:16:0:0:64:64:5:59:5:59\124t' 
-                		end 
-                
-                xCT4:AddMessage(msg,unpack(color))
-		end
-		
+			end
 
 		end
 	end
