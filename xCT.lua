@@ -750,7 +750,9 @@ local dmg=function(self,event,...)
 						_,_,icon=GetSpellInfo(spellId) or ct.blank
 					end
                				if (icon) then 
-                				msg=msg..' \124T'..icon..':'..ct.iconsize..':'..ct.iconsize..':0:0:64:64:5:59:5:59\124t' 
+                				msg=msg..' \124T'..icon..':'..ct.iconsize..':'..ct.iconsize..':0:0:64:64:5:59:5:59\124t'
+					elseif(ct.icons)then
+						msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
                 			end 
 					xCT4:AddMessage(msg,unpack(color))
 				end
