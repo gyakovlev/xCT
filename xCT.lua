@@ -9,7 +9,7 @@ local myname, _ = UnitName("player")
 local version, build, date = GetBuildInfo()
 local release = tonumber(string.sub(version,0,1))
 
-ct={
+local ct={
 
 	["myclass"] = select(2,UnitClass("player")),
 	["myname"] = myname,
