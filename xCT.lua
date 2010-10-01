@@ -401,7 +401,7 @@ COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
 hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
 
 -- modify blizz ct options title lol
-InterfaceOptionsCombatTextPanelTitle:SetText(COMBATTEXT_LABEL.." (powered by |cffFF0000x|rCT)")
+InterfaceOptionsCombatTextPanelTitle:SetText(COMBAT_TEXT_LABEL.." (powered by |cffFF0000x|rCT)")
 
 -- color printer
 local pr = function(msg)
@@ -430,7 +430,7 @@ local StartConfigmode=function()
 			f.fs:SetText(SHOW_COMBAT_HEALING.."(drag me)")
 			f.fs:SetTextColor(.1,1,.1,.9)
 		elseif(i==3)then
-			f.fs:SetText(COMBATTEXT_LABEL.."(drag me)")
+			f.fs:SetText(COMBAT_TEXT_LABEL.."(drag me)")
 			f.fs:SetTextColor(.1,.1,1,.9)
 		else
 			f.fs:SetText(DAMAGE)
@@ -747,7 +747,7 @@ local dmg=function(self,event,...)
 						color={.1,.75,.1}
 					end 
 					if(ct.icons)then
-						_,_,icon=GetSpellInfo(spellId) or ct.blank
+						_,_,icon=GetSpellInfo(spellId)
 					end
                				if (icon) then 
                 				msg=msg..' \124T'..icon..':'..ct.iconsize..':'..ct.iconsize..':0:0:64:64:5:59:5:59\124t'
