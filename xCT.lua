@@ -405,6 +405,8 @@ COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
 -- hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
 if(release==3)then
 	hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
+else
+	InterfaceOptionsCombatTextPanelFCTDropDown:Hide()
 end
 
 -- modify blizz ct options title lol
