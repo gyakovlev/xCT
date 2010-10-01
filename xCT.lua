@@ -6,7 +6,7 @@ Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonder
 
 ]]--
 local myname, _ = UnitName("player")
-local ct={
+ct={
 
 	["myclass"] = select(2,UnitClass("player")),
 	["myname"] = myname,
@@ -16,7 +16,7 @@ local ct={
 	["damage"] = true,		-- show outgoing damage in it's own frame
 	["healing"] = true,		-- show outgoing healing in it's own frame
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
-	["critprefix"] = "*",		-- symbol that will be added before amount, if you deal critical strike. leave "" for empty.
+	["critprefix"] = "*",		-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty.
 	["critpostfix"] = "*",		-- postfix symbol, "" for empty.
 	["icons"] = true,		-- show outgoing damage icons
 	["iconsize"] = 27,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size.
@@ -36,16 +36,17 @@ local ct={
 -- class modules and goodies
 	["stopvespam"] = false,		-- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
 	["dkrunes"] = true,		-- show deatchknight rune recharge
+	["stopfaspam"] = false,		-- do not show Fel Armor healing ticks, useful for warlocks.
 }
 
 --------------------------------
 -- class config, overrides general
-if myclass == "PRIEST" then
-	ct["stopvespam"] = false
+if ct.myclass == "WARLOCK" then
+	ct["stopfaspam"] = true
 end
 --------------------------------
 -- character config, overrides general and class
-if myname == "Affli" then
+if ct.myname == "Affli" then
 	ct["treshold"] = 500
 end
 --------------------------------
@@ -607,18 +608,20 @@ SlashCmdList["XCT"]=function(input)
 end
 
 -- awesome shadow priest helper
-if(ct.stopvespam and select(2,UnitClass"player")=="PRIEST")then
+if(ct.stopvespam and ct.myclass=="PRIEST")then
 	local sp=CreateFrame("Frame")
-	local function spOnEvent(...)
+	sp:SetScript("OnEvent",function(...)
 		if(GetShapeshiftForm()==1)then
 			SetCVar('CombatHealing',0)
+			ct.shadowform=true
 		else
 			SetCVar('CombatHealing',1)
+			ct.shadowform=false
 		end
-	end	
+	end)
+	sp:RegisterEvent("PLAYER_ENTERING_WORLD")	
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
-	sp:SetScript("OnEvent",spOnEvent)
 end
 
 -- damage
@@ -642,8 +645,12 @@ if(ct.damage)then
 		ct.dmgcolor[32]={.5,.5,1} -- shadow
 		ct.dmgcolor[64]={1,.5,1} -- arcane
 	end
+	
+	if(ct.icons)then
+		ct.blank="Interface\\Addons\\xCT\\blank"
+	end
 
-local dmg=function(self,event,...)
+local dmg=function(self,event,...) 
 	local msg
 	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
 	if (sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet")then
@@ -653,6 +660,9 @@ local dmg=function(self,event,...)
 				msg=amount
 				if (critical) then
 					msg=ct.critprefix..msg..ct.critpostfix
+				end
+				if(ct.icons)then
+					msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end
 
 				xCT4:AddMessage(msg)
@@ -664,6 +674,10 @@ local dmg=function(self,event,...)
 				if (critical) then
 					msg=ct.critprefix..msg..ct.critpostfix
 				end
+				if(ct.icons)then
+					msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				end
+
 				xCT4:AddMessage(msg)
 			end
 
@@ -692,16 +706,25 @@ local dmg=function(self,event,...)
 				end
 				if (icon) then
 					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				elseif(ct.icons)then
+					msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end
 				
 				xCT4:AddMessage(msg,unpack(color))
 			end
 		elseif(eventType=="SWING_MISSED")then
 			local missType,_=select(9,...)
+			if(ct.icons)then
+					missType=missType.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+			end
+
 			xCT4:AddMessage(missType)
 
 		elseif(eventType=="SPELL_MISSED")or(eventType=="RANGE_MISSED")then
-			local _,_,_,missType,_ = select(9,...) 
+			local _,_,_,missType,_ = select(9,...)
+			if(ct.icons)then
+					missType=missType.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+			end 
 			xCT4:AddMessage(missType)
 
 		elseif(eventType=='SPELL_HEAL' or eventType=='SPELL_PERIODIC_HEAL')then
@@ -709,6 +732,12 @@ local dmg=function(self,event,...)
 				local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(9,...) 
 				local icon 
 				local color={}
+				if(ct.stopvespam and ct.shadowform and spellId==15290)then
+					return
+				end
+				if(ct.stopfaspam and spellId==47893)then
+					return
+				end
 				if(amount>=ct.healtreshold)then
 					if (critical) then 
 						msg=ct.critprefix..amount..ct.critpostfix
@@ -718,7 +747,7 @@ local dmg=function(self,event,...)
 						color={.1,.75,.1}
 					end 
 					if(ct.icons)then
-						_,_,icon=GetSpellInfo(spellId)
+						_,_,icon=GetSpellInfo(spellId) or ct.blank
 					end
                				if (icon) then 
                 				msg=msg..' \124T'..icon..':'..ct.iconsize..':'..ct.iconsize..':0:0:64:64:5:59:5:59\124t' 
