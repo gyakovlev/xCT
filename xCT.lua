@@ -6,6 +6,9 @@ Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonder
 
 ]]--
 local myname, _ = UnitName("player")
+local version, build, date = GetBuildInfo()
+local release = tonumber(string.sub(version,0,1))
+
 ct={
 
 	["myclass"] = select(2,UnitClass("player")),
@@ -308,7 +311,9 @@ elseif event=="UNIT_ENTERED_VEHICLE"or event=="UNIT_EXITING_VEHICLE"then
 
 elseif event=="PLAYER_ENTERING_WORLD"then
 	SetUnit()
-	ScrollDirection()
+	if(release==3)then
+		ScrollDirection()
+	end
 	
 	if(ct.scrollable)then
 		SetScroll()
@@ -390,7 +395,7 @@ CombatText:SetScript("OnUpdate",nil)
 -- steal external messages sent by other addons using CombatText_AddMessage
 Blizzard_CombatText_AddMessage=CombatText_AddMessage
 function CombatText_AddMessage(message,scrollFunction,r,g,b,displayType,isStaggered)
-xCT3:AddMessage(message,r,g,b)
+	xCT3:AddMessage(message,r,g,b)
 end
 
 -- hide some blizz options
@@ -398,7 +403,9 @@ InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
 COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
 
 -- hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
-hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
+if(release==3)then
+	hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
+end
 
 -- modify blizz ct options title lol
 InterfaceOptionsCombatTextPanelTitle:SetText(COMBAT_TEXT_LABEL.." (powered by |cffFF0000x|rCT)")
