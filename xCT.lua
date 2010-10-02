@@ -660,7 +660,7 @@ if(ct.damage)then
 	end
 
 local dmg=function(self,event,...) 
-	local msg
+	local msg,icon
 	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
 	if (sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet")then
 		if(eventType=="SWING_DAMAGE")then
@@ -671,7 +671,6 @@ local dmg=function(self,event,...)
 					msg=ct.critprefix..msg..ct.critpostfix
 				end
 				if(ct.icons)then
-					local icon
 					if(sourceGUID==UnitGUID"pet")then
 						icon=ct.blank
 					else
@@ -699,7 +698,6 @@ local dmg=function(self,event,...)
 
 		elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE")then
 			local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
-			local icon
 			local color={}
 			if(amount>=ct.treshold)then
 				if (critical) then
@@ -737,16 +735,16 @@ local dmg=function(self,event,...)
 			xCT4:AddMessage(missType)
 
 		elseif(eventType=="SPELL_MISSED")or(eventType=="RANGE_MISSED")then
-			local _,_,_,missType,_ = select(9,...)
+			local spellId,_,_,missType,_ = select(9,...)
 			if(ct.icons)then
-					missType=missType.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				_,_,icon=GetSpellInfo(spellId)
+					msg=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 			end 
-			xCT4:AddMessage(missType)
+			xCT4:AddMessage(msg)
 
 		elseif(eventType=='SPELL_HEAL' or eventType=='SPELL_PERIODIC_HEAL')then
 			if(ct.healing)then
 				local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(9,...) 
-				local icon 
 				local color={}
 				if(ct.stopvespam and ct.shadowform and spellId==15290)then
 					return
