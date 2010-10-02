@@ -671,7 +671,12 @@ local dmg=function(self,event,...)
 					msg=ct.critprefix..msg..ct.critpostfix
 				end
 				if(ct.icons)then
-				local icon=GetSpellTexture(1, BOOKTYPE_SPELL)
+					local icon
+					if(sourceGUID==UnitGUID"pet")then
+						icon=ct.blank
+					else
+						icon=GetSpellTexture(1, BOOKTYPE_SPELL)
+					end
 					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end
 
