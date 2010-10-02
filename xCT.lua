@@ -671,7 +671,8 @@ local dmg=function(self,event,...)
 					msg=ct.critprefix..msg..ct.critpostfix
 				end
 				if(ct.icons)then
-					msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				local icon=GetSpellTexture(1, BOOKTYPE_SPELL)
+					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end
 
 				xCT4:AddMessage(msg)
@@ -684,7 +685,8 @@ local dmg=function(self,event,...)
 					msg=ct.critprefix..msg..ct.critpostfix
 				end
 				if(ct.icons)then
-					msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+					local _,_,icon=GetSpellInfo(spellId)
+					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end
 
 				xCT4:AddMessage(msg)
