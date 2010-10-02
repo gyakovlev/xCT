@@ -729,7 +729,12 @@ local dmg=function(self,event,...)
 		elseif(eventType=="SWING_MISSED")then
 			local missType,_=select(9,...)
 			if(ct.icons)then
-					missType=missType.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				if(sourceGUID==UnitGUID"pet")then
+					icon=ct.blank
+				else
+					icon=GetSpellTexture(1, BOOKTYPE_SPELL)
+				end
+				missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 			end
 
 			xCT4:AddMessage(missType)
