@@ -672,7 +672,7 @@ local dmg=function(self,event,...)
 				end
 				if(ct.icons)then
 					if(sourceGUID==UnitGUID"pet")then
-						icon=ct.blank
+						icon=PET_ATTACK_TEXTURE
 					else
 						icon=GetSpellTexture(1, BOOKTYPE_SPELL)
 					end
@@ -730,7 +730,7 @@ local dmg=function(self,event,...)
 			local missType,_=select(9,...)
 			if(ct.icons)then
 				if(sourceGUID==UnitGUID"pet")then
-					icon=ct.blank
+					icon=PET_ATTACK_TEXTURE
 				else
 					icon=GetSpellTexture(1, BOOKTYPE_SPELL)
 				end
