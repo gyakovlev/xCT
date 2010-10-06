@@ -5,4 +5,5 @@
 ## Version: 1.4b
 ## RequiredDeps: Blizzard_CombatText
 
+config.lua
 xCT.lua
