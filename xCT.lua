@@ -708,8 +708,8 @@ local dmg=function(self,event,...)
 
 		elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE")then
 			local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
-			local color={}
 			if(amount>=ct.treshold)then
+				local color={}
 				if (critical) then
 					msg=ct.critprefix..amount..ct.critpostfix
 				else
@@ -763,8 +763,8 @@ local dmg=function(self,event,...)
 				if(ct.healfilter[spellId]) then
 						return
 				end
-				local color={}
 				if(amount>=ct.healtreshold)then
+					local color={}
 					if(ct.stopvespam and ct.shadowform and spellId==15290)then
 						return
 					end
