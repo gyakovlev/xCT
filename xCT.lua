@@ -759,13 +759,13 @@ local dmg=function(self,event,...)
 
 		elseif(eventType=='SPELL_HEAL' or eventType=='SPELL_PERIODIC_HEAL')then
 			if(ct.healing)then
-				local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(9,...) 
+				local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(9,...)
+				if(ct.healfilter[spellId]) then
+						return
+				end
 				local color={}
 				if(amount>=ct.healtreshold)then
 					if(ct.stopvespam and ct.shadowform and spellId==15290)then
-						return
-					end
-					if(ct.healfilter[spellId]) then
 						return
 					end
 					if (critical) then 
