@@ -670,6 +670,7 @@ if(ct.damage)then
 	end
 
 local dmg=function(self,event,...) 
+	local unpack,select=unpack,select
 	local msg,icon
 	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
 	if (sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet")then
