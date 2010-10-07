@@ -516,8 +516,8 @@ end
 
 local function StartTestMode()
 --init really random number generator.
-	local math.random=math.random
-	math.random(time()); math.random(); math.random(time())
+	local random=math.random
+	random(time());random(); random(time())
 	
 	local TimeSinceLastUpdate=0
 	local UpdateInterval
@@ -535,34 +535,34 @@ local function StartTestMode()
 	
 	for i=1,#ct.frames do
 	ct.frames[i]:SetScript("OnUpdate",function(self,elapsed)
-		UpdateInterval=math.random(65,1000)/250
+		UpdateInterval=random(65,1000)/250
 		TimeSinceLastUpdate=TimeSinceLastUpdate+elapsed
 		if(TimeSinceLastUpdate>UpdateInterval)then
 			if(i==1)then
-			ct.frames[i]:AddMessage("-"..math.random(100000),1,math.random(255)/255,math.random(255)/255)
+			ct.frames[i]:AddMessage("-"..random(100000),1,random(255)/255,random(255)/255)
 			elseif(i==2)then
-			ct.frames[i]:AddMessage("+"..math.random(50000),.1,math.random(128,255)/255,.1)
+			ct.frames[i]:AddMessage("+"..random(50000),.1,random(128,255)/255,.1)
 			elseif(i==3)then
-			ct.frames[i]:AddMessage(COMBAT_TEXT_LABEL,math.random(255)/255,math.random(255)/255,math.random(255)/255)
+			ct.frames[i]:AddMessage(COMBAT_TEXT_LABEL,random(255)/255,random(255)/255,random(255)/255)
 			elseif(i==4)then
 				local msg
 				local icon
 				local color={}
-				msg=math.random(40000)
+				msg=random(40000)
 				if(ct.icons)then
 					_,_,icon=GetSpellInfo(msg)
 				end
 				if(icon)then
 					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					if(ct.damagecolor)then
-						color=ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]
+						color=ct.dmgcolor[ct.dmindex[random(#ct.dmindex)]]
 					else
 						color={1,1,0}
 					end
 				elseif(ct.damagecolor) and not(ct.icons)then
-					color=ct.dmgcolor[ct.dmindex[math.random(#ct.dmindex)]]
+					color=ct.dmgcolor[ct.dmindex[random(#ct.dmindex)]]
 				elseif not(ct.damagecolor)then
-					color={1,1,math.random(0,1)}
+					color={1,1,random(0,1)}
 				end
 				ct.frames[i]:AddMessage(msg,unpack(color))
 				
