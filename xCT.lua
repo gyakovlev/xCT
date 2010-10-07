@@ -9,13 +9,14 @@ local myname, _ = UnitName("player")
 local version, build, date = GetBuildInfo()
 local release = tonumber(string.sub(version,0,1))
 
-local ct={
+ct={
 
 	["myclass"] = select(2,UnitClass("player")),
 	["myname"] = myname,
 ---------------------------------------------------------------------------------
 -- config
 -- options
+	["blizzheadnumbers"] = false,	-- use blizzard damage/healing output (above mob/player head)
 	["damage"] = true,		-- show outgoing damage in it's own frame
 	["healing"] = true,		-- show outgoing healing in it's own frame
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
@@ -39,13 +40,17 @@ local ct={
 -- class modules and goodies
 	["stopvespam"] = false,		-- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
 	["dkrunes"] = true,		-- show deatchknight rune recharge
-	["stopfaspam"] = false,		-- do not show Fel Armor healing ticks, useful for warlocks.
 }
-
+---------------------------------------------------------------------------------
+-- outgoing healing filter, hide this spammy shit, plx
+ct.healfilter={}
+ct.healfilter[47893]=true -- Fel Armor
+ct.healfilter[63108]=true -- Siphon Life
+ct.healfilter[54181]=true -- Fel Synergy
 ---------------------------------------------------------------------------------
 -- class config, overrides general
-if ct.myclass == "WARLOCK" then
-	ct["stopfaspam"] = true
+if ct.myclass == "WARRIOR" then
+	-- do something
 end
 ---------------------------------------------------------------------------------
 -- character config, overrides general and class
@@ -398,6 +403,19 @@ end
 InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
 COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
 
+-- force hide blizz damage/healing, if desired
+if not(ct.blizzheadnumbers==true)then
+	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
+	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
+	InterfaceOptionsCombatTextPanelPetDamage:Hide()
+	InterfaceOptionsCombatTextPanelHealing:Hide()
+	SetCVar("CombatLogPeriodicSpells",0)
+	SetCVar("PetMeleeDamage",0)
+	SetCVar("CombatDamage",0)
+	SetCVar("CombatHealing",0)
+end
+
+
 -- hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
 if(release==3)then
 	hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
@@ -498,6 +516,7 @@ end
 
 local function StartTestMode()
 --init really random number generator.
+	local math.random=math.random
 	math.random(time()); math.random(); math.random(time())
 	
 	local TimeSinceLastUpdate=0
@@ -617,10 +636,14 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 	local sp=CreateFrame("Frame")
 	sp:SetScript("OnEvent",function(...)
 		if(GetShapeshiftForm()==1)then
-			SetCVar('CombatHealing',0)
+			if(ct.blizzheadnumbers)then
+				SetCVar('CombatHealing',0)
+			end
 			ct.shadowform=true
 		else
-			SetCVar('CombatHealing',1)
+			if(ct.blizzheadnumbers)then
+				SetCVar('CombatHealing',1)
+			end
 			ct.shadowform=false
 		end
 	end)
@@ -631,15 +654,6 @@ end
 
 -- damage
 if(ct.damage)then
---	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
---	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
---	InterfaceOptionsCombatTextPanelPetDamage:Hide()
---	SetCVar("CombatLogPeriodicSpells",0)
---	SetCVar("PetMeleeDamage",0)
---	SetCVar("CombatDamage",0)
-
-	
-
 	if(ct.damagecolor)then
 		ct.dmgcolor={}
 		ct.dmgcolor[1]={1,1,0} -- physical
@@ -747,13 +761,13 @@ local dmg=function(self,event,...)
 			if(ct.healing)then
 				local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(9,...) 
 				local color={}
-				if(ct.stopvespam and ct.shadowform and spellId==15290)then
-					return
-				end
-				if(ct.stopfaspam and spellId==47893)then
-					return
-				end
 				if(amount>=ct.healtreshold)then
+					if(ct.stopvespam and ct.shadowform and spellId==15290)then
+						return
+					end
+					if(ct.healfilter[spellId]) then
+						return
+					end
 					if (critical) then 
 						msg=ct.critprefix..amount..ct.critpostfix
 						color={.1,1,.1}
