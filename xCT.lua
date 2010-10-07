@@ -45,7 +45,7 @@ ct={
 -- outgoing healing filter, hide this spammy shit, plx
 ct.healfilter={}
 ct.healfilter[47893]=true -- Fel Armor
-ct.healfilter[63108]=true -- Siphon Life
+ct.healfilter[63106]=true -- Siphon Life
 ct.healfilter[54181]=true -- Fel Synergy
 ---------------------------------------------------------------------------------
 -- class config, overrides general
