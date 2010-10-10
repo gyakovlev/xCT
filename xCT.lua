@@ -27,7 +27,7 @@ ct={
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 	["treshold"] = 1,		-- minimum damage to show in damage frame
 	["healtreshold"] = 1,		-- minimum healing to show in incoming/outgoing healing messages.
-	["scrollable"] = false,		-- allows you to scroll frame lines with mousewheel.
+	["scrollable"] = true,		-- allows you to scroll frame lines with mousewheel.
 	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
 
 -- appearence
@@ -794,3 +794,53 @@ end
 xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 xCT4:SetScript("OnEvent",dmg)
 end
+
+--experimental, 
+local tslu=0
+local count=1
+ShakeCrit=function(self,elapsed)
+tslu = tslu + elapsed
+
+if tslu > .2 then
+	tslu=0
+	XFS={xCT4:GetRegions()}
+	for k,v in ipairs(XFS)do
+	local text
+--	local count
+--	local point={}
+		if v:IsObjectType("FontString")then
+			text=v:GetText()
+	--		point={v:GetPoint()}
+	--		print(text)
+				if text:find(ct.critprefix)then
+				--	if not (v.moving) then
+				--	v:SetFont(ct.font,ct.fontsize+4,ct.fontstyle)
+		--			point={v:GetPoint()}
+					local tPoint, tRTo, tRP, tX, tY = v:GetPoint()
+					if count ==1 then
+						v.moving=true
+						v:SetPoint(tPoint, tRTo, tRP, tX+2, tY)
+						count=2
+					elseif count ==2 then
+						v:SetPoint(tPoint, tRTo, tRP, tX-2, tY)
+						count=3
+					elseif count == 3 then
+						v:SetPoint(tPoint, tRTo, tRP, tX, tY+2)
+						count=4
+					elseif count == 4 then
+						v:SetPoint(tPoint, tRTo, tRP, tX, tY-2)
+						count=1
+						v.moving=false
+				--	end
+				end
+				--	v:SetPoint(unpack(point))
+				--	print(v:GetPoint())
+			--	else
+				--	v:SetPoint(unpack(point))
+				end
+		end
+	end
+end
+end
+
+--xCT4:HookScript("OnUpdate",ShakeCrit)
