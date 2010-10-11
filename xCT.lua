@@ -795,9 +795,11 @@ xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 xCT4:SetScript("OnEvent",dmg)
 end
 
---experimental, might kill your FPS.
+--[[experimental, might kill your FPS.
 local tslu=0
 local count=1
+local numfonts = 0
+local fonts ={}
 local animate=function(self)
 	local	anim=self:CreateAnimationGroup("$parentCritShake")
 	local shakeleft = anim:CreateAnimation("Translation");
@@ -826,17 +828,16 @@ if tslu > .2 then
 	for k,v in ipairs(XFS)do
 	local text
 		if v:IsObjectType("FontString")then
-			text=v:GetText()
-				if text:find(ct.critprefix)then
-					local CritShake=v:GetAnimationGroups() or animate(v)
-					if not v:GetAnimationGroups():IsPlaying() then
-						v:GetAnimationGroups():Play()
-					end
+			if v:GetText():find(ct.critprefix)then
+				if not v:GetAnimationGroups() then animate(v) end
+				if not v:GetAnimationGroups():IsPlaying() then
+					v:GetAnimationGroups():Play()
 				end
+			end
 		end
 	end
 end
 end
 
-xCT4:HookScript("OnUpdate",ShakeCrit)
-
+--xCT4:HookScript("OnUpdate",ShakeCrit)
+]]
