@@ -795,9 +795,28 @@ xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 xCT4:SetScript("OnEvent",dmg)
 end
 
---[[experimental, 
+--experimental, 
 local tslu=0
 local count=1
+local animate=function(self)
+	local	anim=self:CreateAnimationGroup("$parentCritShake")
+	local shakeleft = anim:CreateAnimation("Translation");
+	shakeleft:SetDuration(.1);
+	shakeleft:SetOffset(-4, 0);
+	shakeleft:SetOrder(1);
+	local shakeright = anim:CreateAnimation("Translation");
+	shakeright:SetDuration(.1);
+	shakeright:SetOffset(4, 0);
+	shakeright:SetOrder(2);
+	local shakup = anim:CreateAnimation("Translation");
+	shakup:SetDuration(.1);
+	shakup:SetOffset(0, 4);
+	shakup:SetOrder(3);
+	local shakedown = anim:CreateAnimation("Translation");
+	shakedown:SetDuration(.1);
+	shakedown:SetOffset(0, -4);
+	shakedown:SetOrder(4);
+end
 ShakeCrit=function(self,elapsed)
 tslu = tslu + elapsed
 
@@ -806,66 +825,42 @@ if tslu > .2 then
 	XFS={xCT4:GetRegions()}
 	for k,v in ipairs(XFS)do
 	local text
---	local count
---	local point={}
 		if v:IsObjectType("FontString")then
 			text=v:GetText()
-	--		point={v:GetPoint()}
-	--		print(text)
 				if text:find(ct.critprefix)then
-				--	if not (v.moving) then
-				--	v:SetFont(ct.font,ct.fontsize+4,ct.fontstyle)
-		--			point={v:GetPoint()}
-					local tPoint, tRTo, tRP, tX, tY = v:GetPoint()
-					if count ==1 then
-						v.moving=true
-						v:SetPoint(tPoint, tRTo, tRP, tX+2, tY)
-						count=2
-					elseif count ==2 then
-						v:SetPoint(tPoint, tRTo, tRP, tX-2, tY)
-						count=3
-					elseif count == 3 then
-						v:SetPoint(tPoint, tRTo, tRP, tX, tY+2)
-						count=4
-					elseif count == 4 then
-						v:SetPoint(tPoint, tRTo, tRP, tX, tY-2)
-						count=1
-						v.moving=false
-				--	end
-				end
-				--	v:SetPoint(unpack(point))
-				--	print(v:GetPoint())
-			--	else
-				--	v:SetPoint(unpack(point))
+					local CritShake=v:GetAnimationGroups() or animate(v)
+				--	CritShake:SetLooping("BOUNCE")
+
+					v:GetAnimationGroups():Play()
 				end
 		end
 	end
 end
 end
 
---xCT4:HookScript("OnUpdate",ShakeCrit)
-]]
+xCT4:HookScript("OnUpdate",ShakeCrit)
+--[[
 local CritShake=xCT4:CreateAnimationGroup("CritShake")
 CritShake:SetLooping("BOUNCE")
 
 local shakeleft = CritShake:CreateAnimation("Translation");
-shakeleft:SetDuration(.05);
+shakeleft:SetDuration(.1);
 shakeleft:SetOffset(-4, 0);
 shakeleft:SetOrder(1);
 
 local shakeright = CritShake:CreateAnimation("Translation");
-shakeright:SetDuration(.05);
+shakeright:SetDuration(.1);
 shakeright:SetOffset(4, 0);
 shakeright:SetOrder(2);
 
 local shakup = CritShake:CreateAnimation("Translation");
-shakup:SetDuration(.05);
+shakup:SetDuration(.1);
 shakup:SetOffset(0, 4);
 shakup:SetOrder(3);
 
 local shakedown = CritShake:CreateAnimation("Translation");
-shakedown:SetDuration(.05);
+shakedown:SetDuration(.1);
 shakedown:SetOffset(0, -4);
 shakedown:SetOrder(4);
 
-
+]]
