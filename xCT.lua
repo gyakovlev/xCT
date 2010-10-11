@@ -27,7 +27,7 @@ ct={
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
 	["treshold"] = 1,		-- minimum damage to show in damage frame
 	["healtreshold"] = 1,		-- minimum healing to show in incoming/outgoing healing messages.
-	["scrollable"] = true,		-- allows you to scroll frame lines with mousewheel.
+	["scrollable"] = false,		-- allows you to scroll frame lines with mousewheel.
 	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
 
 -- appearence
@@ -754,9 +754,9 @@ local dmg=function(self,event,...)
 			local spellId,_,_,missType,_ = select(9,...)
 			if(ct.icons)then
 				_,_,icon=GetSpellInfo(spellId)
-					msg=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 			end 
-			xCT4:AddMessage(msg)
+			xCT4:AddMessage(missType)
 
 		elseif(eventType=='SPELL_HEAL' or eventType=='SPELL_PERIODIC_HEAL')then
 			if(ct.healing)then
@@ -795,7 +795,7 @@ xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 xCT4:SetScript("OnEvent",dmg)
 end
 
---[[experimental, might kill your FPS.
+--[[experimental horror, might kill your FPS.
 local tslu=0
 local count=1
 local numfonts = 0
