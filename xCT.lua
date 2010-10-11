@@ -795,7 +795,7 @@ xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 xCT4:SetScript("OnEvent",dmg)
 end
 
---experimental, 
+--[[experimental, 
 local tslu=0
 local count=1
 ShakeCrit=function(self,elapsed)
@@ -844,3 +844,28 @@ end
 end
 
 --xCT4:HookScript("OnUpdate",ShakeCrit)
+]]
+local CritShake=xCT4:CreateAnimationGroup("CritShake")
+CritShake:SetLooping("BOUNCE")
+
+local shakeleft = CritShake:CreateAnimation("Translation");
+shakeleft:SetDuration(.05);
+shakeleft:SetOffset(-4, 0);
+shakeleft:SetOrder(1);
+
+local shakeright = CritShake:CreateAnimation("Translation");
+shakeright:SetDuration(.05);
+shakeright:SetOffset(4, 0);
+shakeright:SetOrder(2);
+
+local shakup = CritShake:CreateAnimation("Translation");
+shakup:SetDuration(.05);
+shakup:SetOffset(0, 4);
+shakup:SetOrder(3);
+
+local shakedown = CritShake:CreateAnimation("Translation");
+shakedown:SetDuration(.05);
+shakedown:SetOffset(0, -4);
+shakedown:SetOrder(4);
+
+
