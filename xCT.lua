@@ -795,11 +795,8 @@ xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 xCT4:SetScript("OnEvent",dmg)
 end
 
---[[experimental horror, might kill your FPS.
-local tslu=0
-local count=1
-local numfonts = 0
-local fonts ={}
+--experimental horror, might kill your FPS.
+
 local animate=function(self)
 	local	anim=self:CreateAnimationGroup("$parentCritShake")
 	local shakeleft = anim:CreateAnimation("Translation");
@@ -819,11 +816,7 @@ local animate=function(self)
 	shakedown:SetOffset(0, -4);
 	shakedown:SetOrder(4);
 end
-ShakeCrit=function(self,elapsed)
-tslu = tslu + elapsed
-
-if tslu > .2 then
-	tslu=0
+ShakeCrit=function(self)
 	XFS={xCT4:GetRegions()}
 	for k,v in ipairs(XFS)do
 	local text
@@ -837,7 +830,6 @@ if tslu > .2 then
 		end
 	end
 end
-end
 
---xCT4:HookScript("OnUpdate",ShakeCrit)
-]]
+xCT4:HookScript("OnMessageScrollChanged",ShakeCrit)
+
