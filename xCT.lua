@@ -795,25 +795,25 @@ xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 xCT4:SetScript("OnEvent",dmg)
 end
 
---experimental, 
+--experimental, might kill your FPS.
 local tslu=0
 local count=1
 local animate=function(self)
 	local	anim=self:CreateAnimationGroup("$parentCritShake")
 	local shakeleft = anim:CreateAnimation("Translation");
-	shakeleft:SetDuration(.1);
+	shakeleft:SetDuration(.05);
 	shakeleft:SetOffset(-4, 0);
 	shakeleft:SetOrder(1);
 	local shakeright = anim:CreateAnimation("Translation");
-	shakeright:SetDuration(.1);
+	shakeright:SetDuration(.05);
 	shakeright:SetOffset(4, 0);
 	shakeright:SetOrder(2);
 	local shakup = anim:CreateAnimation("Translation");
-	shakup:SetDuration(.1);
+	shakup:SetDuration(.05);
 	shakup:SetOffset(0, 4);
 	shakup:SetOrder(3);
 	local shakedown = anim:CreateAnimation("Translation");
-	shakedown:SetDuration(.1);
+	shakedown:SetDuration(.05);
 	shakedown:SetOffset(0, -4);
 	shakedown:SetOrder(4);
 end
@@ -829,9 +829,9 @@ if tslu > .2 then
 			text=v:GetText()
 				if text:find(ct.critprefix)then
 					local CritShake=v:GetAnimationGroups() or animate(v)
-				--	CritShake:SetLooping("BOUNCE")
-
-					v:GetAnimationGroups():Play()
+					if not v:GetAnimationGroups():IsPlaying() then
+						v:GetAnimationGroups():Play()
+					end
 				end
 		end
 	end
@@ -839,28 +839,4 @@ end
 end
 
 xCT4:HookScript("OnUpdate",ShakeCrit)
---[[
-local CritShake=xCT4:CreateAnimationGroup("CritShake")
-CritShake:SetLooping("BOUNCE")
 
-local shakeleft = CritShake:CreateAnimation("Translation");
-shakeleft:SetDuration(.1);
-shakeleft:SetOffset(-4, 0);
-shakeleft:SetOrder(1);
-
-local shakeright = CritShake:CreateAnimation("Translation");
-shakeright:SetDuration(.1);
-shakeright:SetOffset(4, 0);
-shakeright:SetOrder(2);
-
-local shakup = CritShake:CreateAnimation("Translation");
-shakup:SetDuration(.1);
-shakup:SetOffset(0, 4);
-shakup:SetOrder(3);
-
-local shakedown = CritShake:CreateAnimation("Translation");
-shakedown:SetDuration(.1);
-shakedown:SetOffset(0, -4);
-shakedown:SetOrder(4);
-
-]]
