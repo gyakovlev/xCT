@@ -736,6 +736,11 @@ local dmg=function(self,event,...)
 				end
 				
 				xCT4:AddMessage(msg,unpack(color))
+			--	if (critical)then
+			--		toCrit=xCT4:GetCurrentLine()
+			--	else
+			--		toCrit=nil
+			--	end
 			end
 		elseif(eventType=="SWING_MISSED")then
 			local missType,_=select(9,...)
@@ -798,7 +803,8 @@ end
 --experimental horror, might kill your FPS.
 
 local animate=function(self)
-	local	anim=self:CreateAnimationGroup("$parentCritShake")
+	local anim=self:CreateAnimationGroup("$parentCritShake")
+--	anim:SetLooping("BOUNCE")
 	local shakeleft = anim:CreateAnimation("Translation");
 	shakeleft:SetDuration(.05);
 	shakeleft:SetOffset(-4, 0);
@@ -830,6 +836,18 @@ ShakeCrit=function(self)
 		end
 	end
 end
-
+--[[
+ShakeCrit=function(self)
+	XFS={xCT4:GetRegions()}
+	if toCrit then
+	line=XFS[toCrit]
+			--	if not line:GetAnimationGroups() then animate(line) end
+			--	if not line:GetAnimationGroups():IsPlaying() then
+					animate(line)
+					line:GetAnimationGroups():Play()
+			--	end
+	end
+end
+]]
 xCT4:HookScript("OnMessageScrollChanged",ShakeCrit)
 
