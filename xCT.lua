@@ -44,7 +44,7 @@ ct={
 ---------------------------------------------------------------------------------
 -- outgoing healing filter, hide this spammy shit, plx
 ct.healfilter={}
-ct.healfilter[47893]=true -- Fel Armor
+ct.healfilter[28176]=true -- Fel Armor
 ct.healfilter[63106]=true -- Siphon Life
 ct.healfilter[54181]=true -- Fel Synergy
 ---------------------------------------------------------------------------------
@@ -401,7 +401,6 @@ end
 
 -- hide some blizz options
 InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
-COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
 
 -- force hide blizz damage/healing, if desired
 if not(ct.blizzheadnumbers==true)then
@@ -419,6 +418,7 @@ end
 -- hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
 if(release==3)then
 	hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
+	--COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
 else
 	InterfaceOptionsCombatTextPanelFCTDropDown:Hide()
 end
@@ -849,5 +849,5 @@ ShakeCrit=function(self)
 	end
 end
 ]]
-xCT4:HookScript("OnMessageScrollChanged",ShakeCrit)
+--xCT4:HookScript("OnMessageScrollChanged",ShakeCrit)
 
