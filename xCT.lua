@@ -6,8 +6,6 @@ Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonder
 
 ]]--
 local myname, _ = UnitName("player")
-local version, build, date = GetBuildInfo()
-local release = tonumber(string.sub(version,0,1))
 
 ct={
 
@@ -312,9 +310,9 @@ elseif event=="UNIT_ENTERED_VEHICLE"or event=="UNIT_EXITING_VEHICLE"then
 
 elseif event=="PLAYER_ENTERING_WORLD"then
 	SetUnit()
-	if(release==3)then
-		ScrollDirection()
-	end
+	
+--		ScrollDirection()
+
 	
 	if(ct.scrollable)then
 		SetScroll()
@@ -416,12 +414,10 @@ end
 
 
 -- hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
-if(release==3)then
-	hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
-	--COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
-else
+--	hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
+--	--COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
+
 	InterfaceOptionsCombatTextPanelFCTDropDown:Hide()
-end
 
 -- modify blizz ct options title lol
 InterfaceOptionsCombatTextPanelTitle:SetText(COMBAT_TEXT_LABEL.." (powered by |cffFF0000x|rCT)")
