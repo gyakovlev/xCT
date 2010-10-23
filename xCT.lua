@@ -18,8 +18,8 @@ ct={
 	["damage"] = true,		-- show outgoing damage in it's own frame
 	["healing"] = true,		-- show outgoing healing in it's own frame
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
-	["critprefix"] = "*",		-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty.
-	["critpostfix"] = "*",		-- postfix symbol, "" for empty.
+	["critprefix"] = "|cffFF0000*|r",		-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty.
+	["critpostfix"] = "|cffFF0000*|r",		-- postfix symbol, "" for empty.
 	["icons"] = true,		-- show outgoing damage icons
 	["iconsize"] = 27,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size.
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
@@ -27,6 +27,8 @@ ct={
 	["healtreshold"] = 1,		-- minimum healing to show in incoming/outgoing healing messages.
 	["scrollable"] = false,		-- allows you to scroll frame lines with mousewheel.
 	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
+	["delocalize"] = true,		-- use english then block parry miss etc.
+	
 
 -- appearence
 	["font"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	-- "Fonts\\ARIALN.ttf" is default WoW font.
@@ -111,7 +113,42 @@ local function ScrollDirection()
 end
 -- partial resists styler
 local part="-%s (%s %s)"
+--local ABSORB
+-- delocalize
+--[[
+if(ct.delocalize)then
+ct.locale={
+	local COMBAT_TEXT_DEFLECT = "Deflect"
+	local COMBAT_TEXT_REFLECT = "Reflect"
+	local COMBAT_TEXT_IMMUNE = "Immune"
+	local COMBAT_TEXT_RESIST = "Resist"
+	local COMBAT_TEXT_ABSORB = "Absorb"
+	local COMBAT_TEXT_BLOCK = "Block"
+	local COMBAT_TEXT_DODGE = "Dodge"
+	local COMBAT_TEXT_PARRY = "Parry"
+	local COMBAT_TEXT_EVADE = "Evade"
+	local COMBAT_TEXT_MISS = "Miss"
 
+	DEFLECT = "Deflect",
+	REFLECT = "Reflect",
+	IMMUNE = "Immune",
+	RESIST = "Resist",
+	ABSORB = "Absorb",
+	BLOCK = "Block",
+	DODGE = "Dodge",
+	PARRY = "Parry",
+	EVADE = "Evade",
+	MISS = "Miss",
+	HONOR = "Honor",
+	LEAVING_COMBAT = "Leaving combat",
+	ENTERING_COMBAT = "Entering combat",
+	HEALTH_LOW = "Health low",
+	MANA_LOW = "Mana low",
+	COMBAT_TEXT_COMBO_POINTS = "<%d|combo points>",
+	COMBAT_TEXT_RUNE={"Blood rune","Unholy rune","Ice rune"},
+	}
+end
+]]
 -- the function, handles everything
 local function OnEvent(self,event,subevent,...)
 if(event=="COMBAT_TEXT_UPDATE")then
@@ -212,10 +249,18 @@ if(event=="COMBAT_TEXT_UPDATE")then
 		end
 
 	elseif subevent=="ENERGIZE"and(COMBAT_TEXT_SHOW_ENERGIZE=="1")then
-		xCT3:AddMessage("+"..arg2,.1,.1,1)
+	--	if(arg3)then
+	--		xCT3:AddMessage("+"..arg2.." "..format(_G[arg3]),.1,.1,1)
+	--	else
+			xCT3:AddMessage("+"..arg2,.1,.1,1)
+	--	end
 
 	elseif subevent=="PERIODIC_ENERGIZE"and(COMBAT_TEXT_SHOW_PERIODIC_ENERGIZE=="1")then
+	--	if(arg3)then
+	--		xCT3:AddMessage("+"..arg2.." "..format(_G[arg3],),.1,.1,1)
+	--	else
 		xCT3:AddMessage("+"..arg2,.1,.1,.75)
+	--	end
 
 	elseif subevent=="SPELL_AURA_START"and(COMBAT_TEXT_SHOW_AURAS=="1")then
 		xCT3:AddMessage("+"..arg2,1,.5,.5)
@@ -452,7 +497,7 @@ local StartConfigmode=function()
 			f.fs:SetText(COMBAT_TEXT_LABEL.."(drag me)")
 			f.fs:SetTextColor(.1,.1,1,.9)
 		else
-			f.fs:SetText(DAMAGE)
+			f.fs:SetText(SCORE_DAMAGE_DONE.." / "..SCORE_HEALING_DONE)
 			f.fs:SetTextColor(1,1,0,.9)
 		end
 
@@ -705,9 +750,11 @@ local dmg=function(self,event,...)
 
 		elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE")then
 			local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
+			local id
 			if(amount>=ct.treshold)then
 				local color={}
 				if (critical) then
+					id=5
 					msg=ct.critprefix..amount..ct.critpostfix
 				else
 					msg=amount
@@ -732,12 +779,12 @@ local dmg=function(self,event,...)
 				end
 				
 				xCT4:AddMessage(msg,unpack(color))
-			--	if (critical)then
-			--		toCrit=xCT4:GetCurrentLine()
-			--	else
-			--		toCrit=nil
-			--	end
+			--/run print(xCT4:GetMessageInfo(xCT4:GetCurrentLine()+1))
+	--		"xCT4:AddMessage()"]:1: Usage: xCT4:AddMessage("text", [r, g, b,] typeID, backFill, accessID, extraData)
+		--	/run print(xCT4:GetMessageInfo(xCT4:GetCurrentLine()+1))
+			--	xCT4:AddMessage(msg,1,0,0,1,false,1,"crit")
 			end
+
 		elseif(eventType=="SWING_MISSED")then
 			local missType,_=select(9,...)
 			if(ct.icons)then
@@ -818,6 +865,7 @@ local animate=function(self)
 	shakedown:SetOffset(0, -4);
 	shakedown:SetOrder(4);
 end
+--[[
 ShakeCrit=function(self)
 	XFS={xCT4:GetRegions()}
 	for k,v in ipairs(XFS)do
@@ -832,18 +880,48 @@ ShakeCrit=function(self)
 		end
 	end
 end
---[[
+]]
 ShakeCrit=function(self)
 	XFS={xCT4:GetRegions()}
 	if toCrit then
 	line=XFS[toCrit]
-			--	if not line:GetAnimationGroups() then animate(line) end
-			--	if not line:GetAnimationGroups():IsPlaying() then
-					animate(line)
+				if not line:GetAnimationGroups() then animate(line) end
+				if not line:GetAnimationGroups():IsPlaying() then
+			--		animate(line)
 					line:GetAnimationGroups():Play()
-			--	end
+				end
 	end
 end
-]]
---xCT4:HookScript("OnMessageScrollChanged",ShakeCrit)
 
+--xCT4:HookScript("OnMessageScrollChanged",ShakeCrit)
+local fstrings=0
+populate=function()
+XFS={xCT4:GetRegions()}
+
+for i,v in ipairs(XFS) do
+	if v:IsObjectType("FontString")then
+		if not v:GetAnimationGroups() then animate(v) end
+	end
+end
+end
+local simp=function()
+	local cmax=xCT4:GetMaxLines()
+	local cl=xCT4:GetCurrentLine()
+
+	local idx=function(curl)
+	local fs
+			if cl==cmax then
+				fs=XFS[#XFS]
+			elseif cl==-1 then return
+			else
+				fs=XFS[cl+1]
+			end
+		return fs
+	end
+	if cl and idx(cl):GetText():find(ct.critprefix) then
+		idx(cl):GetAnimationGroups():Play()
+	end
+end
+xCT4:SetScript("OnMessageScrollChanged",populate)	
+xCT4:HookScript("OnMessageScrollChanged",simp)
+--"xCT4:AddMessage()"]:1: Usage: xCT4:AddMessage("text", [r, g, b,] typeID, backFill, accessID, extraData)
