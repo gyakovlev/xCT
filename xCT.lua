@@ -236,7 +236,13 @@ if(event=="COMBAT_TEXT_UPDATE")then
 		xCT3:AddMessage("-"..arg2,.1,1,.1)
 
 	elseif subevent=="HONOR_GAINED"and(COMBAT_TEXT_SHOW_HONOR_GAINED=="1")then
-		xCT3:AddMessage(HONOR.." +"..arg2,.1,.1,1)
+		arg2=tonumber(arg2)
+		if(arg2 and abs(arg2)>1) then
+			arg2=floor(arg2)
+			if (arg2>0)then
+				xCT3:AddMessage(HONOR.." +"..arg2,.1,.1,1)
+			end
+		end
 
 	elseif subevent=="FACTION"and(COMBAT_TEXT_SHOW_REPUTATION=="1")then
 		xCT3:AddMessage(arg2.." +"..arg3,.1,.1,1)
