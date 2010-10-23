@@ -182,7 +182,7 @@ if(event=="COMBAT_TEXT_UPDATE")then
 			else
 				xCT1:AddMessage(arg2,.75,.1,.1)
 			end
-		else
+		elseif(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
 			xCT1:AddMessage(RESIST,.5,.5,.5)
 		end
 	elseif subevent=="BLOCK"then
@@ -192,7 +192,7 @@ if(event=="COMBAT_TEXT_UPDATE")then
 			else
 				xCT1:AddMessage(arg2,.75,.1,.1)
 			end
-		else
+		elseif(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
 			xCT1:AddMessage(BLOCK,.5,.5,.5)
 		end
 	elseif subevent=="ABSORB"then
@@ -202,7 +202,7 @@ if(event=="COMBAT_TEXT_UPDATE")then
 			else
 				xCT1:AddMessage(arg2,.75,.1,.1)
 			end
-		else
+		elseif(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
 			xCT1:AddMessage(ABSORB,.5,.5,.5)
 		end
 	elseif subevent=="SPELL_RESIST"then
@@ -212,7 +212,7 @@ if(event=="COMBAT_TEXT_UPDATE")then
 			else
 				xCT1:AddMessage(arg2,.75,.3,.85)
 			end
-		else
+		elseif(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
 			xCT1:AddMessage(RESIST,.5,.5,.5)
 		end
 	elseif subevent=="SPELL_BLOCK"then
@@ -222,7 +222,7 @@ if(event=="COMBAT_TEXT_UPDATE")then
 			else
 				xCT1:AddMessage("-"..arg2,.75,.3,.85)
 			end
-		else
+		elseif(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
 			xCT1:AddMessage(BLOCK,.5,.5,.5)
 		end
 	elseif subevent=="SPELL_ABSORB"then
@@ -232,7 +232,7 @@ if(event=="COMBAT_TEXT_UPDATE")then
 			else
 				xCT1:AddMessage(arg2,.75,.3,.85)
 			end
-		else
+		elseif(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
 			xCT1:AddMessage(ABSORB,.5,.5,.5)
 		end
 
