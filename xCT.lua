@@ -175,39 +175,63 @@ if(event=="COMBAT_TEXT_UPDATE")then
 	elseif subevent=="SPELL_REFLECT"and(COMBAT_TEXT_SHOW_DODGE_PARRY_MISS=="1")then
 		xCT1:AddMessage(REFLECT,.5,.5,.5)
 
-	elseif subevent=="RESIST"and(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
+	elseif subevent=="RESIST"then
 		if(arg3)then
-			xCT1:AddMessage(part:format(arg2,RESIST,arg3),.75,.5,.5)
+			if(COMBAT_TEXT_SHOW_RESISTANCES=="1") then
+				xCT1:AddMessage(part:format(arg2,RESIST,arg3),.75,.5,.5)
+			else
+				xCT1:AddMessage(arg2,.75,.1,.1)
+			end
 		else
 			xCT1:AddMessage(RESIST,.5,.5,.5)
 		end
-	elseif subevent=="BLOCK"and(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
+	elseif subevent=="BLOCK"then
 		if(arg3)then
-			xCT1:AddMessage(part:format(arg2,BLOCK,arg3),.75,.5,.5)
+			if(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
+				xCT1:AddMessage(part:format(arg2,BLOCK,arg3),.75,.5,.5)
+			else
+				xCT1:AddMessage(arg2,.75,.1,.1)
+			end
 		else
 			xCT1:AddMessage(BLOCK,.5,.5,.5)
 		end
-	elseif subevent=="ABSORB"and(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
+	elseif subevent=="ABSORB"then
 		if(arg3)then
-			xCT1:AddMessage(part:format(arg2,ABSORB,arg3),.75,.5,.5)
+			if(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
+				xCT1:AddMessage(part:format(arg2,ABSORB,arg3),.75,.5,.5)
+			else
+				xCT1:AddMessage(arg2,.75,.1,.1)
+			end
 		else
 			xCT1:AddMessage(ABSORB,.5,.5,.5)
 		end
-	elseif subevent=="SPELL_RESIST"and(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
+	elseif subevent=="SPELL_RESIST"then
 		if(arg3)then
-			xCT1:AddMessage(part:format(arg2,RESIST,arg3),.5,.3,.5)
+			if(COMBAT_TEXT_SHOW_RESISTANCES=="1") then
+				xCT1:AddMessage(part:format(arg2,RESIST,arg3),.5,.3,.5)
+			else
+				xCT1:AddMessage(arg2,.75,.3,.85)
+			end
 		else
 			xCT1:AddMessage(RESIST,.5,.5,.5)
 		end
-	elseif subevent=="SPELL_BLOCK"and(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
+	elseif subevent=="SPELL_BLOCK"then
 		if (arg3)then
-			xCT1:AddMessage(part:format(arg2,BLOCK,arg3),.5,.3,.5)
+			if(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
+				xCT1:AddMessage(part:format(arg2,BLOCK,arg3),.5,.3,.5)
+			else
+				xCT1:AddMessage("-"..arg2,.75,.3,.85)
+			end
 		else
 			xCT1:AddMessage(BLOCK,.5,.5,.5)
 		end
-	elseif subevent=="SPELL_ABSORB"and(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
+	elseif subevent=="SPELL_ABSORB"then
 		if(arg3)then
-			xCT1:AddMessage(part:format(arg2,ABSORB,arg3),.5,.3,.5)
+			if(COMBAT_TEXT_SHOW_RESISTANCES=="1")then
+				xCT1:AddMessage(part:format(arg2,ABSORB,arg3),.5,.3,.5)
+			else
+				xCT1:AddMessage(arg2,.75,.3,.85)
+			end
 		else
 			xCT1:AddMessage(ABSORB,.5,.5,.5)
 		end
