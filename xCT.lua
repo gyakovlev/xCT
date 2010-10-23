@@ -237,19 +237,18 @@ if(event=="COMBAT_TEXT_UPDATE")then
 		end
 
 	elseif subevent=="ENERGIZE"and(COMBAT_TEXT_SHOW_ENERGIZE=="1")then
-	--	if(arg3)then
-	--		xCT3:AddMessage("+"..arg2.." "..format(_G[arg3]),.1,.1,1)
-	--	else
-			xCT3:AddMessage("+"..arg2,.1,.1,1)
-	--	end
+		if  tonumber(arg2)>0 then
+			if(arg3 and arg3=="MANA" or arg3=="RAGE" or arg3=="FOCUS" or arg3=="ENERGY" or arg3=="RUINIC_POWER" or arg3=="SOUL_SHARDS")then
+				xCT3:AddMessage("+"..arg2.." ".._G[arg3],PowerBarColor[arg3].r,PowerBarColor[arg3].g,PowerBarColor[arg3].b)
+			end
+		end
 
 	elseif subevent=="PERIODIC_ENERGIZE"and(COMBAT_TEXT_SHOW_PERIODIC_ENERGIZE=="1")then
-	--	if(arg3)then
-	--		xCT3:AddMessage("+"..arg2.." "..format(_G[arg3],),.1,.1,1)
-	--	else
-		xCT3:AddMessage("+"..arg2,.1,.1,.75)
-	--	end
-
+		if  tonumber(arg2)>0 then
+			if(arg3 and arg3=="MANA" or arg3=="RAGE" or arg3=="FOCUS" or arg3=="ENERGY" or arg3=="RUINIC_POWER" or arg3=="SOUL_SHARDS")then
+				xCT3:AddMessage("+"..arg2.." ".._G[arg3],PowerBarColor[arg3].r,PowerBarColor[arg3].g,PowerBarColor[arg3].b)
+			end
+		end
 	elseif subevent=="SPELL_AURA_START"and(COMBAT_TEXT_SHOW_AURAS=="1")then
 		xCT3:AddMessage("+"..arg2,1,.5,.5)
 	elseif subevent=="SPELL_AURA_END"and(COMBAT_TEXT_SHOW_AURAS=="1")then
