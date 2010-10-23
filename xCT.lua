@@ -27,7 +27,6 @@ ct={
 	["healtreshold"] = 1,		-- minimum healing to show in incoming/outgoing healing messages.
 	["scrollable"] = false,		-- allows you to scroll frame lines with mousewheel.
 	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
-	["delocalize"] = true,		-- use english then block parry miss etc.
 	
 
 -- appearence
@@ -113,42 +112,7 @@ local function ScrollDirection()
 end
 -- partial resists styler
 local part="-%s (%s %s)"
---local ABSORB
--- delocalize
---[[
-if(ct.delocalize)then
-ct.locale={
-	local COMBAT_TEXT_DEFLECT = "Deflect"
-	local COMBAT_TEXT_REFLECT = "Reflect"
-	local COMBAT_TEXT_IMMUNE = "Immune"
-	local COMBAT_TEXT_RESIST = "Resist"
-	local COMBAT_TEXT_ABSORB = "Absorb"
-	local COMBAT_TEXT_BLOCK = "Block"
-	local COMBAT_TEXT_DODGE = "Dodge"
-	local COMBAT_TEXT_PARRY = "Parry"
-	local COMBAT_TEXT_EVADE = "Evade"
-	local COMBAT_TEXT_MISS = "Miss"
 
-	DEFLECT = "Deflect",
-	REFLECT = "Reflect",
-	IMMUNE = "Immune",
-	RESIST = "Resist",
-	ABSORB = "Absorb",
-	BLOCK = "Block",
-	DODGE = "Dodge",
-	PARRY = "Parry",
-	EVADE = "Evade",
-	MISS = "Miss",
-	HONOR = "Honor",
-	LEAVING_COMBAT = "Leaving combat",
-	ENTERING_COMBAT = "Entering combat",
-	HEALTH_LOW = "Health low",
-	MANA_LOW = "Mana low",
-	COMBAT_TEXT_COMBO_POINTS = "<%d|combo points>",
-	COMBAT_TEXT_RUNE={"Blood rune","Unholy rune","Ice rune"},
-	}
-end
-]]
 -- the function, handles everything
 local function OnEvent(self,event,subevent,...)
 if(event=="COMBAT_TEXT_UPDATE")then
@@ -779,10 +743,6 @@ local dmg=function(self,event,...)
 				end
 				
 				xCT4:AddMessage(msg,unpack(color))
-			--/run print(xCT4:GetMessageInfo(xCT4:GetCurrentLine()+1))
-	--		"xCT4:AddMessage()"]:1: Usage: xCT4:AddMessage("text", [r, g, b,] typeID, backFill, accessID, extraData)
-		--	/run print(xCT4:GetMessageInfo(xCT4:GetCurrentLine()+1))
-			--	xCT4:AddMessage(msg,1,0,0,1,false,1,"crit")
 			end
 
 		elseif(eventType=="SWING_MISSED")then
@@ -843,85 +803,3 @@ xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 xCT4:SetScript("OnEvent",dmg)
 end
 
---experimental horror, might kill your FPS.
-
-local animate=function(self)
-	local anim=self:CreateAnimationGroup("$parentCritShake")
---	anim:SetLooping("BOUNCE")
-	local shakeleft = anim:CreateAnimation("Translation");
-	shakeleft:SetDuration(.05);
-	shakeleft:SetOffset(-4, 0);
-	shakeleft:SetOrder(1);
-	local shakeright = anim:CreateAnimation("Translation");
-	shakeright:SetDuration(.05);
-	shakeright:SetOffset(4, 0);
-	shakeright:SetOrder(2);
-	local shakup = anim:CreateAnimation("Translation");
-	shakup:SetDuration(.05);
-	shakup:SetOffset(0, 4);
-	shakup:SetOrder(3);
-	local shakedown = anim:CreateAnimation("Translation");
-	shakedown:SetDuration(.05);
-	shakedown:SetOffset(0, -4);
-	shakedown:SetOrder(4);
-end
---[[
-ShakeCrit=function(self)
-	XFS={xCT4:GetRegions()}
-	for k,v in ipairs(XFS)do
-	local text
-		if v:IsObjectType("FontString")then
-			if v:GetText():find(ct.critprefix)then
-				if not v:GetAnimationGroups() then animate(v) end
-				if not v:GetAnimationGroups():IsPlaying() then
-					v:GetAnimationGroups():Play()
-				end
-			end
-		end
-	end
-end
-]]
-ShakeCrit=function(self)
-	XFS={xCT4:GetRegions()}
-	if toCrit then
-	line=XFS[toCrit]
-				if not line:GetAnimationGroups() then animate(line) end
-				if not line:GetAnimationGroups():IsPlaying() then
-			--		animate(line)
-					line:GetAnimationGroups():Play()
-				end
-	end
-end
-
---xCT4:HookScript("OnMessageScrollChanged",ShakeCrit)
-local fstrings=0
-populate=function()
-XFS={xCT4:GetRegions()}
-
-for i,v in ipairs(XFS) do
-	if v:IsObjectType("FontString")then
-		if not v:GetAnimationGroups() then animate(v) end
-	end
-end
-end
-local simp=function()
-	local cmax=xCT4:GetMaxLines()
-	local cl=xCT4:GetCurrentLine()
-
-	local idx=function(curl)
-	local fs
-			if cl==cmax then
-				fs=XFS[#XFS]
-			elseif cl==-1 then return
-			else
-				fs=XFS[cl+1]
-			end
-		return fs
-	end
-	if cl and idx(cl):GetText():find(ct.critprefix) then
-		idx(cl):GetAnimationGroups():Play()
-	end
-end
-xCT4:SetScript("OnMessageScrollChanged",populate)	
-xCT4:HookScript("OnMessageScrollChanged",simp)
---"xCT4:AddMessage()"]:1: Usage: xCT4:AddMessage("text", [r, g, b,] typeID, backFill, accessID, extraData)
