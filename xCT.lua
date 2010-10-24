@@ -7,26 +7,29 @@ Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonder
 ]]--
 local myname, _ = UnitName("player")
 
-ct={
+local ct={
 
 	["myclass"] = select(2,UnitClass("player")),
 	["myname"] = myname,
 ---------------------------------------------------------------------------------
 -- config
+-- use ["option"] = true/false, to set options.
 -- options
+-- blizz damage options.
 	["blizzheadnumbers"] = false,	-- use blizzard damage/healing output (above mob/player head)
+	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes! has no effect if blizzheadnumbers = false
+-- xCT outgoing damage/healing options
 	["damage"] = true,		-- show outgoing damage in it's own frame
 	["healing"] = true,		-- show outgoing healing in it's own frame
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
-	["critprefix"] = "|cffFF0000*|r",		-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty.
-	["critpostfix"] = "|cffFF0000*|r",		-- postfix symbol, "" for empty.
+	["critprefix"] = "|cffFF0000*|r",	-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty. default is red *
+	["critpostfix"] = "|cffFF0000*|r",	-- postfix symbol, "" for empty.
 	["icons"] = true,		-- show outgoing damage icons
 	["iconsize"] = 27,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size.
-	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes!
-	["treshold"] = 1,		-- minimum damage to show in damage frame
+	["petdamage"] = true,		-- show your pet damage.
+	["dotdamage"] = true,		-- show damage from your dots. someone asked an option to disable lol.
+	["treshold"] = 1,		-- minimum damage to show in outgoing damage frame
 	["healtreshold"] = 1,		-- minimum healing to show in incoming/outgoing healing messages.
-	["scrollable"] = false,		-- allows you to scroll frame lines with mousewheel.
-	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
 	
 
 -- appearence
@@ -35,6 +38,8 @@ ct={
 	["fontstyle"] = "OUTLINE",	-- valid options are "OUTLINE", "MONOCHROME", "THICKOUTLINE", "OUTLINE,MONOCHROME", "THICKOUTLINE,MONOCHROME"
 	["damagefont"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	 -- "Fonts\\FRIZQT__.ttf" is default WoW damage font
 	["timevisible"] = 3, 		-- time (seconds) a single message will be visible. 3 is a good value.
+	["scrollable"] = false,		-- allows you to scroll frame lines with mousewheel.
+	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
 
 -- class modules and goodies
 	["stopvespam"] = false,		-- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
@@ -455,7 +460,7 @@ end
 --	hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
 --	--COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
 
-	InterfaceOptionsCombatTextPanelFCTDropDown:Hide()
+InterfaceOptionsCombatTextPanelFCTDropDown:Hide() -- sorry, blizz fucking bug with SCM:SetInsertMode()
 
 -- modify blizz ct options title lol
 InterfaceOptionsCombatTextPanelTitle:SetText(COMBAT_TEXT_LABEL.." (powered by |cffFF0000x|rCT)")
@@ -707,7 +712,7 @@ local dmg=function(self,event,...)
 	local unpack,select=unpack,select
 	local msg,icon
 	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
-	if (sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet")then
+	if (sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
 		if(eventType=="SWING_DAMAGE")then
 			local amount,_,_,_,_,_,critical=select(9,...)
 			if(amount>=ct.treshold)then
@@ -741,7 +746,7 @@ local dmg=function(self,event,...)
 				xCT4:AddMessage(msg)
 			end
 
-		elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE")then
+		elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE" and ct.dotdamage)then
 			local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
 			local id
 			if(amount>=ct.treshold)then
