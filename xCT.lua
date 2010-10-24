@@ -118,7 +118,7 @@ local function ScrollDirection()
 end
 -- partial resists styler
 local part="-%s (%s %s)"
-
+local r,g,b
 -- the function, handles everything
 local function OnEvent(self,event,subevent,...)
 if(event=="COMBAT_TEXT_UPDATE")then
