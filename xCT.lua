@@ -21,6 +21,7 @@ local ct={
 -- xCT outgoing damage/healing options
 	["damage"] = true,		-- show outgoing damage in it's own frame
 	["healing"] = true,		-- show outgoing healing in it's own frame
+	["showhots"] = true,		-- show periodic healing effects in xCT healing frame.
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 	["critprefix"] = "|cffFF0000*|r",	-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty. default is red *
 	["critpostfix"] = "|cffFF0000*|r",	-- postfix symbol, "" for empty.
@@ -65,8 +66,8 @@ end
 
 --do not edit below unless you know what you are doing
 
-local numf
-if(ct.damage)then
+--local numf
+if(ct.damage or ct.healing)then
 	 numf=4
 else
 	 numf=3
@@ -712,7 +713,7 @@ local dmg=function(self,event,...)
 	local unpack,select=unpack,select
 	local msg,icon
 	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
-	if (sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
+	if(sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
 		if(eventType=="SWING_DAMAGE")then
 			local amount,_,_,_,_,_,critical=select(9,...)
 			if(amount>=ct.treshold)then
@@ -800,40 +801,55 @@ local dmg=function(self,event,...)
 			end 
 			xCT4:AddMessage(missType)
 
-		elseif(eventType=='SPELL_HEAL' or eventType=='SPELL_PERIODIC_HEAL')then
-			if(ct.healing)then
-				local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(9,...)
-				if(ct.healfilter[spellId]) then
-						return
-				end
-				if(amount>=ct.healtreshold)then
-					local color={}
-					if(ct.stopvespam and ct.shadowform and spellId==15290)then
-						return
-					end
-					if (critical) then 
-						msg=ct.critprefix..amount..ct.critpostfix
-						color={.1,1,.1}
-					else
-						msg=amount
-						color={.1,.75,.1}
-					end 
-					if(ct.icons)then
-						_,_,icon=GetSpellInfo(spellId)
-					end
-               				if (icon) then 
-                				msg=msg..' \124T'..icon..':'..ct.iconsize..':'..ct.iconsize..':0:0:64:64:5:59:5:59\124t'
-					elseif(ct.icons)then
-						msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
-                			end 
-					xCT4:AddMessage(msg,unpack(color))
-				end
-			end
-
+		
 		end
 	end
 end
 xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 xCT4:SetScript("OnEvent",dmg)
 end
-
+if(ct.healing)then
+	local xCTh=CreateFrame"Frame"
+	if(ct.icons)then
+		ct.blank="Interface\\Addons\\xCT\\blank"
+	end
+	local heal=function(self,event,...) 
+		local unpack,select=unpack,select
+		local msg,icon
+		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
+		if(sourceGUID==UnitGUID"player")then
+			if(eventType=='SPELL_HEAL')or(eventType=='SPELL_PERIODIC_HEAL'and ct.showhots)then
+				if(ct.healing)then
+					local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(9,...)
+					if(ct.healfilter[spellId]) then
+						return
+					end
+					if(amount>=ct.healtreshold)then
+						local color={}
+						if(ct.stopvespam and ct.shadowform and spellId==15290)then
+							return
+						end
+						if (critical) then 
+							msg=ct.critprefix..amount..ct.critpostfix
+							color={.1,1,.1}
+						else
+							msg=amount
+							color={.1,.75,.1}
+						end 
+						if(ct.icons)then
+							_,_,icon=GetSpellInfo(spellId)
+						end
+               					if (icon) then 
+                					msg=msg..' \124T'..icon..':'..ct.iconsize..':'..ct.iconsize..':0:0:64:64:5:59:5:59\124t'
+						elseif(ct.icons)then
+							msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+                				end 
+						xCT4:AddMessage(msg,unpack(color))
+					end
+				end
+			end
+		end
+	end
+	xCTh:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
+	xCTh:SetScript("OnEvent",heal)
+end
