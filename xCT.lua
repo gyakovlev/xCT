@@ -694,6 +694,7 @@ end
 
 -- damage
 if(ct.damage)then
+	local xCTd=CreateFrame"Frame"
 	if(ct.damagecolor)then
 		ct.dmgcolor={}
 		ct.dmgcolor[1]={1,1,0} -- physical
@@ -709,104 +710,104 @@ if(ct.damage)then
 		ct.blank="Interface\\Addons\\xCT\\blank"
 	end
 
-local dmg=function(self,event,...) 
-	local unpack,select=unpack,select
-	local msg,icon
-	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
-	if(sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
-		if(eventType=="SWING_DAMAGE")then
-			local amount,_,_,_,_,_,critical=select(9,...)
-			if(amount>=ct.treshold)then
-				msg=amount
-				if (critical) then
-					msg=ct.critprefix..msg..ct.critpostfix
+	local dmg=function(self,event,...) 
+		local unpack,select=unpack,select
+		local msg,icon
+		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
+		if(sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
+			if(eventType=="SWING_DAMAGE")then
+				local amount,_,_,_,_,_,critical=select(9,...)
+				if(amount>=ct.treshold)then
+					msg=amount
+					if (critical) then
+						msg=ct.critprefix..msg..ct.critpostfix
+					end
+					if(ct.icons)then
+						if(sourceGUID==UnitGUID"pet")then
+							icon=PET_ATTACK_TEXTURE
+						else
+							icon=GetSpellTexture(1, BOOKTYPE_SPELL)
+						end
+						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+					end
+	
+					xCT4:AddMessage(msg)
 				end
+			elseif(eventType=="RANGE_DAMAGE")then
+				local spellId,_,_,amount,_,_,_,_,_,critical=select(9,...)
+				if(amount>=ct.treshold)then
+					msg=amount
+					if (critical) then
+						msg=ct.critprefix..msg..ct.critpostfix
+					end
+					if(ct.icons)then
+						local _,_,icon=GetSpellInfo(spellId)
+						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+					end
+	
+					xCT4:AddMessage(msg)
+				end
+	
+			elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE" and ct.dotdamage)then
+				local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
+				local id
+				if(amount>=ct.treshold)then
+					local color={}
+					if (critical) then
+						id=5
+						msg=ct.critprefix..amount..ct.critpostfix
+					else
+						msg=amount
+					end
+	
+					if(ct.icons)then
+						_,_,icon=GetSpellInfo(spellId)
+					end
+					if(ct.damagecolor)then
+						if(ct.dmgcolor[spellSchool])then
+							color=ct.dmgcolor[spellSchool]
+						else
+							color=ct.dmgcolor[1]
+						end
+					else
+						color={1,1,0}
+					end
+					if (icon) then
+						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+					elseif(ct.icons)then
+						msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+					end
+					
+					xCT4:AddMessage(msg,unpack(color))
+				end
+	
+			elseif(eventType=="SWING_MISSED")then
+				local missType,_=select(9,...)
 				if(ct.icons)then
 					if(sourceGUID==UnitGUID"pet")then
 						icon=PET_ATTACK_TEXTURE
 					else
 						icon=GetSpellTexture(1, BOOKTYPE_SPELL)
 					end
-					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+					missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end
-
-				xCT4:AddMessage(msg)
-			end
-		elseif(eventType=="RANGE_DAMAGE")then
-			local spellId,_,_,amount,_,_,_,_,_,critical=select(9,...)
-			if(amount>=ct.treshold)then
-				msg=amount
-				if (critical) then
-					msg=ct.critprefix..msg..ct.critpostfix
-				end
-				if(ct.icons)then
-					local _,_,icon=GetSpellInfo(spellId)
-					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
-				end
-
-				xCT4:AddMessage(msg)
-			end
-
-		elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE" and ct.dotdamage)then
-			local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
-			local id
-			if(amount>=ct.treshold)then
-				local color={}
-				if (critical) then
-					id=5
-					msg=ct.critprefix..amount..ct.critpostfix
-				else
-					msg=amount
-				end
-
+	
+				xCT4:AddMessage(missType)
+	
+			elseif(eventType=="SPELL_MISSED")or(eventType=="RANGE_MISSED")then
+				local spellId,_,_,missType,_ = select(9,...)
 				if(ct.icons)then
 					_,_,icon=GetSpellInfo(spellId)
-				end
-				if(ct.damagecolor)then
-					if(ct.dmgcolor[spellSchool])then
-						color=ct.dmgcolor[spellSchool]
-					else
-						color=ct.dmgcolor[1]
-					end
-				else
-					color={1,1,0}
-				end
-				if (icon) then
-					msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
-				elseif(ct.icons)then
-					msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
-				end
-				
-				xCT4:AddMessage(msg,unpack(color))
+					missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				end 
+				xCT4:AddMessage(missType)
+	
+			
 			end
-
-		elseif(eventType=="SWING_MISSED")then
-			local missType,_=select(9,...)
-			if(ct.icons)then
-				if(sourceGUID==UnitGUID"pet")then
-					icon=PET_ATTACK_TEXTURE
-				else
-					icon=GetSpellTexture(1, BOOKTYPE_SPELL)
-				end
-				missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
-			end
-
-			xCT4:AddMessage(missType)
-
-		elseif(eventType=="SPELL_MISSED")or(eventType=="RANGE_MISSED")then
-			local spellId,_,_,missType,_ = select(9,...)
-			if(ct.icons)then
-				_,_,icon=GetSpellInfo(spellId)
-				missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
-			end 
-			xCT4:AddMessage(missType)
-
-		
 		end
 	end
-end
-xCT4:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
-xCT4:SetScript("OnEvent",dmg)
+	xCTd:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
+	xCTd:SetScript("OnEvent",dmg)
 end
 if(ct.healing)then
 	local xCTh=CreateFrame"Frame"
