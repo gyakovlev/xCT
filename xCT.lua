@@ -16,11 +16,11 @@ local ct={
 -- use ["option"] = true/false, to set options.
 -- options
 -- blizz damage options.
-	["blizzheadnumbers"] = false,	-- use blizzard damage/healing output (above mob/player head)
+	["blizzheadnumbers"] = true,	-- use blizzard damage/healing output (above mob/player head)
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes! has no effect if blizzheadnumbers = false
 -- xCT outgoing damage/healing options
-	["damage"] = true,		-- show outgoing damage in it's own frame
-	["healing"] = true,		-- show outgoing healing in it's own frame
+	["damage"] = false,		-- show outgoing damage in it's own frame
+	["healing"] = false,		-- show outgoing healing in it's own frame
 	["showhots"] = true,		-- show periodic healing effects in xCT healing frame.
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 	["critprefix"] = "|cffFF0000*|r",	-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty. default is red *
@@ -31,6 +31,7 @@ local ct={
 	["dotdamage"] = true,		-- show damage from your dots. someone asked an option to disable lol.
 	["treshold"] = 1,		-- minimum damage to show in outgoing damage frame
 	["healtreshold"] = 1,		-- minimum healing to show in incoming/outgoing healing messages.
+	["killingblow"] = true,		-- tells you about your killingblows
 	
 
 -- appearence
@@ -428,6 +429,16 @@ xCT:RegisterEvent"UNIT_ENTERED_VEHICLE"
 xCT:RegisterEvent"UNIT_EXITING_VEHICLE"
 xCT:RegisterEvent"PLAYER_ENTERING_WORLD"
 xCT:SetScript("OnEvent",OnEvent)
+
+if(ct.killingblow)then
+	local xCTkb=CreateFrame"Frame"
+	xCTkb:SetScript("OnEvent", function(_, _, _, event, guid, _, _, _, tname)
+		if event == "PARTY_KILL" and guid==UnitGUID("player") then
+			xCT3:AddMessage("Killing Blow: "..tname, 1, 1, 0)
+		end
+	end)
+	xCTkb:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+end
 
 -- turn off blizz ct
 CombatText:UnregisterAllEvents()
