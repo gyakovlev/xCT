@@ -60,7 +60,7 @@ end
 ---------------------------------------------------------------------------------
 if(ct.mergeaoespam)then
 	ct.aoespam={}
-	ct.aoespam[27243]=true -- Seed of Corruption
+	ct.aoespam[27285]=true -- Seed of Corruption Explosion
 	ct.aoespam[172]=true -- Corruption
 	ct.aoespam[30108]=true -- Unstable Corruption
 end
@@ -735,7 +735,7 @@ if(ct.damage)then
 	if(ct.mergeaoespam)then
 		SQ={}
 		for k,v in pairs(ct.aoespam) do
-			SQ[k]={queue = 0, msg = "", color={}}
+			SQ[k]={queue = 0, msg = "", color={}, count=0}
 		--	table.insert(SQ[k],"msg","")
 		end
 		ct.sq=function(spellId, add)
@@ -754,14 +754,21 @@ if(ct.damage)then
 		local tslu=0
 		local xCTspam=CreateFrame"Frame"
 		xCTspam:SetScript("OnUpdate", function(self, elapsed)
+			local count
 			tslu=tslu+elapsed
 
 			if tslu > ct.mergeaoespamtime then
 				tslu=0
 				for k,v in pairs(SQ) do
 					if SQ[k]["queue"]>0 then
-						xCT4:AddMessage(SQ[k]["queue"]..SQ[k]["msg"], unpack(SQ[k]["color"]))
+						if SQ[k]["count"]>1 then
+							count=" |cffFFFFFFx"..SQ[k]["count"].."|r"
+						else
+							count=""
+						end
+						xCT4:AddMessage(SQ[k]["queue"]..SQ[k]["msg"]..count, unpack(SQ[k]["color"]))
 						SQ[k]["queue"]=0
+						SQ[k]["count"]=0
 				--		print(unpack(v))
 					end
 				--	SQ={}
@@ -838,7 +845,8 @@ if(ct.damage)then
 						SQ[spellId]["queue"]=ct.sq(spellId, rawamount)
 						SQ[spellId]["msg"]=msg
 						SQ[spellId]["color"]=color
-						DEFAULT_CHAT_FRAME:AddMessage(rawamount..msg,unpack(color))
+						SQ[spellId]["count"]=SQ[spellId]["count"]+1
+					--	DEFAULT_CHAT_FRAME:AddMessage(rawamount..msg,unpack(color))
 						return
 					end
 					
