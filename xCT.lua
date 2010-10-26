@@ -735,7 +735,7 @@ if(ct.damage)then
 	if(ct.mergeaoespam)then
 		SQ={}
 		for k,v in pairs(ct.aoespam) do
-			SQ[k]={queue = 0, msg = ""}
+			SQ[k]={queue = 0, msg = "", color={}}
 		--	table.insert(SQ[k],"msg","")
 		end
 		ct.sq=function(spellId, add)
@@ -752,18 +752,22 @@ if(ct.damage)then
 			return amount
 		end
 		local tslu=0
-	--[[	local xCTspam=CreateFrame"Frame"
+		local xCTspam=CreateFrame"Frame"
 		xCTspam:SetScript("OnUpdate", function(self, elapsed)
 			tslu=tslu+elapsed
 
 			if tslu > ct.mergeaoespamtime then
 				tslu=0
 				for k,v in pairs(SQ) do
-					xCT4:AddMessage(unpack(v))
+					if SQ[k]["queue"]>0 then
+						xCT4:AddMessage(SQ[k]["queue"]..SQ[k]["msg"], unpack(SQ[k]["color"]))
+						SQ[k]["queue"]=0
+				--		print(unpack(v))
+					end
 				--	SQ={}
 				end
 			end
-		end)]]
+		end)
 	end
 
 	local dmg=function(self,event,...) 
@@ -808,10 +812,9 @@ if(ct.damage)then
 				local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
 				if(amount>=ct.treshold)then
 					local color={}
+					local rawamount=amount
 					if (critical) then
-						msg=ct.critprefix..amount..ct.critpostfix
-					else
-						msg=amount
+						amount=ct.critprefix..amount..ct.critpostfix
 					end
 	
 					if(ct.icons)then
@@ -827,17 +830,19 @@ if(ct.damage)then
 						color={1,1,0}
 					end
 					if (icon) then
-						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+						msg=" \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					elseif(ct.icons)then
-						msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+						msg=" \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					end
 					if ct.mergeaoespam and ct.aoespam[spellId] then
-						SQ[spellId]["queue"]=ct.sq(spellId, amount)
-						DEFAULT_CHAT_FRAME:AddMessage(msg,unpack(color))
+						SQ[spellId]["queue"]=ct.sq(spellId, rawamount)
+						SQ[spellId]["msg"]=msg
+						SQ[spellId]["color"]=color
+						DEFAULT_CHAT_FRAME:AddMessage(rawamount..msg,unpack(color))
 						return
 					end
 					
-					xCT4:AddMessage(msg,unpack(color))
+					xCT4:AddMessage(amount.." "..msg,unpack(color))
 				end
 	
 			elseif(eventType=="SWING_MISSED")then
