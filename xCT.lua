@@ -62,6 +62,7 @@ if(ct.mergeaoespam)then
 	ct.aoespam={}
 	ct.aoespam[27243]=true -- Seed of Corruption
 	ct.aoespam[172]=true -- Corruption
+	ct.aoespam[30108]=true -- Unstable Corruption
 end
 ---------------------------------------------------------------------------------
 -- class config, overrides general
@@ -733,32 +734,36 @@ if(ct.damage)then
 
 	if(ct.mergeaoespam)then
 		SQ={}
+		for k,v in pairs(ct.aoespam) do
+			SQ[k]={queue = 0, msg = ""}
+		--	table.insert(SQ[k],"msg","")
+		end
 		ct.sq=function(spellId, add)
 			local amount
-			local spam=SQ[spellId]
+			local spam=SQ[spellId]["queue"]
 		--	/run print(type(SQ[172]))
 			if (spam and type(spam=="number"))then
 				amount=spam+add
-				print("adding "..amount)
+		--		print("adding "..amount)
 			else
 				amount=add
-				print("Settin to "..amount)
+		--		print("Settin to "..amount)
 			end
 			return amount
 		end
 		local tslu=0
-		local xCTspam=CreateFrame"Frame"
+	--[[	local xCTspam=CreateFrame"Frame"
 		xCTspam:SetScript("OnUpdate", function(self, elapsed)
 			tslu=tslu+elapsed
 
 			if tslu > ct.mergeaoespamtime then
 				tslu=0
 				for k,v in pairs(SQ) do
-					xCT4:AddMessage(v)
-					SQ={}
+					xCT4:AddMessage(unpack(v))
+				--	SQ={}
 				end
 			end
-		end)
+		end)]]
 	end
 
 	local dmg=function(self,event,...) 
@@ -827,7 +832,7 @@ if(ct.damage)then
 						msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					end
 					if ct.mergeaoespam and ct.aoespam[spellId] then
-						table.insert(SQ, spellId, ct.sq(spellId, amount))
+						SQ[spellId]["queue"]=ct.sq(spellId, amount)
 						DEFAULT_CHAT_FRAME:AddMessage(msg,unpack(color))
 						return
 					end
