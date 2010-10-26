@@ -7,7 +7,7 @@ Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonder
 ]]--
 local myname, _ = UnitName("player")
 
-local ct={
+ct={
 
 	["myclass"] = select(2,UnitClass("player")),
 	["myname"] = myname,
@@ -19,7 +19,7 @@ local ct={
 	["blizzheadnumbers"] = true,	-- use blizzard damage/healing output (above mob/player head)
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes! has no effect if blizzheadnumbers = false
 -- xCT outgoing damage/healing options
-	["damage"] = false,		-- show outgoing damage in it's own frame
+	["damage"] = true,		-- show outgoing damage in it's own frame
 	["healing"] = false,		-- show outgoing healing in it's own frame
 	["showhots"] = true,		-- show periodic healing effects in xCT healing frame.
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
@@ -46,13 +46,23 @@ local ct={
 -- class modules and goodies
 	["stopvespam"] = false,		-- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
 	["dkrunes"] = true,		-- show deatchknight rune recharge
+	["mergeaoespam"] = true,	-- merges multiple aoe spam into single message
+	["mergeaoespamtime"] = 3,	-- time in seconds aoe spell will be merged into single message.
 }
 ---------------------------------------------------------------------------------
 -- outgoing healing filter, hide this spammy shit, plx
-ct.healfilter={}
-ct.healfilter[28176]=true -- Fel Armor
-ct.healfilter[63106]=true -- Siphon Life
-ct.healfilter[54181]=true -- Fel Synergy
+if(ct.healing)then
+	ct.healfilter={}
+	ct.healfilter[28176]=true -- Fel Armor
+	ct.healfilter[63106]=true -- Siphon Life
+	ct.healfilter[54181]=true -- Fel Synergy
+end
+---------------------------------------------------------------------------------
+if(ct.mergeaoespam)then
+	ct.aoespam={}
+	ct.aoespam[27243]=true -- Seed of Corruption
+	ct.aoespam[172]=true -- Corruption
+end
 ---------------------------------------------------------------------------------
 -- class config, overrides general
 if ct.myclass == "WARRIOR" then
@@ -721,6 +731,36 @@ if(ct.damage)then
 		ct.blank="Interface\\Addons\\xCT\\blank"
 	end
 
+	if(ct.mergeaoespam)then
+		SQ={}
+		ct.sq=function(spellId, add)
+			local amount
+			local spam=SQ[spellId]
+		--	/run print(type(SQ[172]))
+			if (spam and type(spam=="number"))then
+				amount=spam+add
+				print("adding "..amount)
+			else
+				amount=add
+				print("Settin to "..amount)
+			end
+			return amount
+		end
+		local tslu=0
+		local xCTspam=CreateFrame"Frame"
+		xCTspam:SetScript("OnUpdate", function(self, elapsed)
+			tslu=tslu+elapsed
+
+			if tslu > ct.mergeaoespamtime then
+				tslu=0
+				for k,v in pairs(SQ) do
+					xCT4:AddMessage(v)
+					SQ={}
+				end
+			end
+		end)
+	end
+
 	local dmg=function(self,event,...) 
 		local unpack,select=unpack,select
 		local msg,icon
@@ -761,11 +801,9 @@ if(ct.damage)then
 	
 			elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE" and ct.dotdamage)then
 				local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
-				local id
 				if(amount>=ct.treshold)then
 					local color={}
 					if (critical) then
-						id=5
 						msg=ct.critprefix..amount..ct.critpostfix
 					else
 						msg=amount
@@ -787,6 +825,11 @@ if(ct.damage)then
 						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					elseif(ct.icons)then
 						msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+					end
+					if ct.mergeaoespam and ct.aoespam[spellId] then
+						table.insert(SQ, spellId, ct.sq(spellId, amount))
+						DEFAULT_CHAT_FRAME:AddMessage(msg,unpack(color))
+						return
 					end
 					
 					xCT4:AddMessage(msg,unpack(color))
