@@ -7,7 +7,7 @@ Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonder
 ]]--
 local myname, _ = UnitName("player")
 
-ct={
+local ct={
 
 	["myclass"] = select(2,UnitClass("player")),
 	["myname"] = myname,
@@ -46,7 +46,7 @@ ct={
 -- class modules and goodies
 	["stopvespam"] = false,		-- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
 	["dkrunes"] = true,		-- show deatchknight rune recharge
-	["mergeaoespam"] = true,	-- merges multiple aoe spam into single message
+	["mergeaoespam"] = true,	-- merges multiple aoe spam into single message, can be useful for dots too.
 	["mergeaoespamtime"] = 3,	-- time in seconds aoe spell will be merged into single message.
 }
 ---------------------------------------------------------------------------------
@@ -715,6 +715,7 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 end
 
 -- damage
+local SQ
 if(ct.damage)then
 	local xCTd=CreateFrame"Frame"
 	if(ct.damagecolor)then
@@ -733,21 +734,18 @@ if(ct.damage)then
 	end
 
 	if(ct.mergeaoespam)then
+		local pairs=pairs
 		SQ={}
 		for k,v in pairs(ct.aoespam) do
 			SQ[k]={queue = 0, msg = "", color={}, count=0}
-		--	table.insert(SQ[k],"msg","")
 		end
-		ct.sq=function(spellId, add)
+		ct.SpamQueue=function(spellId, add)
 			local amount
 			local spam=SQ[spellId]["queue"]
-		--	/run print(type(SQ[172]))
 			if (spam and type(spam=="number"))then
 				amount=spam+add
-		--		print("adding "..amount)
 			else
 				amount=add
-		--		print("Settin to "..amount)
 			end
 			return amount
 		end
@@ -756,7 +754,6 @@ if(ct.damage)then
 		xCTspam:SetScript("OnUpdate", function(self, elapsed)
 			local count
 			tslu=tslu+elapsed
-
 			if tslu > ct.mergeaoespamtime then
 				tslu=0
 				for k,v in pairs(SQ) do
@@ -769,9 +766,7 @@ if(ct.damage)then
 						xCT4:AddMessage(SQ[k]["queue"]..SQ[k]["msg"]..count, unpack(SQ[k]["color"]))
 						SQ[k]["queue"]=0
 						SQ[k]["count"]=0
-				--		print(unpack(v))
 					end
-				--	SQ={}
 				end
 			end
 		end)
@@ -842,11 +837,10 @@ if(ct.damage)then
 						msg=" \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					end
 					if ct.mergeaoespam and ct.aoespam[spellId] then
-						SQ[spellId]["queue"]=ct.sq(spellId, rawamount)
+						SQ[spellId]["queue"]=ct.SpamQueue(spellId, rawamount)
 						SQ[spellId]["msg"]=msg
 						SQ[spellId]["color"]=color
 						SQ[spellId]["count"]=SQ[spellId]["count"]+1
-					--	DEFAULT_CHAT_FRAME:AddMessage(rawamount..msg,unpack(color))
 						return
 					end
 					
