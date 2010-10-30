@@ -95,6 +95,7 @@ elseif ct.myclass=="SHAMAN"then
 	if(ct.mergeaoespam)then
 		ct.aoespam[421]=true	-- Chain Lightning
 		ct.aoespam[8349]=true	-- Fire Nova
+		ct.aoespam[77478]=true 	-- Earhquake
 	end
 elseif ct.myclass=="MAGE"then
 	if(ct.mergeaoespam)then
@@ -833,7 +834,7 @@ if(ct.damage)then
 		local unpack,select=unpack,select
 		local msg,icon
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
-		if(sourceGUID==UnitGUID"player")or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
+		if(sourceGUID==UnitGUID"player" and destGUID~=UnitGUID"player")or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
 			if(eventType=="SWING_DAMAGE")then
 				local amount,_,_,_,_,_,critical=select(9,...)
 				if(amount>=ct.treshold)then
