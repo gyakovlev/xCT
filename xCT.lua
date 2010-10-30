@@ -58,6 +58,7 @@ end
 ---------------------------------------------------------------------------------
 if(ct.mergeaoespam)then
 	ct.aoespam={}
+	-- See class-specific config for merged spells.
 end
 ---------------------------------------------------------------------------------
 -- class config, overrides general
