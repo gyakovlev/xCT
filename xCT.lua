@@ -20,7 +20,7 @@ local ct={
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes! has no effect if blizzheadnumbers = false
 -- xCT outgoing damage/healing options
 	["damage"] = true,		-- show outgoing damage in it's own frame
-	["healing"] = false,		-- show outgoing healing in it's own frame
+	["healing"] = true,		-- show outgoing healing in it's own frame
 	["showhots"] = true,		-- show periodic healing effects in xCT healing frame.
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 	["critprefix"] = "|cffFF0000*|r",	-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty. default is red *
@@ -53,9 +53,7 @@ local ct={
 -- outgoing healing filter, hide this spammy shit, plx
 if(ct.healing)then
 	ct.healfilter={}
-	ct.healfilter[28176]=true -- Fel Armor
-	ct.healfilter[63106]=true -- Siphon Life
-	ct.healfilter[54181]=true -- Fel Synergy
+	-- See class-specific config for filtered spells.
 end
 ---------------------------------------------------------------------------------
 if(ct.mergeaoespam)then
@@ -77,6 +75,14 @@ if ct.myclass=="WARLOCK" then
 		ct.aoespam[42223]=true	-- Rain of Fire
 		ct.aoespam[5857]=true	-- Hellfire Effect
 		ct.aoespam[50590]=true	-- Immolation Aura
+	end
+	if(ct.healing)then
+		ct.healfilter[28176]=true -- Fel Armor
+		ct.healfilter[63106]=true -- Siphon Life
+		ct.healfilter[54181]=true -- Fel Synergy
+		ct.healfilter[89653]=true -- Drain Life
+		ct.healfilter[79268]=true -- Soul Harvest
+		ct.healfilter[30294]=true -- Soul Leech
 	end
 elseif ct.myclass=="DRUID"then
 	if(ct.mergeaoespam)then
@@ -829,12 +835,12 @@ if(ct.damage)then
 			end
 		end)
 	end
-
+	ct.pguid=UnitGUID"player"
 	local dmg=function(self,event,...) 
 		local unpack,select=unpack,select
 		local msg,icon
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
-		if(sourceGUID==UnitGUID"player" and destGUID~=UnitGUID"player")or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
+		if(sourceGUID==ct.pguid and destGUID~=ct.pguid)or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
 			if(eventType=="SWING_DAMAGE")then
 				local amount,_,_,_,_,_,critical=select(9,...)
 				if(amount>=ct.treshold)then
