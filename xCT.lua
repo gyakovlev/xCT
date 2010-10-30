@@ -47,7 +47,7 @@ local ct={
 	["stopvespam"] = false,		-- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
 	["dkrunes"] = true,		-- show deatchknight rune recharge
 	["mergeaoespam"] = true,	-- merges multiple aoe spam into single message, can be useful for dots too.
-	["mergeaoespamtime"] = 3,	-- time in seconds aoe spell will be merged into single message.
+	["mergeaoespamtime"] = .1,	-- time in seconds aoe spell will be merged into single message. minimum is 1.
 }
 ---------------------------------------------------------------------------------
 -- outgoing healing filter, hide this spammy shit, plx
@@ -798,6 +798,9 @@ if(ct.damage)then
 		return id
 	end
 	if(ct.mergeaoespam)then
+		if (not ct.mergeaoespamtime or ct.mergeaoespamtime<1) then
+			ct.mergeaoespamtime=1
+		end
 		local pairs=pairs
 		SQ={}
 		for k,v in pairs(ct.aoespam) do
