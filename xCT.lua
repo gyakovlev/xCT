@@ -5,7 +5,7 @@ All rights reserved.
 Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonderful style of coding. Thanks Rostok for some fixes and healing code.
 
 ]]--
-local debug=true -- internal use only! do not change.
+local debug=false -- internal use only! do not change.
 local myname, _ = UnitName("player")
 
 local ct={
@@ -77,6 +77,8 @@ if ct.myclass=="WARLOCK" then
 		ct.aoespam[42223]=true	-- Rain of Fire
 		ct.aoespam[5857]=true	-- Hellfire Effect
 		ct.aoespam[50590]=true	-- Immolation Aura
+		ct.aoespam[30213]=true	-- Legion Strike (Felguard)
+		ct.aoespam[89753]=true	-- Felstorm (Felguard)
 	end
 	if(ct.healing)then
 		ct.healfilter[28176]=true -- Fel Armor
@@ -559,64 +561,69 @@ end
 
 -- awesome configmode and testmode
 local StartConfigmode=function()
-	for i=1,#ct.frames do
-		f=ct.frames[i]
-		f:SetBackdrop({
-			bgFile="Interface/Tooltips/UI-Tooltip-Background",
-			edgeFile="Interface/Tooltips/UI-Tooltip-Border",
-			tile=false,tileSize=0,edgeSize=2,
-			insets={left=0,right=0,top=0,bottom=0}})
-		f:SetBackdropColor(.1,.1,.1,.8)
-		f:SetBackdropBorderColor(.1,.1,.1,.5)
+	if not InCombatLockdown()then
+		for i=1,#ct.frames do
+			f=ct.frames[i]
+			f:SetBackdrop({
+				bgFile="Interface/Tooltips/UI-Tooltip-Background",
+				edgeFile="Interface/Tooltips/UI-Tooltip-Border",
+				tile=false,tileSize=0,edgeSize=2,
+				insets={left=0,right=0,top=0,bottom=0}})
+			f:SetBackdropColor(.1,.1,.1,.8)
+			f:SetBackdropBorderColor(.1,.1,.1,.5)
 
-		f.fs=f:CreateFontString(nil,"OVERLAY")
-		f.fs:SetFont(ct.font,ct.fontsize,ct.fontstyle)
-		f.fs:SetPoint("BOTTOM",f,"TOP",0,0)
-		if(i==1)then
-			f.fs:SetText(DAMAGE.." (drag me)")
-			f.fs:SetTextColor(1,.1,.1,.9)
-		elseif(i==2)then
-			f.fs:SetText(SHOW_COMBAT_HEALING.."(drag me)")
-			f.fs:SetTextColor(.1,1,.1,.9)
-		elseif(i==3)then
-			f.fs:SetText(COMBAT_TEXT_LABEL.."(drag me)")
-			f.fs:SetTextColor(.1,.1,1,.9)
-		else
-			f.fs:SetText(SCORE_DAMAGE_DONE.." / "..SCORE_HEALING_DONE)
-			f.fs:SetTextColor(1,1,0,.9)
+			f.fs=f:CreateFontString(nil,"OVERLAY")
+			f.fs:SetFont(ct.font,ct.fontsize,ct.fontstyle)
+			f.fs:SetPoint("BOTTOM",f,"TOP",0,0)
+			if(i==1)then
+				f.fs:SetText(DAMAGE.." (drag me)")
+				f.fs:SetTextColor(1,.1,.1,.9)
+			elseif(i==2)then
+				f.fs:SetText(SHOW_COMBAT_HEALING.."(drag me)")
+				f.fs:SetTextColor(.1,1,.1,.9)
+			elseif(i==3)then
+				f.fs:SetText(COMBAT_TEXT_LABEL.."(drag me)")
+				f.fs:SetTextColor(.1,.1,1,.9)
+			else
+				f.fs:SetText(SCORE_DAMAGE_DONE.." / "..SCORE_HEALING_DONE)
+				f.fs:SetTextColor(1,1,0,.9)
+			end
+
+			f.t=f:CreateTexture"ARTWORK"
+			f.t:SetPoint("TOPLEFT",f,"TOPLEFT",1,-1)
+			f.t:SetPoint("TOPRIGHT",f,"TOPRIGHT",-1,-19)
+			f.t:SetHeight(20)
+			f.t:SetTexture(.5,.5,.5)
+			f.t:SetAlpha(.3)
+
+			f.d=f:CreateTexture"ARTWORK"
+			f.d:SetHeight(16)
+			f.d:SetWidth(16)
+			f.d:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT",-1,1)
+			f.d:SetTexture(.5,.5,.5)
+			f.d:SetAlpha(.3)
+
+			f.tr=f:CreateTitleRegion()
+			f.tr:SetPoint("TOPLEFT",f,"TOPLEFT",0,0)
+			f.tr:SetPoint("TOPRIGHT",f,"TOPRIGHT",0,0)
+			f.tr:SetHeight(20)
+
+			f:EnableMouse(true)
+			f:RegisterForDrag"LeftButton"
+			f:SetScript("OnDragStart",f.StartSizing)
+			if not(ct.scrollable)then
+			f:SetScript("OnSizeChanged",function(self)
+				self:SetMaxLines(self:GetHeight()/ct.fontsize)
+				self:Clear()
+			end)
+			end
+
+			f:SetScript("OnDragStop",f.StopMovingOrSizing)
+			ct.locked=false
 		end
-
-		f.t=f:CreateTexture"ARTWORK"
-		f.t:SetPoint("TOPLEFT",f,"TOPLEFT",1,-1)
-		f.t:SetPoint("TOPRIGHT",f,"TOPRIGHT",-1,-19)
-		f.t:SetHeight(20)
-		f.t:SetTexture(.5,.5,.5)
-		f.t:SetAlpha(.3)
-
-		f.d=f:CreateTexture"ARTWORK"
-		f.d:SetHeight(16)
-		f.d:SetWidth(16)
-		f.d:SetPoint("BOTTOMRIGHT",f,"BOTTOMRIGHT",-1,1)
-		f.d:SetTexture(.5,.5,.5)
-		f.d:SetAlpha(.3)
-
-		f.tr=f:CreateTitleRegion()
-		f.tr:SetPoint("TOPLEFT",f,"TOPLEFT",0,0)
-		f.tr:SetPoint("TOPRIGHT",f,"TOPRIGHT",0,0)
-		f.tr:SetHeight(20)
-
-		f:EnableMouse(true)
-		f:RegisterForDrag"LeftButton"
-		f:SetScript("OnDragStart",f.StartSizing)
-		if not(ct.scrollable)then
-		f:SetScript("OnSizeChanged",function(self)
-			self:SetMaxLines(self:GetHeight()/ct.fontsize)
-			self:Clear()
-		end)
-		end
-
-		f:SetScript("OnDragStop",f.StopMovingOrSizing)
-		ct.locked=false
+		pr("unlocked.")
+	else
+		pr("can't be configured in combat.")
 	end
 end
 
@@ -634,7 +641,6 @@ local function EndConfigmode()
 		f:EnableMouse(false)
 		f:SetScript("OnDragStart",nil)
 		f:SetScript("OnDragStop",nil)
-		
 	end
 	ct.locked=true
 	pr("Window positions unsaved, don't forget to reload UI.")
@@ -716,7 +722,7 @@ StaticPopupDialogs["XCT_LOCK"]={
 	text="To save |cffFF0000x|rCT window positions you need to reload your UI.\n Click "..ACCEPT.." to reload UI.\nClick "..CANCEL.." to do it later.",
 	button1=ACCEPT,
 	button2=CANCEL,
-	OnAccept=ReloadUI,
+	OnAccept=function() if not InCombatLockdown() then ReloadUI() else EndConfigmode() end end,
 	OnCancel=EndConfigmode,
 	timeout=0,
 	whileDead=1,
@@ -731,7 +737,6 @@ SlashCmdList["XCT"]=function(input)
 	if(input=="unlock")then
 		if (ct.locked)then
 			StartConfigmode()
-			pr("unlocked.")
 		else
 			pr("already unlocked.")
 		end
@@ -749,7 +754,23 @@ SlashCmdList["XCT"]=function(input)
 			StartTestMode()
 			pr("test mode enabled.")
 		end
-
+	elseif(input=="mypos")then
+		xCT1:ClearAllPoints()
+		xCT1:SetPoint("CENTER",UIParent, "CENTER", -90, -8)
+		xCT1:SetHeight(142)
+		xCT1:SetWidth(128)
+		xCT2:ClearAllPoints()
+		xCT2:SetPoint("CENTER",UIParent, "CENTER", 90, -8)
+		xCT2:SetHeight(142)
+		xCT2:SetWidth(128)
+		xCT3:ClearAllPoints()
+		xCT3:SetPoint("TOP",UIParent, "TOP", -2, -34)
+		xCT3:SetHeight(264)
+		xCT3:SetWidth(216)
+		xCT4:ClearAllPoints()
+		xCT4:SetPoint("CENTER",UIParent, "CENTER", 444, 152)
+		xCT4:SetHeight(172)
+		xCT4:SetWidth(136)
 	else
 		pr("use |cffFF0000/xct unlock|r to move and resize frames.")
 		pr("use |cffFF0000/xct lock|r to lock frames.")
