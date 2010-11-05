@@ -5,9 +5,10 @@ All rights reserved.
 Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonderful style of coding. Thanks Rostok for some fixes and healing code.
 
 ]]--
+local debug=true -- internal use only! do not change.
 local myname, _ = UnitName("player")
 
-ct={
+local ct={
 
 	["myclass"] = select(2,UnitClass("player")),
 	["myname"] = myname,
@@ -778,7 +779,7 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 end
 
 -- damage
---local SQ
+local SQ
 if(ct.damage)then
 	local xCTd=CreateFrame"Frame"
 	if(ct.damagecolor)then
@@ -991,4 +992,9 @@ if(ct.healing)then
 	end
 	xCTh:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 	xCTh:SetScript("OnEvent",heal)
+end
+
+if debug then
+	xct=ct
+	xct.sq=SQ
 end
