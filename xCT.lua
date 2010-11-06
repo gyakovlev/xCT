@@ -5,7 +5,7 @@ All rights reserved.
 Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonderful style of coding. Thanks Rostok for some fixes and healing code.
 
 ]]--
-local debug=false -- internal use only! do not change.
+local debug=false	-- internal use only! do not change.
 local myname, _ = UnitName("player")
 
 local ct={
@@ -27,19 +27,18 @@ local ct={
 	["critprefix"] = "|cffFF0000*|r",	-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty. default is red *
 	["critpostfix"] = "|cffFF0000*|r",	-- postfix symbol, "" for empty.
 	["icons"] = true,		-- show outgoing damage icons
-	["iconsize"] = 27,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size.
+	["iconsize"] = 27,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size if it's set to "auto"
 	["petdamage"] = true,		-- show your pet damage.
 	["dotdamage"] = true,		-- show damage from your dots. someone asked an option to disable lol.
 	["treshold"] = 1,		-- minimum damage to show in outgoing damage frame
 	["healtreshold"] = 1,		-- minimum healing to show in incoming/outgoing healing messages.
-	["killingblow"] = true,		-- tells you about your killingblows
-	
 
 -- appearence
 	["font"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	-- "Fonts\\ARIALN.ttf" is default WoW font.
 	["fontsize"] = 12,
 	["fontstyle"] = "OUTLINE",	-- valid options are "OUTLINE", "MONOCHROME", "THICKOUTLINE", "OUTLINE,MONOCHROME", "THICKOUTLINE,MONOCHROME"
 	["damagefont"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	 -- "Fonts\\FRIZQT__.ttf" is default WoW damage font
+	["damagefontsize"] = "auto",	-- size of xCT damage font. use "auto" to set it automatically depending on icon size, or use own value, 16 for example. if it's set to number value icons will change size.
 	["timevisible"] = 3, 		-- time (seconds) a single message will be visible. 3 is a good value.
 	["scrollable"] = false,		-- allows you to scroll frame lines with mousewheel.
 	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
@@ -49,6 +48,8 @@ local ct={
 	["dkrunes"] = true,		-- show deatchknight rune recharge
 	["mergeaoespam"] = true,	-- merges multiple aoe spam into single message, can be useful for dots too.
 	["mergeaoespamtime"] = 3,	-- time in seconds aoe spell will be merged into single message. minimum is 1.
+	["killingblow"] = true,		-- tells you about your killingblows
+
 }
 ---------------------------------------------------------------------------------
 -- outgoing healing filter, hide this spammy shit, plx
@@ -483,10 +484,15 @@ for i=1,numf do
 	else
 		f:SetJustifyH"RIGHT"
 		f:SetPoint("CENTER",320,0)
-		if (ct.icons)then
-			a,_,c=f:GetFont()
-			f:SetFont(a,ct.iconsize/2,c)
+		local a,_,c=f:GetFont()
+		if (ct.damagefontsize=="auto")then
+			if ct.icons then
+				f:SetFont(a,ct.iconsize/2,c)
+			end
+		elseif (type(ct.damagefontsize)=="number")then
+			f:SetFont(a,ct.damagefontsize,c)
 		end
+			
 	end
 	ct.frames[i] = f
 end
