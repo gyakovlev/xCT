@@ -107,6 +107,7 @@ elseif ct.myclass=="SHAMAN"then
 		ct.aoespam[421]=true	-- Chain Lightning
 		ct.aoespam[8349]=true	-- Fire Nova
 		ct.aoespam[77478]=true 	-- Earhquake
+		ct.aoespam[51490]=true 	-- Thunderstorm
 	end
 elseif ct.myclass=="MAGE"then
 	if(ct.mergeaoespam)then
@@ -822,13 +823,6 @@ if(ct.damage)then
 	
 	if(ct.icons)then
 		ct.blank="Interface\\Addons\\xCT\\blank"
-	end
-	local getcrit=function(critical)
-		local id
-		if critical then
-			id=2
-		end
-		return id
 	end
 	if(ct.mergeaoespam)then
 		if (not ct.mergeaoespamtime or ct.mergeaoespamtime<1) then
