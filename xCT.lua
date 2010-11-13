@@ -889,6 +889,8 @@ if(ct.damage)then
 						msg=" \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					elseif(ct.icons)then
 						msg=" \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+					else
+						msg=""
 					end
 					if ct.mergeaoespam and ct.aoespam[spellId] then
 						SQ[spellId]["locked"]=true
