@@ -66,7 +66,21 @@ elseif ct.myclass=="PALADIN"then
 elseif ct.myclass=="PRIEST"then
 	if(ct.mergeaoespam)then
 		-- Healer spells
-		ct.aoespam[47750]=true	-- Penance
+		ct.aoespam[47750]=true	-- Penance (Heal Effect)
+		ct.aoespam[139]=true	-- Renew
+		ct.aoespam[596]=true	-- Prayer of Healing
+		ct.aoespam[56161]=true	-- Glyph of Prayer of Healing
+		ct.aoespam[64844]=true	-- Divine Hymn
+		ct.aoespam[32546]=true	-- Binding Heal
+		ct.aoespam[77489]=true	-- Echo of Light
+		ct.aoespam[34861]=true	-- Circle of Healing
+		ct.aoespam[23455]=true	-- Holy Nova (Healing Effect)
+		ct.aoespam[33110]=true	-- Prayer of Mending
+		ct.aoespam[63544]=true	-- Divine Touch
+		-- Damager spells
+		ct.aoespam[47666]=true	-- Penance (Damage Effect)
+		ct.aoespam[15237]=true	-- Holy Nova (Damage Effect)
+		
 	end
 elseif ct.myclass=="SHAMAN"then
 	if(ct.mergeaoespam)then
