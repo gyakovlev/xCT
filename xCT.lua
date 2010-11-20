@@ -63,6 +63,11 @@ elseif ct.myclass=="PALADIN"then
 		ct.aoespam[2812]=true	-- Holy Wrath
 		ct.aoespam[53385]=true	-- Divine Storm
 	end
+elseif ct.myclass=="PRIEST"then
+	if(ct.mergeaoespam)then
+		-- Healer spells
+		ct.aoespam[47750]=true	-- Penance
+	end
 elseif ct.myclass=="SHAMAN"then
 	if(ct.mergeaoespam)then
 		ct.aoespam[421]=true	-- Chain Lightning
@@ -901,7 +906,7 @@ if(ct.damage)then
 						SQ[spellId]["locked"]=false
 						return
 					end
-					xCT4:AddMessage(amount.." "..msg,unpack(color))
+					xCT4:AddMessage(amount..""..msg,unpack(color))
 				end
 	
 			elseif(eventType=="SWING_MISSED")then
@@ -953,22 +958,32 @@ if(ct.healing)then
 						if(ct.stopvespam and ct.shadowform and spellId==15290)then
 							return
 						end
+						local rawamount=amount
 						if (critical) then 
-							msg=ct.critprefix..amount..ct.critpostfix
+							amount=ct.critprefix..amount..ct.critpostfix
 							color={.1,1,.1}
 						else
-							msg=amount
+							
 							color={.1,.75,.1}
 						end 
 						if(ct.icons)then
 							_,_,icon=GetSpellInfo(spellId)
 						end
                					if (icon) then 
-                					msg=msg..' \124T'..icon..':'..ct.iconsize..':'..ct.iconsize..':0:0:64:64:5:59:5:59\124t'
+                					msg=' \124T'..icon..':'..ct.iconsize..':'..ct.iconsize..':0:0:64:64:5:59:5:59\124t'
 						elseif(ct.icons)then
-							msg=msg.." \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
-                				end 
-						xCT4:AddMessage(msg,unpack(color))
+							msg=" \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+                				end
+						if ct.mergeaoespam and ct.aoespam[spellId] then
+							SQ[spellId]["locked"]=true
+							SQ[spellId]["queue"]=ct.SpamQueue(spellId, rawamount)
+							SQ[spellId]["msg"]=msg
+							SQ[spellId]["color"]=color
+							SQ[spellId]["count"]=SQ[spellId]["count"]+1
+							SQ[spellId]["locked"]=false
+							return
+					end 
+						xCT4:AddMessage(amount..""..msg,unpack(color))
 					end
 				end
 			end
