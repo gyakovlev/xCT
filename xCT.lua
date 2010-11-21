@@ -56,6 +56,13 @@ elseif ct.myclass=="DRUID"then
 		ct.aoespam[5570]=true	-- Insect Swarm
 		ct.aoespam[42231]=true	-- Hurricane
 		ct.aoespam[50288]=true	-- Starfall
+
+		ct.aoespam[1822]=true		-- Rake
+		ct.aoespam[62078]=true		-- Swipe (Cat Form)
+		ct.aoespam[779]=true		-- Swipe (Bear Form)
+		ct.aoespam[33745]=true		-- Lacerate
+		ct.aoespam[1079]=true		-- Rip
+		
 	end
 elseif ct.myclass=="PALADIN"then
 	if(ct.mergeaoespam)then
