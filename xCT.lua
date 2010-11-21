@@ -9,7 +9,8 @@ Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonder
 
 
 --some init
-ct=unpack(select(2,...))
+local addon, ns=...
+ct=ns.config
 ct.myname, _ = UnitName("player")
 ct.myclass=select(2,UnitClass("player"))
 ---------------------------------------------------------------------------------
