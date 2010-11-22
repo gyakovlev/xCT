@@ -96,7 +96,17 @@ elseif ct.myclass=="PRIEST"then
 		-- Damager spells
 		ct.aoespam[47666]=true	-- Penance (Damage Effect)
 		ct.aoespam[15237]=true	-- Holy Nova (Damage Effect)
+		ct.aoespam[589]=true	-- Shadow Word: Pain
+		ct.aoespam[34914]=true	-- Vampiric Touch
+		ct.aoespam[2944]=true	-- Devouring Plague
+		ct.aoespam[63675]=true	-- Improved Devouring Plague
+		ct.aoespam[15407]=true	-- Mind Flay
+		ct.aoespam[49821]=true	-- Mind Seer
+		ct.aoespam[87532]=true	-- Shadowy Apparition
 		
+	end
+	if(ct.healing)then
+		ct.healfilter[2944]=true -- Devouring Plague (Healing)
 	end
 elseif ct.myclass=="SHAMAN"then
 	if(ct.mergeaoespam)then
@@ -197,14 +207,6 @@ local function ScrollDirection()
 		ct.frames[i]:Clear()
 		ct.frames[i]:SetInsertMode(ct.mode)
 	end
-end
-local ScanUnits=function()
-	ct.units={UnitGUID"player"}
-		if tonumber(HasPetUI())==1 then
-			if tonumber(HasPetUI())==1 then
-				table.insert(ct.units,UnitGUID("pet"))
-			end
-		end
 end
 -- partial resists styler
 local part="-%s (%s %s)"
@@ -455,7 +457,6 @@ elseif event=="PLAYER_ENTERING_WORLD"then
 	end
 
 	if(ct.damage)then
-		ScanUnits()
 		ct.pguid=UnitGUID"player"
 	end
 end
@@ -825,6 +826,11 @@ end
 -- damage
 local SQ
 if(ct.damage)then
+local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
+ 			COMBATLOG_OBJECT_REACTION_FRIENDLY,
+ 			COMBATLOG_OBJECT_CONTROL_PLAYER,
+ 			COMBATLOG_OBJECT_TYPE_GUARDIAN
+ 			)
 	local xCTd=CreateFrame"Frame"
 	if(ct.damagecolor)then
 		ct.dmgcolor={}
@@ -885,7 +891,7 @@ if(ct.damage)then
 		local unpack,select=unpack,select
 		local msg,icon
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
-		if(sourceGUID==ct.pguid and destGUID~=ct.pguid)or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
+		if(sourceGUID==ct.pguid and destGUID~=ct.pguid)or(sourceGUID==UnitGUID"pet" and ct.petdamage)or(sourceFlags==gflags)then
 			if(eventType=="SPELL_SUMMON")then
 				gguid=destGUID
 				end
@@ -897,10 +903,11 @@ if(ct.damage)then
 						msg=ct.critprefix..msg..ct.critpostfix
 					end
 					if(ct.icons)then
-						if(sourceGUID==UnitGUID"pet")then
+						if(sourceGUID==UnitGUID"pet") or (sourceFlags==gflags)then
 							icon=PET_ATTACK_TEXTURE
 						else
-							icon=GetSpellTexture(1, BOOKTYPE_SPELL)
+						--	icon=GetSpellTexture(1, BOOKTYPE_SPELL)
+							_,_,icon=GetSpellInfo(6603)
 						end
 						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					end
@@ -965,10 +972,11 @@ if(ct.damage)then
 			elseif(eventType=="SWING_MISSED")then
 				local missType,_=select(9,...)
 				if(ct.icons)then
-					if(sourceGUID==UnitGUID"pet")then
+					if(sourceGUID==UnitGUID"pet") or (sourceFlags==gflags)then
 						icon=PET_ATTACK_TEXTURE
 					else
-						icon=GetSpellTexture(1, BOOKTYPE_SPELL)
+					--	icon=GetSpellTexture(1, BOOKTYPE_SPELL)
+						_,_,icon=GetSpellInfo(6603)
 					end
 					missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end
