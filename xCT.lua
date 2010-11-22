@@ -53,16 +53,24 @@ if ct.myclass=="WARLOCK" then
 	end
 elseif ct.myclass=="DRUID"then
 	if(ct.mergeaoespam)then
+		-- Healer spells
+		ct.aoespam[774]=true	-- Rejuvenation (Normal)
+		ct.aoespam[64801]=true	-- Rejuvenation (First tick)
+		ct.aoespam[48438]=true	-- Wild Growth
+		ct.aoespam[33763]=true	-- Lifebloom
+		-- Damager spells
 		ct.aoespam[8921]=true	-- Moonfire
+		ct.aoespam[93402]=true	-- Sunfire
 		ct.aoespam[5570]=true	-- Insect Swarm
 		ct.aoespam[42231]=true	-- Hurricane
 		ct.aoespam[50288]=true	-- Starfall
-
-		ct.aoespam[1822]=true		-- Rake
-		ct.aoespam[62078]=true		-- Swipe (Cat Form)
-		ct.aoespam[779]=true		-- Swipe (Bear Form)
-		ct.aoespam[33745]=true		-- Lacerate
-		ct.aoespam[1079]=true		-- Rip
+		ct.aoespam[61391]=true	-- Typhoon
+		ct.aoespam[1822]=true	-- Rake
+		ct.aoespam[62078]=true	-- Swipe (Cat Form)
+		ct.aoespam[779]=true	-- Swipe (Bear Form)
+		ct.aoespam[33745]=true	-- Lacerate
+		ct.aoespam[1079]=true	-- Rip
+		
 		
 	end
 elseif ct.myclass=="PALADIN"then
@@ -120,6 +128,16 @@ elseif ct.myclass=="HUNTER"then
 	if(ct.mergeaoespam)then
 		ct.aoespam[2643]=true	-- Multi-Shot
 	end
+elseif ct.myclass=="DEATHKNIGHT"then
+	if(ct.mergeaoespam)then
+		ct.aoespam[55095]=true		-- Frost Fever
+		ct.aoespam[55078]=true		-- Blood Plague
+		ct.aoespam[55536]=true		-- Unholy Blight
+		ct.aoespam[48721]=true		-- Blood Boil
+		ct.aoespam[49184]=true		-- Howling Blast
+		ct.aoespam[52212]=true		-- Death and Decay
+	end
+
 end
 ---------------------------------------------------------------------------------
 -- character config, overrides general and class
@@ -130,7 +148,7 @@ end
 
 --do not edit below unless you know what you are doing
 
---local numf
+local numf
 if(ct.damage or ct.healing)then
 	 numf=4
 else
@@ -179,6 +197,14 @@ local function ScrollDirection()
 		ct.frames[i]:Clear()
 		ct.frames[i]:SetInsertMode(ct.mode)
 	end
+end
+local ScanUnits=function()
+	ct.units={UnitGUID"player"}
+		if tonumber(HasPetUI())==1 then
+			if tonumber(HasPetUI())==1 then
+				table.insert(ct.units,UnitGUID("pet"))
+			end
+		end
 end
 -- partial resists styler
 local part="-%s (%s %s)"
@@ -429,10 +455,12 @@ elseif event=="PLAYER_ENTERING_WORLD"then
 	end
 
 	if(ct.damage)then
+		ScanUnits()
 		ct.pguid=UnitGUID"player"
 	end
 end
 end
+XCT=ct
 -- change damage font (if desired)
 if(ct.damagestyle)then
 	DAMAGE_TEXT_FONT=ct.damagefont
@@ -858,6 +886,9 @@ if(ct.damage)then
 		local msg,icon
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
 		if(sourceGUID==ct.pguid and destGUID~=ct.pguid)or(sourceGUID==UnitGUID"pet" and ct.petdamage)then
+			if(eventType=="SPELL_SUMMON")then
+				gguid=destGUID
+				end
 			if(eventType=="SWING_DAMAGE")then
 				local amount,_,_,_,_,_,critical=select(9,...)
 				if(amount>=ct.treshold)then
