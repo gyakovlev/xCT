@@ -59,6 +59,7 @@ elseif ct.myclass=="DRUID"then
 		ct.aoespam[64801]=true	-- Rejuvenation (First tick)
 		ct.aoespam[48438]=true	-- Wild Growth
 		ct.aoespam[33763]=true	-- Lifebloom
+		ct.aoespam[81269]=true	-- Efflorescence
 		-- Damager spells
 		ct.aoespam[8921]=true	-- Moonfire
 		ct.aoespam[93402]=true	-- Sunfire
