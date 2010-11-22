@@ -42,6 +42,7 @@ if ct.myclass=="WARLOCK" then
 		ct.aoespam[50590]=true	-- Immolation Aura
 		ct.aoespam[30213]=true	-- Legion Strike (Felguard)
 		ct.aoespam[89753]=true	-- Felstorm (Felguard)
+		ct.aoespam[20153]=true	-- Immolation (Infrenal)
 	end
 	if(ct.healing)then
 		ct.healfilter[28176]=true -- Fel Armor
