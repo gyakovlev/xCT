@@ -447,7 +447,7 @@ elseif event=="UNIT_ENTERED_VEHICLE"or event=="UNIT_EXITING_VEHICLE"then
 elseif event=="PLAYER_ENTERING_WORLD"then
 	SetUnit()
 	
---		ScrollDirection()
+--	ScrollDirection()
 
 	
 	if(ct.scrollable)then
@@ -461,7 +461,7 @@ elseif event=="PLAYER_ENTERING_WORLD"then
 	end
 end
 end
-XCT=ct
+
 -- change damage font (if desired)
 if(ct.damagestyle)then
 	DAMAGE_TEXT_FONT=ct.damagefont
@@ -892,9 +892,6 @@ local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
 		local msg,icon
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
 		if(sourceGUID==ct.pguid and destGUID~=ct.pguid)or(sourceGUID==UnitGUID"pet" and ct.petdamage)or(sourceFlags==gflags)then
-			if(eventType=="SPELL_SUMMON")then
-				gguid=destGUID
-				end
 			if(eventType=="SWING_DAMAGE")then
 				local amount,_,_,_,_,_,critical=select(9,...)
 				if(amount>=ct.treshold)then
