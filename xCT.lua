@@ -136,6 +136,7 @@ elseif ct.myclass=="WARRIOR"then
 		ct.aoespam[46968]=true	-- Shockwave
 		ct.aoespam[6343]=true	-- Thunder Clap
 		ct.aoespam[1680]=true	-- Whirlwind
+		ct.aoespam[94009]=true	-- Rend
 	end
 elseif ct.myclass=="HUNTER"then
 	if(ct.mergeaoespam)then
@@ -813,12 +814,10 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 			if(ct.blizzheadnumbers)then
 				SetCVar('CombatHealing',0)
 			end
-			ct.shadowform=true
 		else
 			if(ct.blizzheadnumbers)then
 				SetCVar('CombatHealing',1)
 			end
-			ct.shadowform=false
 		end
 	end)
 	sp:RegisterEvent("PLAYER_ENTERING_WORLD")	
@@ -1016,9 +1015,6 @@ if(ct.healing)then
 					end
 					if(amount>=ct.healtreshold)then
 						local color={}
-						if(ct.stopvespam and ct.shadowform and spellId==15290)then
-							return
-						end
 						local rawamount=amount
 						if (critical) then 
 							amount=ct.critprefix..amount..ct.critpostfix
