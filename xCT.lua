@@ -29,6 +29,7 @@ if ct.myclass=="WARLOCK" then
 	if(ct.mergeaoespam)then
 		ct.aoespam[27243]=true		-- Seed of Corruption (DoT)
 		ct.aoespam[27285]=true		-- Seed of Corruption (Explosion)
+		ct.aoespam[87385]=true		-- Seed of Corruption (Explosion Soulburned)
 		ct.aoespam[172]=true		-- Corruption
 		ct.aoespam[87389]=true		-- Corruption (Soulburn: Seed of Corruption)
 		ct.aoespam[30108]=true		-- Unstable Affliction
@@ -833,8 +834,9 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 end
 
 -- damage
-local SQ
+--local SQ
 if(ct.damage)then
+local time=time
 local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
  			COMBATLOG_OBJECT_REACTION_FRIENDLY,
  			COMBATLOG_OBJECT_CONTROL_PLAYER,
@@ -862,7 +864,7 @@ local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
 		local pairs=pairs
 		SQ={}
 		for k,v in pairs(ct.aoespam) do
-			SQ[k]={queue = 0, msg = "", color={}, count=0, locked=false}
+			SQ[k]={queue = 0, msg = "", color={}, count=0, utime=0, locked=false}
 		end
 		ct.SpamQueue=function(spellId, add)
 			local amount
@@ -878,11 +880,12 @@ local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
 		local xCTspam=CreateFrame"Frame"
 		xCTspam:SetScript("OnUpdate", function(self, elapsed)
 			local count
+			local utime=time()
 			tslu=tslu+elapsed
-			if tslu > ct.mergeaoespamtime then
+			if tslu > 0.5 then
 				tslu=0
 				for k,v in pairs(SQ) do
-					if SQ[k]["queue"]>0 and not SQ[k]["locked"] then
+					if SQ[k]["queue"]>0 and not SQ[k]["locked"] and SQ[k]["utime"]+ct.mergeaoespamtime<utime then
 						if SQ[k]["count"]>1 then
 							count=" |cffFFFFFF x "..SQ[k]["count"].."|r"
 						else
@@ -913,7 +916,8 @@ local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
 							icon=PET_ATTACK_TEXTURE
 						else
 						--	icon=GetSpellTexture(1, BOOKTYPE_SPELL)
-							_,_,icon=GetSpellInfo(6603)
+						--	_,_,icon=GetSpellInfo(6603)
+							icon=GetSpellTexture(6603)
 						end
 						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					end
@@ -969,6 +973,9 @@ local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
 						SQ[spellId]["msg"]=msg
 						SQ[spellId]["color"]=color
 						SQ[spellId]["count"]=SQ[spellId]["count"]+1
+						if SQ[spellId]["count"]==1 then
+							SQ[spellId]["utime"]=time()
+						end
 						SQ[spellId]["locked"]=false
 						return
 					end
@@ -982,7 +989,8 @@ local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
 						icon=PET_ATTACK_TEXTURE
 					else
 					--	icon=GetSpellTexture(1, BOOKTYPE_SPELL)
-						_,_,icon=GetSpellInfo(6603)
+					--	_,_,icon=GetSpellInfo(6603)
+						icon=GetSpellTexture(6603)
 					end
 					missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end

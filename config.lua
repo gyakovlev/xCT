@@ -34,6 +34,6 @@ ns.config={
 	["stopvespam"] = false,		-- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!
 	["dkrunes"] = true,		-- show deatchknight rune recharge
 	["mergeaoespam"] = true,	-- merges multiple aoe spam into single message, can be useful for dots too.
-	["mergeaoespamtime"] = 3,	-- time in seconds aoe spell will be merged into single message. minimum is 1.
+	["mergeaoespamtime"] = 1,	-- time in seconds aoe spell will be merged into single message. minimum is 1.
 	["killingblow"] = true,		-- tells you about your killingblows
 }
