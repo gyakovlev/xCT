@@ -834,7 +834,7 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 end
 
 -- damage
---local SQ
+local SQ
 if(ct.damage)then
 	local unpack,select,time=unpack,select,time
 	local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
