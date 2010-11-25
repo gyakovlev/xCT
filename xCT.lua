@@ -836,8 +836,8 @@ end
 -- damage
 --local SQ
 if(ct.damage)then
-local time=time
-local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
+	local unpack,select,time=unpack,select,time
+	local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
  			COMBATLOG_OBJECT_REACTION_FRIENDLY,
  			COMBATLOG_OBJECT_CONTROL_PLAYER,
  			COMBATLOG_OBJECT_TYPE_GUARDIAN
@@ -900,7 +900,6 @@ local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
 		end)
 	end
 	local dmg=function(self,event,...) 
-		local unpack,select=unpack,select
 		local msg,icon
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
 		if(sourceGUID==ct.pguid and destGUID~=ct.pguid)or(sourceGUID==UnitGUID"pet" and ct.petdamage)or(sourceFlags==gflags)then
@@ -1013,12 +1012,12 @@ local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
 	xCTd:SetScript("OnEvent",dmg)
 end
 if(ct.healing)then
+	local unpack,select,time=unpack,select,time
 	local xCTh=CreateFrame"Frame"
 	if(ct.icons)then
 		ct.blank="Interface\\Addons\\xCT\\blank"
 	end
-	local heal=function(self,event,...) 
-		local unpack,select=unpack,select
+	local heal=function(self,event,...) 	
 		local msg,icon
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
 		if(sourceGUID==UnitGUID"player")then
@@ -1052,6 +1051,9 @@ if(ct.healing)then
 							SQ[spellId]["msg"]=msg
 							SQ[spellId]["color"]=color
 							SQ[spellId]["count"]=SQ[spellId]["count"]+1
+							if SQ[spellId]["count"]==1 then
+								SQ[spellId]["utime"]=time()
+							end
 							SQ[spellId]["locked"]=false
 							return
 					end 
