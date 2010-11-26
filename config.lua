@@ -7,13 +7,13 @@ ns.config={
 	["blizzheadnumbers"] = true,	-- use blizzard damage/healing output (above mob/player head)
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes! has no effect if blizzheadnumbers = false
 -- xCT outgoing damage/healing options
-	["damage"] = true,		-- show outgoing damage in it's own frame
+	["damage"] = true ,		-- show outgoing damage in it's own frame
 	["healing"] = true,		-- show outgoing healing in it's own frame
 	["showhots"] = true,		-- show periodic healing effects in xCT healing frame.
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 	["critprefix"] = "|cffFF0000*|r",	-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty. default is red *
 	["critpostfix"] = "|cffFF0000*|r",	-- postfix symbol, "" for empty.
-	["icons"] = true,		-- show outgoing damage icons
+	["icons"] = false,		-- show outgoing damage icons
 	["iconsize"] = 27,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size if it's set to "auto"
 	["petdamage"] = true,		-- show your pet damage.
 	["dotdamage"] = true,		-- show damage from your dots. someone asked an option to disable lol.
