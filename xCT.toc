@@ -2,7 +2,7 @@
 ## Title: |cffFF0000x|rCT
 ## Notes: X Combat Text
 ## Author: Affli @ RU-Howling Fjord
-## Version: 1.7.1
+## Version: 1.7s
 ## RequiredDeps: Blizzard_CombatText
 
 config.lua
