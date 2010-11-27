@@ -833,31 +833,12 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 end
 
--- damage
 local SQ
-if(ct.damage)then
-	local unpack,select,time=unpack,select,time
-	local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
- 			COMBATLOG_OBJECT_REACTION_FRIENDLY,
- 			COMBATLOG_OBJECT_CONTROL_PLAYER,
- 			COMBATLOG_OBJECT_TYPE_GUARDIAN
- 			)
-	local xCTd=CreateFrame"Frame"
-	if(ct.damagecolor)then
-		ct.dmgcolor={}
-		ct.dmgcolor[1]={1,1,0} -- physical
-		ct.dmgcolor[2]={1,.9,.5} -- holy
-		ct.dmgcolor[4]={1,.5,0} -- fire
-		ct.dmgcolor[8]={.3,1,.3} -- nature
-		ct.dmgcolor[16]={.5,1,1} -- frost
-		ct.dmgcolor[32]={.5,.5,1} -- shadow
-		ct.dmgcolor[64]={1,.5,1} -- arcane
-	end
-	
-	if(ct.icons)then
-		ct.blank="Interface\\Addons\\xCT\\blank"
-	end
-	if(ct.mergeaoespam)then
+if(ct.mergeaoespam)then
+	if not ct.damage or not ct.healing then
+		return
+	else
+
 		if (not ct.mergeaoespamtime or ct.mergeaoespamtime<1) then
 			ct.mergeaoespamtime=1
 		end
@@ -899,6 +880,32 @@ if(ct.damage)then
 			end
 		end)
 	end
+end
+-- damage
+
+if(ct.damage)then
+	local unpack,select,time=unpack,select,time
+	local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
+ 			COMBATLOG_OBJECT_REACTION_FRIENDLY,
+ 			COMBATLOG_OBJECT_CONTROL_PLAYER,
+ 			COMBATLOG_OBJECT_TYPE_GUARDIAN
+ 			)
+	local xCTd=CreateFrame"Frame"
+	if(ct.damagecolor)then
+		ct.dmgcolor={}
+		ct.dmgcolor[1]={1,1,0} -- physical
+		ct.dmgcolor[2]={1,.9,.5} -- holy
+		ct.dmgcolor[4]={1,.5,0} -- fire
+		ct.dmgcolor[8]={.3,1,.3} -- nature
+		ct.dmgcolor[16]={.5,1,1} -- frost
+		ct.dmgcolor[32]={.5,.5,1} -- shadow
+		ct.dmgcolor[64]={1,.5,1} -- arcane
+	end
+	
+	if(ct.icons)then
+		ct.blank="Interface\\Addons\\xCT\\blank"
+	end
+
 	local dmg=function(self,event,...) 
 		local msg,icon
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
