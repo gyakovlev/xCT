@@ -860,9 +860,9 @@ if(ct.mergeaoespam)then
 			tslu=tslu+elapsed
 			if tslu > 0.5 then
 				tslu=0
-		--	local utime=time()
+			local utime=time()
 				for k,v in pairs(SQ) do
-					if not SQ[k]["locked"] and SQ[k]["queue"]>0 and SQ[k]["utime"]+ct.mergeaoespamtime<=time() then
+					if not SQ[k]["locked"] and SQ[k]["queue"]>0 and SQ[k]["utime"]+ct.mergeaoespamtime<=utime then
 						if SQ[k]["count"]>1 then
 							count=" |cffFFFFFF x "..SQ[k]["count"].."|r"
 						else
