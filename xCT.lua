@@ -468,7 +468,7 @@ elseif event=="PLAYER_ENTERING_WORLD"then
 		LimitLines()
 	end
 
-	if(ct.damage)then
+	if(ct.damage or ct.healing)then
 		ct.pguid=UnitGUID"player"
 	end
 end
@@ -833,7 +833,7 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 end
 
---local SQ
+local SQ
 if(ct.mergeaoespam)then
 	if (ct.damage or ct.healing) then
 		if (not ct.mergeaoespamtime or ct.mergeaoespamtime<1) then
@@ -935,7 +935,8 @@ if(ct.damage)then
 						msg=ct.critprefix..msg..ct.critpostfix
 					end
 					if(ct.icons)then
-						local _,_,icon=GetSpellInfo(spellId)
+						--_,_,icon=GetSpellInfo(spellId)
+						icon=GetSpellTexture(spellId)
 						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					end
 	
@@ -952,7 +953,8 @@ if(ct.damage)then
 					end
 	
 					if(ct.icons)then
-						_,_,icon=GetSpellInfo(spellId)
+					--	_,_,icon=GetSpellInfo(spellId)
+						icon=GetSpellTexture(spellId)
 					end
 					if(ct.damagecolor)then
 						if(ct.dmgcolor[spellSchool])then
@@ -1003,7 +1005,8 @@ if(ct.damage)then
 			elseif(eventType=="SPELL_MISSED")or(eventType=="RANGE_MISSED")then
 				local spellId,_,_,missType,_ = select(9,...)
 				if(ct.icons)then
-					_,_,icon=GetSpellInfo(spellId)
+				--	_,_,icon=GetSpellInfo(spellId)
+					icon=GetSpellTexture(spellId)
 					missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end 
 				xCT4:AddMessage(missType)
@@ -1024,7 +1027,7 @@ if(ct.healing)then
 	local heal=function(self,event,...) 	
 		local msg,icon
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
-		if(sourceGUID==UnitGUID"player")then
+		if(sourceGUID==ct.pguid)then
 			if(eventType=='SPELL_HEAL')or(eventType=='SPELL_PERIODIC_HEAL'and ct.showhots)then
 				if(ct.healing)then
 					local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(9,...)
@@ -1042,7 +1045,8 @@ if(ct.healing)then
 							color={.1,.75,.1}
 						end 
 						if(ct.icons)then
-							_,_,icon=GetSpellInfo(spellId)
+						--	_,_,icon=GetSpellInfo(spellId)
+							icon=GetSpellTexture(spellId)
 						else
 							msg=""
 						end
