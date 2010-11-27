@@ -4,7 +4,7 @@ ns.config={
 -- use ["option"] = true/false, to set options.
 -- options
 -- blizz damage options.
-	["blizzheadnumbers"] = true,	-- use blizzard damage/healing output (above mob/player head)
+	["blizzheadnumbers"] = false,	-- use blizzard damage/healing output (above mob/player head)
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes! has no effect if blizzheadnumbers = false
 -- xCT outgoing damage/healing options
 	["damage"] = true ,		-- show outgoing damage in it's own frame
@@ -29,6 +29,12 @@ ns.config={
 	["timevisible"] = 3, 		-- time (seconds) a single message will be visible. 3 is a good value.
 	["scrollable"] = false,		-- allows you to scroll frame lines with mousewheel.
 	["maxlines"] = 64,		-- max lines to keep in scrollable mode. more lines=more memory. nom nom nom.
+
+-- justify messages in frames, valid values are "RIGHT" "LEFT" "CENTER"
+	["justify_1"] = "LEFT",		-- incoming damage justify
+	["justify_2"] = "RIGHT",	-- incoming healing justify
+	["justify_3"] = "CENTER",	-- various messages justify
+	["justify_4"] = "RIGHT",	-- outgoing damage/healing justify
 
 -- class modules and goodies
 	["stopvespam"] = false,		-- automaticly turns off healing spam for priests in shadowform. HIDE THOSE GREEN NUMBERS PLX!

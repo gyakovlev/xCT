@@ -493,7 +493,6 @@ for i=1,numf do
 	f:SetSpacing(2)
 	f:SetWidth(128)
 	f:SetHeight(128)
-	f:SetJustifyH"LEFT"
 	f:SetPoint("CENTER",0,0)
 	f:SetMovable(true)
 	f:SetResizable(true)
@@ -502,17 +501,17 @@ for i=1,numf do
 	f:SetClampedToScreen(true)
 	f:SetClampRectInsets(0,0,ct.fontsize,0)
 	if(i==1)then
-		f:SetJustifyH"LEFT"
+		f:SetJustifyH(ct.justify_1)
 		f:SetPoint("CENTER",-192,-32)
 	elseif(i==2)then
-		f:SetJustifyH"RIGHT"
+		f:SetJustifyH(ct.justify_2)
 		f:SetPoint("CENTER",192,-32)
 	elseif(i==3)then
-		f:SetJustifyH"CENTER"
+		f:SetJustifyH(ct.justify_3)
 		f:SetWidth(256)
 		f:SetPoint("CENTER",0,192)
 	else
-		f:SetJustifyH"RIGHT"
+		f:SetJustifyH(ct.justify_4)
 		f:SetPoint("CENTER",320,0)
 		local a,_,c=f:GetFont()
 		if (ct.damagefontsize=="auto")then
