@@ -33,7 +33,7 @@ ns.config={
 -- justify messages in frames, valid values are "RIGHT" "LEFT" "CENTER"
 	["justify_1"] = "LEFT",		-- incoming damage justify
 	["justify_2"] = "RIGHT",	-- incoming healing justify
-	["justify_3"] = "CENTER",	-- various messages justify
+	["justify_3"] = "CENTER",	-- various messages justify (mana, rage, auras, etc)
 	["justify_4"] = "RIGHT",	-- outgoing damage/healing justify
 
 -- class modules and goodies

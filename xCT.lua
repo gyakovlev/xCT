@@ -860,9 +860,9 @@ if(ct.mergeaoespam)then
 			tslu=tslu+elapsed
 			if tslu > 0.5 then
 				tslu=0
-			local utime=time()
+		--	local utime=time()
 				for k,v in pairs(SQ) do
-					if not SQ[k]["locked"] and SQ[k]["queue"]>0 and SQ[k]["utime"]+ct.mergeaoespamtime<=utime then
+					if not SQ[k]["locked"] and SQ[k]["queue"]>0 and SQ[k]["utime"]+ct.mergeaoespamtime<=time() then
 						if SQ[k]["count"]>1 then
 							count=" |cffFFFFFF x "..SQ[k]["count"].."|r"
 						else
@@ -979,6 +979,9 @@ if(ct.damage)then
 						SQ[spellId]["count"]=SQ[spellId]["count"]+1
 						if SQ[spellId]["count"]==1 then
 							SQ[spellId]["utime"]=time()
+						--	SQ[spellId]["utime"]=timestamp  -- cant use now, cause log timestamps differ from time() return value by 2+ seconds (CL is in the future)
+						--	print("timestamp: "..timestamp)
+						--	print("time():"..time())
 						end
 						SQ[spellId]["locked"]=false
 						return
@@ -1041,7 +1044,7 @@ if(ct.healing)then
 							color={.1,1,.1}
 						else
 							
-							color={.1,.75,.1}
+							color={.1,.65,.1}
 						end 
 						if(ct.icons)then
 						--	_,_,icon=GetSpellInfo(spellId)
