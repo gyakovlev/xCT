@@ -8,7 +8,7 @@ ns.config={
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes! has no effect if blizzheadnumbers = false
 -- xCT outgoing damage/healing options
 	["damage"] = true ,		-- show outgoing damage in it's own frame
-	["healing"] = true,		-- show outgoing healing in it's own frame
+	["healing"] = false,		-- show outgoing healing in it's own frame
 	["showhots"] = true,		-- show periodic healing effects in xCT healing frame.
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 	["critprefix"] = "|cffFF0000*|r",	-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty. default is red *

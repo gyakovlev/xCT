@@ -833,12 +833,9 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 end
 
-local SQ
+--local SQ
 if(ct.mergeaoespam)then
-	if not ct.damage or not ct.healing then
-		return
-	else
-
+	if (ct.damage or ct.healing) then
 		if (not ct.mergeaoespamtime or ct.mergeaoespamtime<1) then
 			ct.mergeaoespamtime=1
 		end
