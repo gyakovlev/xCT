@@ -832,6 +832,7 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 end
 
+-- spam merger
 local SQ
 if(ct.mergeaoespam)then
 	if (ct.damage or ct.healing) then
@@ -877,8 +878,8 @@ if(ct.mergeaoespam)then
 		end)
 	end
 end
--- damage
 
+-- damage
 if(ct.damage)then
 	local unpack,select,time=unpack,select,time
 	local	gflags=bit.bor(	COMBATLOG_OBJECT_AFFILIATION_MINE,
@@ -1020,6 +1021,8 @@ if(ct.damage)then
 	xCTd:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 	xCTd:SetScript("OnEvent",dmg)
 end
+
+-- healing
 if(ct.healing)then
 	local unpack,select,time=unpack,select,time
 	local xCTh=CreateFrame"Frame"
