@@ -60,6 +60,7 @@ elseif ct.myclass=="DRUID"then
 		ct.aoespam[48438]=true		-- Wild Growth
 		ct.aoespam[8936]=true		-- Regrowth
 		ct.aoespam[33763]=true		-- Lifebloom
+		ct.aoespam[44203]=true		-- Tranquility
 		ct.aoespam[81269]=true		-- Efflorescence
 		-- Damager spells
 		ct.aoespam[8921]=true		-- Moonfire
@@ -999,6 +1000,7 @@ if(ct.damage)then
 						--	SQ[spellId]["utime"]=timestamp  -- cant use now, cause log timestamps differ from time() return value by 2+ seconds (CL is in the future)
 						--	print("timestamp: "..timestamp)
 						--	print("time():"..time())
+						--	print(format(TEXT_MODE_A_STRING_TIMESTAMP, date(TEXT_MODE_A_STRING_TIMESTAMP, timestamp), "finalString"))
 						end
 						SQ[spellId]["locked"]=false
 						return
