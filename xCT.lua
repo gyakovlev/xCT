@@ -191,11 +191,7 @@ end
 
 local numf
 if(ct.damage or ct.healing)then
-	if ct.bigcrits then
-		numf=5
-	else
-		numf=4
-	end
+	 numf=4
 else
 	 numf=3
 end
@@ -533,7 +529,7 @@ for i=1,numf do
 		f:SetJustifyH(ct.justify_3)
 		f:SetWidth(256)
 		f:SetPoint("CENTER",0,192)
-	elseif(i==4)then
+	else
 		f:SetJustifyH(ct.justify_4)
 		f:SetPoint("CENTER",320,0)
 		local a,_,c=f:GetFont()
@@ -543,17 +539,6 @@ for i=1,numf do
 			end
 		elseif (type(ct.damagefontsize)=="number")then
 			f:SetFont(a,ct.damagefontsize,c)
-		end
-	else
-		f:SetJustifyH("LEFT")
-		f:SetAllPoints(xCT4)
-		local a,_,c=f:GetFont()
-		if (ct.damagefontsize=="auto")then
-			if ct.icons then
-				f:SetFont(a,ct.iconsize/2*1.5,c)
-			end
-		elseif (type(ct.damagefontsize)=="number")then
-			f:SetFont(a,ct.damagefontsize*1.5,c)
 		end
 			
 	end
@@ -938,7 +923,7 @@ if(ct.damage)then
 	end
 
 	local dmg=function(self,event,...) 
-		local msg,icon,f
+		local msg,icon
 		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
 		if(sourceGUID==ct.pguid and destGUID~=ct.pguid)or(sourceGUID==UnitGUID"pet" and ct.petdamage)or(sourceFlags==gflags)then
 			if(eventType=="SWING_DAMAGE")then
@@ -973,7 +958,7 @@ if(ct.damage)then
 						icon=GetSpellTexture(spellId)
 						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					end
-
+	
 					xCT4:AddMessage(msg)
 				end
 	
@@ -1022,11 +1007,7 @@ if(ct.damage)then
 						SQ[spellId]["locked"]=false
 						return
 					end
-					if critical and ct.bigcrits then
-						xCT5:AddMessage(amount..""..msg,unpack(color))
-					else
-						xCT4:AddMessage(amount..""..msg,unpack(color))
-					end
+					xCT4:AddMessage(amount..""..msg,unpack(color))
 				end
 	
 			elseif(eventType=="SWING_MISSED")then
@@ -1120,33 +1101,3 @@ if(ct.healing)then
 	xCTh:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 	xCTh:SetScript("OnEvent",heal)
 end
-local animate=function(self)
-	local	anim=self:CreateAnimationGroup("$parentCritShake")
-	anim:SetLooping("BOUNCE")
-	local shakeleft = anim:CreateAnimation("Translation");
-	shakeleft:SetDuration(.05);
-	shakeleft:SetOffset(-4, 0);
-	shakeleft:SetOrder(1);
-	local shakeright = anim:CreateAnimation("Translation");
-	shakeright:SetDuration(.05);
-	shakeright:SetOffset(4, 0);
-	shakeright:SetOrder(2);
-	local shakup = anim:CreateAnimation("Translation");
-	shakup:SetDuration(.05);
-	shakup:SetOffset(0, 4);
-	shakup:SetOrder(3);
-	local shakedown = anim:CreateAnimation("Translation");
-	shakedown:SetDuration(.05);
-	shakedown:SetOffset(0, -4);
-	shakedown:SetOrder(4);
-end
-
-animate(xCT5)
-ShakeCrit=function(self)
-	if not self:GetAnimationGroups():IsPlaying() then
-		self:GetAnimationGroups():Play()
-	end	
-end
-
-xCT5:HookScript("OnMessageScrollChanged",ShakeCrit)
-

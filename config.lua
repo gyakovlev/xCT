@@ -13,7 +13,6 @@ ns.config={
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
 	["critprefix"] = "|cffFF0000*|r",	-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty. default is red *
 	["critpostfix"] = "|cffFF0000*|r",	-- postfix symbol, "" for empty.
-	["bigcrits"]	= true,		-- FUCK YEAH!
 	["icons"] = true,		-- show outgoing damage icons
 	["iconsize"] = 28,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size if it's set to "auto"
 	["petdamage"] = true,		-- show your pet damage.
