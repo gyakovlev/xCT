@@ -94,11 +94,7 @@ elseif ct.myclass=="PALADIN"then
 		ct.aoespam[31935]=true		-- Avenger's Shield
 		ct.aoespam[94289]=true		-- Protector of the Innocent
 		ct.aoespam[53652]=true		-- Beacon of Light
-		ct.aoespam[85222]=true		-- Light of Dawn
-		
-		ct.aoespam[71904]=true		-- Chaos Bane (Shadowmourne proc)
-
-		
+		ct.aoespam[85222]=true		-- Light of Dawn		
 	end
 elseif ct.myclass=="PRIEST"then
 	if(ct.mergeaoespam)then
@@ -157,7 +153,12 @@ elseif ct.myclass=="WARRIOR"then
 		ct.aoespam[6343]=true		-- Thunder Clap
 		ct.aoespam[1680]=true		-- Whirlwind
 		ct.aoespam[94009]=true		-- Rend
-		ct.aoespam[71904]=true		-- Chaos Bane (Shadowmourne proc)
+		ct.aoespam[12721]=true		-- Deep Wounds
+		
+	end
+	if(ct.healing)then
+		ct.healfilter[23880]=true 	-- Bloodthirst
+		ct.healfilter[55694]=true	-- Enraged Regeneration
 	end
 elseif ct.myclass=="HUNTER"then
 	if(ct.mergeaoespam)then
@@ -171,7 +172,6 @@ elseif ct.myclass=="DEATHKNIGHT"then
 		ct.aoespam[48721]=true		-- Blood Boil
 		ct.aoespam[49184]=true		-- Howling Blast
 		ct.aoespam[52212]=true		-- Death and Decay
-		ct.aoespam[71904]=true		-- Chaos Bane (Shadowmourne proc)
 	end
 elseif ct.myclass=="ROGUE"then
 	if(ct.mergeaoespam)then
