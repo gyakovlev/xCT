@@ -1053,7 +1053,22 @@ if(ct.damage)then
 				else
 					color={1,0,.5}
 				end
-				xCT3:AddMessage(ACTION_SPELL_DISPEL.." "..effect..msg,unpack(color))
+				xCT3:AddMessage(ACTION_SPELL_DISPEL..": "..effect..msg,unpack(color))
+			
+			elseif(eventType=="SPELL_INTERRUPT")and ct.interrupt then
+				local target,_, _, id, effect = select(9,...)
+				local color={1,.5,0}
+				if(ct.icons)then
+					icon=GetSpellTexture(id)
+				end
+				if (icon) then
+					msg=" \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				elseif(ct.icons)then
+					msg=" \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				else
+					msg=""
+				end
+				xCT3:AddMessage(ACTION_SPELL_INTERRUPT..": "..effect..msg,unpack(color))
 			
 			end
 			

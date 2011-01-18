@@ -43,4 +43,5 @@ ns.config={
 	["mergeaoespamtime"] = 3,	-- time in seconds aoe spell will be merged into single message. minimum is 1.
 	["killingblow"] = true,		-- tells you about your killingblows
 	["dispel"] = true,		-- tells you about your dispels
+	["interrupt"] = true,		-- tells you about your interrupts
 }
