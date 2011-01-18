@@ -157,7 +157,7 @@ elseif ct.myclass=="WARRIOR"then
 		
 	end
 	if(ct.healing)then
-		ct.healfilter[23880]=true 	-- Bloodthirst
+		ct.healfilter[23880]=true	-- Bloodthirst
 		ct.healfilter[55694]=true	-- Enraged Regeneration
 	end
 elseif ct.myclass=="HUNTER"then
@@ -1035,8 +1035,28 @@ if(ct.damage)then
 				end 
 				xCT4:AddMessage(missType)
 	
+			elseif(eventType=="SPELL_DISPEL")and ct.dispel then
+				local target,_, _, id, effect, _, etype = select(9,...)
+				local color
+				if(ct.icons)then
+					icon=GetSpellTexture(id)
+				end
+				if (icon) then
+					msg=" \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				elseif(ct.icons)then
+					msg=" \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
+				else
+					msg=""
+				end
+				if etype=="BUFF"then
+					color={0,1,.5}
+				else
+					color={1,0,.5}
+				end
+				xCT3:AddMessage(ACTION_SPELL_DISPEL.." "..effect..msg,unpack(color))
 			
 			end
+			
 		end
 	end
 	xCTd:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
