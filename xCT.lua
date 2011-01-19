@@ -562,16 +562,6 @@ xCT:RegisterEvent"UNIT_EXITING_VEHICLE"
 xCT:RegisterEvent"PLAYER_ENTERING_WORLD"
 xCT:SetScript("OnEvent",OnEvent)
 
-if(ct.killingblow)then
-	local xCTkb=CreateFrame"Frame"
-	xCTkb:SetScript("OnEvent", function(_, _, _, event, guid, _, _, _, tname)
-		if event == "PARTY_KILL" and guid==UnitGUID("player") then
-			xCT3:AddMessage("Killing Blow: "..tname, 1, 1, 0)
-		end
-	end)
-	xCTkb:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-end
-
 -- turn off blizz ct
 CombatText:UnregisterAllEvents()
 CombatText:SetScript("OnLoad",nil)
@@ -1069,7 +1059,9 @@ if(ct.damage)then
 					msg=""
 				end
 				xCT3:AddMessage(ACTION_SPELL_INTERRUPT..": "..effect..msg,unpack(color))
-			
+			elseif(eventType=="PARTY_KILL") and ct.killingblow then
+				local tname=select(7,...)
+				xCT3:AddMessage(ACTION_PARTY_KILL..": "..tname, .2, 1, .2)
 			end
 			
 		end
