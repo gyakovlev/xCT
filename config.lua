@@ -7,7 +7,7 @@ ns.config={
 	["blizzheadnumbers"] = false,	-- use blizzard damage/healing output (above mob/player head)
 	["damagestyle"] = true,		-- change default damage/healing font above mobs/player heads. you need to restart WoW to see changes! has no effect if blizzheadnumbers = false
 -- xCT outgoing damage/healing options
-	["damage"] = true ,		-- show outgoing damage in it's own frame
+	["damage"] = true,		-- show outgoing damage in it's own frame
 	["healing"] = true,		-- show outgoing healing in it's own frame
 	["showhots"] = true,		-- show periodic healing effects in xCT healing frame.
 	["damagecolor"] = true,		-- display damage numbers depending on school of magic, see http://www.wowwiki.com/API_COMBAT_LOG_EVENT
@@ -41,7 +41,7 @@ ns.config={
 	["dkrunes"] = true,		-- show deatchknight rune recharge
 	["mergeaoespam"] = true,	-- merges multiple aoe spam into single message, can be useful for dots too.
 	["mergeaoespamtime"] = 3,	-- time in seconds aoe spell will be merged into single message. minimum is 1.
-	["killingblow"] = true,		-- tells you about your killingblows
-	["dispel"] = true,		-- tells you about your dispels
-	["interrupt"] = true,		-- tells you about your interrupts
+	["killingblow"] = true,		-- tells you about your killingblows (works only with ["damage"] = true,)
+	["dispel"] = true,		-- tells you about your dispels (works only with ["damage"] = true,)
+	["interrupt"] = true,		-- tells you about your interrupts (works only with ["damage"] = true,)
 }

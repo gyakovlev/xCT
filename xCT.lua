@@ -586,9 +586,6 @@ function CombatText_AddMessage(message,scrollFunction,r,g,b,displayType,isStagge
 	xCT3:AddMessage(message,r,g,b)
 end
 
--- hide some blizz options
---InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
-
 -- force hide blizz damage/healing, if desired
 if not(ct.blizzheadnumbers==true)then
 	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
@@ -601,11 +598,9 @@ if not(ct.blizzheadnumbers==true)then
 	SetCVar("CombatHealing",0)
 end
 
-
 -- hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
---	hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
---	--COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
-
+--hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
+--COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
 InterfaceOptionsCombatTextPanelFCTDropDown:Hide() -- sorry, blizz fucking bug with SCM:SetInsertMode()
 
 -- modify blizz ct options title lol
@@ -633,13 +628,13 @@ local StartConfigmode=function()
 			f.fs:SetFont(ct.font,ct.fontsize,ct.fontstyle)
 			f.fs:SetPoint("BOTTOM",f,"TOP",0,0)
 			if(i==1)then
-				f.fs:SetText(DAMAGE.." (drag me)")
+				f.fs:SetText(DAMAGE)
 				f.fs:SetTextColor(1,.1,.1,.9)
 			elseif(i==2)then
-				f.fs:SetText(SHOW_COMBAT_HEALING.."(drag me)")
+				f.fs:SetText(SHOW_COMBAT_HEALING.)
 				f.fs:SetTextColor(.1,1,.1,.9)
 			elseif(i==3)then
-				f.fs:SetText(COMBAT_TEXT_LABEL.."(drag me)")
+				f.fs:SetText(COMBAT_TEXT_LABEL)
 				f.fs:SetTextColor(.1,.1,1,.9)
 			else
 				f.fs:SetText(SCORE_DAMAGE_DONE.." / "..SCORE_HEALING_DONE)
