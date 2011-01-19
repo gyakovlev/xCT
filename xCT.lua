@@ -631,7 +631,7 @@ local StartConfigmode=function()
 				f.fs:SetText(DAMAGE)
 				f.fs:SetTextColor(1,.1,.1,.9)
 			elseif(i==2)then
-				f.fs:SetText(SHOW_COMBAT_HEALING.)
+				f.fs:SetText(SHOW_COMBAT_HEALING)
 				f.fs:SetTextColor(.1,1,.1,.9)
 			elseif(i==3)then
 				f.fs:SetText(COMBAT_TEXT_LABEL)
