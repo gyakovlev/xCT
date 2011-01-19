@@ -261,11 +261,23 @@ if(event=="COMBAT_TEXT_UPDATE")then
 
 	elseif subevent=="HEAL"then
 		if(arg3>=ct.healtreshold)then
-			xCT2:AddMessage("+"..arg3,.1,.75,.1)
+			if(arg2)then
+				if(COMBAT_TEXT_SHOW_FRIENDLY_NAMES=="1")then
+					xCT2:AddMessage(arg2.." +"..arg3,.1,.75,.1)
+				else
+					xCT2:AddMessage("+"..arg3,.1,.75,.1)
+				end
+			end
 		end
 	elseif subevent=="HEAL_CRIT"then
 		if(arg3>=ct.healtreshold)then
-			xCT2:AddMessage("+"..ct.critprefix..arg3..ct.critpostfix,.1,1,.1)
+			if(arg2)then
+				if(COMBAT_TEXT_SHOW_FRIENDLY_NAMES=="1")then
+					xCT2:AddMessage(arg2.." +"..arg3,.1,1,.1)
+				else
+					xCT2:AddMessage("+"..arg3,.1,1,.1)
+				end
+			end
 		end
 	elseif subevent=="PERIODIC_HEAL"then
 		if(arg3>=ct.healtreshold)then
@@ -575,7 +587,7 @@ function CombatText_AddMessage(message,scrollFunction,r,g,b,displayType,isStagge
 end
 
 -- hide some blizz options
-InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
+--InterfaceOptionsCombatTextPanelFriendlyHealerNames:Hide()
 
 -- force hide blizz damage/healing, if desired
 if not(ct.blizzheadnumbers==true)then
