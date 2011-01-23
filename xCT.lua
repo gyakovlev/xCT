@@ -528,7 +528,7 @@ for i=1,numf do
 	f:SetPoint("CENTER",0,0)
 	f:SetMovable(true)
 	f:SetResizable(true)
-	f:SetMinResize(128,128)
+	f:SetMinResize(64,64)
 	f:SetMaxResize(768,768)
 	f:SetClampedToScreen(true)
 	f:SetClampRectInsets(0,0,ct.fontsize,0)
