@@ -134,6 +134,11 @@ elseif ct.myclass=="SHAMAN"then
 		ct.aoespam[51490]=true 		-- Thunderstorm
 		ct.aoespam[8187]=true 		-- Magma Totem
 	end
+	if(ct.healing)then
+		ct.aoespam[73921]=true		-- Healing Rain
+		ct.aoespam[5394]=true		-- Healing Stream Totem
+		ct.aoespam[1064]=true		-- Chain Heal
+	end
 elseif ct.myclass=="MAGE"then
 	if(ct.mergeaoespam)then
 		ct.aoespam[44461]=true		-- Living Bomb Explosion
@@ -163,6 +168,11 @@ elseif ct.myclass=="WARRIOR"then
 elseif ct.myclass=="HUNTER"then
 	if(ct.mergeaoespam)then
 		ct.aoespam[2643]=true		-- Multi-Shot
+		ct.aoespam[83077]=true		-- instant part of Serpent Sting
+		ct.aoespam[88466]=true		-- Serpent Sting#1
+		ct.aoespam[1978]=true		-- Serpent Sting#2
+		ct.aoespam[13812]=true		-- Explosive Trap  
+		
 	end
 elseif ct.myclass=="DEATHKNIGHT"then
 	if(ct.mergeaoespam)then
