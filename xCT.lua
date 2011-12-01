@@ -932,10 +932,12 @@ if(ct.damage)then
 
 	local dmg=function(self,event,...) 
 		local msg,icon
-		local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
+	--	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
+		local timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, srcFlags2, destGUID, destName, destFlags, destFlags2 = select(1,...)
+
 		if(sourceGUID==ct.pguid and destGUID~=ct.pguid)or(sourceGUID==UnitGUID"pet" and ct.petdamage)or(sourceFlags==gflags)then
 			if(eventType=="SWING_DAMAGE")then
-				local amount,_,_,_,_,_,critical=select(9,...)
+				local amount,_,_,_,_,_,critical=select(12,...)
 				if(amount>=ct.treshold)then
 					msg=amount
 					if (critical) then
@@ -955,7 +957,7 @@ if(ct.damage)then
 					xCT4:AddMessage(msg)
 				end
 			elseif(eventType=="RANGE_DAMAGE")then
-				local spellId,_,_,amount,_,_,_,_,_,critical=select(9,...)
+				local spellId,_,_,amount,_,_,_,_,_,critical=select(12,...)
 				if(amount>=ct.treshold)then
 					msg=amount
 					if (critical) then
@@ -971,7 +973,7 @@ if(ct.damage)then
 				end
 	
 			elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE" and ct.dotdamage)then
-				local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(9,...)
+				local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(12,...)
 				if(amount>=ct.treshold)then
 					local color={}
 					local rawamount=amount
@@ -1034,7 +1036,7 @@ if(ct.damage)then
 				xCT4:AddMessage(missType)
 	
 			elseif(eventType=="SPELL_MISSED")or(eventType=="RANGE_MISSED")then
-				local spellId,_,_,missType,_ = select(9,...)
+				local spellId,_,_,missType,_ = select(12,...)
 				if(ct.icons)then
 				--	_,_,icon=GetSpellInfo(spellId)
 					icon=GetSpellTexture(spellId)
@@ -1043,7 +1045,7 @@ if(ct.damage)then
 				xCT4:AddMessage(missType)
 	
 			elseif(eventType=="SPELL_DISPEL")and ct.dispel then
-				local target,_, _, id, effect, _, etype = select(9,...)
+				local target,_, _, id, effect, _, etype = select(12,...)
 				local color
 				if(ct.icons)then
 					icon=GetSpellTexture(id)
@@ -1063,7 +1065,7 @@ if(ct.damage)then
 				xCT3:AddMessage(ACTION_SPELL_DISPEL..": "..effect..msg,unpack(color))
 			
 			elseif(eventType=="SPELL_INTERRUPT")and ct.interrupt then
-				local target,_, _, id, effect = select(9,...)
+				local target,_, _, id, effect = select(12,...)
 				local color={1,.5,0}
 				if(ct.icons)then
 					icon=GetSpellTexture(id)
@@ -1100,7 +1102,7 @@ if(ct.healing)then
 		if(sourceGUID==ct.pguid)or(sourceFlags==gflags)then
 			if(eventType=='SPELL_HEAL')or(eventType=='SPELL_PERIODIC_HEAL'and ct.showhots)then
 				if(ct.healing)then
-					local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(9,...)
+					local spellId,spellName,spellSchool,amount,overhealing,absorbed,critical = select(12,...)
 					if(ct.healfilter[spellId]) then
 						return
 					end
