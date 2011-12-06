@@ -1079,7 +1079,7 @@ if(ct.damage)then
 				end
 				xCT3:AddMessage(ACTION_SPELL_INTERRUPT..": "..effect..msg,unpack(color))
 			elseif(eventType=="PARTY_KILL") and ct.killingblow then
-				local tname=select(7,...)
+				local tname=select(9,...)
 				xCT3:AddMessage(ACTION_PARTY_KILL..": "..tname, .2, 1, .2)
 			end
 			
