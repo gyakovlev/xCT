@@ -1021,7 +1021,7 @@ if(ct.damage)then
 				end
 	
 			elseif(eventType=="SWING_MISSED")then
-				local missType,_=select(9,...)
+				local missType,_=select(12,...)
 				if(ct.icons)then
 					if(sourceGUID==UnitGUID"pet") or (sourceFlags==gflags)then
 						icon=PET_ATTACK_TEXTURE
