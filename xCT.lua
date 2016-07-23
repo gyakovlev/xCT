@@ -2,7 +2,10 @@
 
 xCT by affli @ RU-Howling Fjord
 All rights reserved.
-Thanks ALZA and Shestak for making this mod possible. Thanks Tukz for his wonderful style of coding. Thanks Rostok for some fixes and healing code.
+Thanks ALZA and Shestak for making this mod possible.
+Thanks Tukz for his wonderful style of coding.
+Thanks Rostok for some fixes and healing code.
+
 
 ]]--
 
@@ -34,7 +37,7 @@ if ct.myclass=="WARLOCK" then
 		ct.aoespam[87389]=true		-- Corruption (Soulburn: Seed of Corruption)
 		ct.aoespam[30108]=true		-- Unstable Affliction
 		ct.aoespam[348]=true		-- Immolate
-		ct.aoespam[980]=true		-- Bane of Agony
+		ct.aoespam[980]=true		-- Agony
 		ct.aoespam[85455]=true		-- Bane of Havoc
 		ct.aoespam[85421]=true		-- Burning Embers
 		ct.aoespam[42223]=true		-- Rain of Fire
@@ -50,7 +53,7 @@ if ct.myclass=="WARLOCK" then
 		ct.healfilter[96379]=true	-- Fel Armor
 		ct.healfilter[63106]=true	-- Siphon Life
 		ct.healfilter[54181]=true	-- Fel Synergy
-		ct.healfilter[89653]=true	-- Drain Life
+		ct.healfilter[689]=true		-- Drain Life
 		ct.healfilter[79268]=true	-- Soul Harvest
 		ct.healfilter[30294]=true	-- Soul Leech
 	end
@@ -81,8 +84,8 @@ elseif ct.myclass=="DRUID"then
 		ct.aoespam[779]=true		-- Swipe (Bear Form)
 		ct.aoespam[33745]=true		-- Lacerate
 		ct.aoespam[1079]=true		-- Rip
-		
-		
+
+
 	end
 elseif ct.myclass=="PALADIN"then
 	if(ct.mergeaoespam)then
@@ -104,7 +107,7 @@ elseif ct.myclass=="PALADIN"then
 		-- Deathwing healer mace
 		ct.aoespam[109847]=true		-- MAW LFR
 		ct.aoespam[107835]=true		-- MAW NORMAL
-		ct.aoespam[109849]=true		-- MAW HEROIC		
+		ct.aoespam[109849]=true		-- MAW HEROIC
 	end
 elseif ct.myclass=="PRIEST"then
 	if(ct.mergeaoespam)then
@@ -130,7 +133,7 @@ elseif ct.myclass=="PRIEST"then
 		ct.aoespam[15407]=true		-- Mind Flay
 		ct.aoespam[49821]=true		-- Mind Seer
 		ct.aoespam[87532]=true		-- Shadowy Apparition
-		
+
 	end
 	if(ct.healing)then
 		ct.healfilter[2944]=true 	-- Devouring Plague (Healing)
@@ -177,7 +180,7 @@ elseif ct.myclass=="WARRIOR"then
 		ct.aoespam[1680]=true		-- Whirlwind
 		ct.aoespam[94009]=true		-- Rend
 		ct.aoespam[12721]=true		-- Deep Wounds
-		
+
 	end
 	if(ct.healing)then
 		ct.healfilter[23880]=true	-- Bloodthirst
@@ -189,8 +192,8 @@ elseif ct.myclass=="HUNTER"then
 		ct.aoespam[83077]=true		-- instant part of Serpent Sting
 		ct.aoespam[88466]=true		-- Serpent Sting#1
 		ct.aoespam[1978]=true		-- Serpent Sting#2
-		ct.aoespam[13812]=true		-- Explosive Trap  
-		
+		ct.aoespam[13812]=true		-- Explosive Trap
+
 	end
 elseif ct.myclass=="DEATHKNIGHT"then
 	if(ct.mergeaoespam)then
@@ -255,7 +258,7 @@ local function SetScroll()
 		end)
 	end
 end
-	
+
 -- msg flow direction
 local function ScrollDirection()
 	if (COMBAT_TEXT_FLOAT_MODE=="2") then
@@ -315,7 +318,7 @@ if(event=="COMBAT_TEXT_UPDATE")then
 	elseif subevent=="SPELL_CAST"then
 		xCT3:AddMessage(arg2,1,.82,0)
 
-	
+
 	elseif subevent=="MISS"and(COMBAT_TEXT_SHOW_DODGE_PARRY_MISS=="1")then
 		xCT1:AddMessage(MISS,.5,.5,.5)
 	elseif subevent=="DODGE"and(COMBAT_TEXT_SHOW_DODGE_PARRY_MISS=="1")then
@@ -493,7 +496,7 @@ elseif event=="RUNE_POWER_UPDATE"then
 	if(arg2==true)then
 		local rune=GetRuneType(arg1);
 		local msg=COMBAT_TEXT_RUNE[rune];
-		if(rune==1)then 
+		if(rune==1)then
 			r=.75
 			g=0
 			b=0
@@ -504,7 +507,7 @@ elseif event=="RUNE_POWER_UPDATE"then
 		elseif(rune==3)then
 			r=0
 			g=1
-			b=1	
+			b=1
 		end
 		if(rune and rune<4)then
 			xCT3:AddMessage("+"..msg,r,g,b)
@@ -518,10 +521,10 @@ elseif event=="UNIT_ENTERED_VEHICLE"or event=="UNIT_EXITING_VEHICLE"then
 
 elseif event=="PLAYER_ENTERING_WORLD"then
 	SetUnit()
-	
+
 --	ScrollDirection()
 
-	
+
 	if(ct.scrollable)then
 		SetScroll()
 	else
@@ -581,7 +584,7 @@ for i=1,numf do
 		elseif (type(ct.damagefontsize)=="number")then
 			f:SetFont(a,ct.damagefontsize,c)
 		end
-			
+
 	end
 	ct.frames[i] = f
 end
@@ -615,24 +618,24 @@ function CombatText_AddMessage(message,scrollFunction,r,g,b,displayType,isStagge
 end
 
 -- force hide blizz damage/healing, if desired
-if not(ct.blizzheadnumbers==true)then
-	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
-	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
-	InterfaceOptionsCombatTextPanelPetDamage:Hide()
-	InterfaceOptionsCombatTextPanelHealing:Hide()
-	SetCVar("CombatLogPeriodicSpells",0)
-	SetCVar("PetMeleeDamage",0)
-	SetCVar("CombatDamage",0)
-	SetCVar("CombatHealing",0)
-end
+--if not(ct.blizzheadnumbers==true)then
+--	InterfaceOptionsCombatTextPanelTargetDamage:Hide()
+--	InterfaceOptionsCombatTextPanelPeriodicDamage:Hide()
+--	InterfaceOptionsCombatTextPanelPetDamage:Hide()
+--	InterfaceOptionsCombatTextPanelHealing:Hide()
+--	SetCVar("CombatLogPeriodicSpells",0)
+--	SetCVar("PetMeleeDamage",0)
+--	SetCVar("CombatDamage",0)
+--	SetCVar("CombatHealing",0)
+--end
 
 -- hook blizz float mode selector. blizz sucks, because changing  cVar combatTextFloatMode doesn't fire CVAR_UPDATE
 --hooksecurefunc("InterfaceOptionsCombatTextPanelFCTDropDown_OnClick",ScrollDirection)
 --COMBAT_TEXT_SCROLL_ARC="" --may cause unexpected bugs, use with caution!
-InterfaceOptionsCombatTextPanelFCTDropDown:Hide() -- sorry, blizz fucking bug with SCM:SetInsertMode()
+--InterfaceOptionsCombatTextPanelFCTDropDown:Hide() -- sorry, blizz fucking bug with SCM:SetInsertMode()
 
 -- modify blizz ct options title lol
-InterfaceOptionsCombatTextPanelTitle:SetText(COMBAT_TEXT_LABEL.." (powered by |cffFF0000x|rCT)")
+--InterfaceOptionsCombatTextPanelTitle:SetText(COMBAT_TEXT_LABEL.." (powered by |cffFF0000x|rCT)")
 
 -- color printer
 local pr = function(msg)
@@ -730,7 +733,7 @@ local function StartTestMode()
 --init really random number generator.
 	local random=math.random
 	random(time());random(); random(time())
-	
+
 	local TimeSinceLastUpdate=0
 	local UpdateInterval
 	if(ct.damagecolor)then
@@ -744,7 +747,7 @@ local function StartTestMode()
 		ct.dmindex[7]=64
 	end
 
-	
+
 	for i=1,#ct.frames do
 	ct.frames[i]:SetScript("OnUpdate",function(self,elapsed)
 		UpdateInterval=random(65,1000)/250
@@ -777,11 +780,11 @@ local function StartTestMode()
 					color={1,1,random(0,1)}
 				end
 				ct.frames[i]:AddMessage(msg,unpack(color))
-				
+
 			end
 			TimeSinceLastUpdate = 0
 		end
-		end)		
+		end)
 	ct.testmode=true
 end
 end
@@ -872,7 +875,7 @@ if(ct.stopvespam and ct.myclass=="PRIEST")then
 			end
 		end
 	end)
-	sp:RegisterEvent("PLAYER_ENTERING_WORLD")	
+	sp:RegisterEvent("PLAYER_ENTERING_WORLD")
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORM")
 	sp:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
 end
@@ -943,12 +946,12 @@ if(ct.damage)then
 		ct.dmgcolor[32]={.5,.5,1} -- shadow
 		ct.dmgcolor[64]={1,.5,1} -- arcane
 	end
-	
+
 	if(ct.icons)then
 		ct.blank="Interface\\Addons\\xCT\\blank"
 	end
 
-	local dmg=function(self,event,...) 
+	local dmg=function(self,event,...)
 		local msg,icon
 	--	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
 		local timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, srcFlags2, destGUID, destName, destFlags, destFlags2 = select(1,...)
@@ -971,7 +974,7 @@ if(ct.damage)then
 						end
 						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					end
-	
+
 					xCT4:AddMessage(msg)
 				end
 			elseif(eventType=="RANGE_DAMAGE")then
@@ -986,10 +989,10 @@ if(ct.damage)then
 						icon=GetSpellTexture(spellId)
 						msg=msg.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 					end
-	
+
 					xCT4:AddMessage(msg)
 				end
-	
+
 			elseif(eventType=="SPELL_DAMAGE")or(eventType=="SPELL_PERIODIC_DAMAGE" and ct.dotdamage)then
 				local spellId,_,spellSchool,amount,_,_,_,_,_,critical=select(12,...)
 				if(amount>=ct.treshold)then
@@ -998,7 +1001,7 @@ if(ct.damage)then
 					if (critical) then
 						amount=ct.critprefix..amount..ct.critpostfix
 					end
-	
+
 					if(ct.icons)then
 					--	_,_,icon=GetSpellInfo(spellId)
 						icon=GetSpellTexture(spellId)
@@ -1037,7 +1040,7 @@ if(ct.damage)then
 					end
 					xCT4:AddMessage(amount..""..msg,unpack(color))
 				end
-	
+
 			elseif(eventType=="SWING_MISSED")then
 				local missType,_=select(12,...)
 				if(ct.icons)then
@@ -1050,18 +1053,18 @@ if(ct.damage)then
 					end
 					missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
 				end
-	
+
 				xCT4:AddMessage(missType)
-	
+
 			elseif(eventType=="SPELL_MISSED")or(eventType=="RANGE_MISSED")then
 				local spellId,_,_,missType,_ = select(12,...)
 				if(ct.icons)then
 				--	_,_,icon=GetSpellInfo(spellId)
 					icon=GetSpellTexture(spellId)
 					missType=missType.." \124T"..icon..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
-				end 
+				end
 				xCT4:AddMessage(missType)
-	
+
 			elseif(eventType=="SPELL_DISPEL")and ct.dispel then
 				local target,_, _, id, effect, _, etype = select(12,...)
 				local color
@@ -1081,7 +1084,7 @@ if(ct.damage)then
 					color={1,0,.5}
 				end
 				xCT3:AddMessage(ACTION_SPELL_DISPEL..": "..effect..msg,unpack(color))
-			
+
 			elseif(eventType=="SPELL_INTERRUPT")and ct.interrupt then
 				local target,_, _, id, effect = select(12,...)
 				local color={1,.5,0}
@@ -1100,7 +1103,7 @@ if(ct.damage)then
 				local tname=select(9,...)
 				xCT3:AddMessage(ACTION_PARTY_KILL..": "..tname, .2, 1, .2)
 			end
-			
+
 		end
 	end
 	xCTd:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
@@ -1114,7 +1117,7 @@ if(ct.healing)then
 	if(ct.icons)then
 		ct.blank="Interface\\Addons\\xCT\\blank"
 	end
-	local heal=function(self,event,...) 	
+	local heal=function(self,event,...)
 		local msg,icon
 	--	local timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags = select(1,...)
 		local timestamp, eventType, hideCaster, sourceGUID, sourceName, sourceFlags, srcFlags2, destGUID, destName, destFlags, destFlags2 = select(1,...)
@@ -1128,20 +1131,20 @@ if(ct.healing)then
 					if(amount>=ct.healtreshold)then
 						local color={}
 						local rawamount=amount
-						if (critical) then 
+						if (critical) then
 							amount=ct.critprefix..amount..ct.critpostfix
 							color={.1,1,.1}
 						else
-							
+
 							color={.1,.65,.1}
-						end 
+						end
 						if(ct.icons)then
 						--	_,_,icon=GetSpellInfo(spellId)
 							icon=GetSpellTexture(spellId)
 						else
 							msg=""
 						end
-               					if (icon) then 
+               					if (icon) then
                 					msg=' \124T'..icon..':'..ct.iconsize..':'..ct.iconsize..':0:0:64:64:5:59:5:59\124t'
 						elseif(ct.icons)then
 							msg=" \124T"..ct.blank..":"..ct.iconsize..":"..ct.iconsize..":0:0:64:64:5:59:5:59\124t"
@@ -1157,7 +1160,7 @@ if(ct.healing)then
 							end
 							SQ[spellId]["locked"]=false
 							return
-					end 
+					end
 						xCT4:AddMessage(amount..""..msg,unpack(color))
 					end
 				end
@@ -1166,4 +1169,23 @@ if(ct.healing)then
 	end
 	xCTh:RegisterEvent"COMBAT_LOG_EVENT_UNFILTERED"
 	xCTh:SetScript("OnEvent",heal)
+end
+
+
+
+-- Check outdated spells
+if ct.mergeaoespam then
+	for spell in pairs(ct.aoespam) do
+		local name = GetSpellInfo(spell)
+		if not name then
+			print("|cffff0000WARNING: spell ID ["..tostring(spell).."] no longer exists! Report this to xCT author.|r")
+		end
+	end
+
+	for spell in pairs(ct.healfilter) do
+		local name = GetSpellInfo(spell)
+		if not name then
+			print("|cffff0000WARNING: spell ID ["..tostring(spell).."] no longer exists! Report this to xCT author.|r")
+		end
+	end
 end
