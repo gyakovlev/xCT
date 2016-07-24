@@ -538,9 +538,9 @@ end
 end
 
 -- change damage font (if desired)
-if(ct.damagestyle)then
-	DAMAGE_TEXT_FONT=ct.damagefont
-end
+--if(ct.damagestyle)then
+--	DAMAGE_TEXT_FONT=ct.damagefont
+--end
 
 -- the frames
 ct.locked=true
@@ -1173,19 +1173,19 @@ end
 
 
 
--- Check outdated spells
-if ct.mergeaoespam then
-	for spell in pairs(ct.aoespam) do
-		local name = GetSpellInfo(spell)
-		if not name then
-			print("|cffff0000WARNING: spell ID ["..tostring(spell).."] no longer exists! Report this to xCT author.|r")
-		end
-	end
-
-	for spell in pairs(ct.healfilter) do
-		local name = GetSpellInfo(spell)
-		if not name then
-			print("|cffff0000WARNING: spell ID ["..tostring(spell).."] no longer exists! Report this to xCT author.|r")
-		end
-	end
-end
+---- Check outdated spells
+--if ct.mergeaoespam then
+--	for spell in pairs(ct.aoespam) do
+--		local name = GetSpellInfo(spell)
+--		if not name then
+--			print("|cffff0000WARNING: spell ID ["..tostring(spell).."] no longer exists! Report this to xCT author.|r")
+--		end
+--	end
+--
+--	for spell in pairs(ct.healfilter) do
+--		local name = GetSpellInfo(spell)
+--		if not name then
+--			print("|cffff0000WARNING: spell ID ["..tostring(spell).."] no longer exists! Report this to xCT author.|r")
+--		end
+--	end
+--end

@@ -1,5 +1,5 @@
-local addon, ns=...
-ns.config={
+local addon, ns= ...
+ns.config = {
 ---------------------------------------------------------------------------------
 -- use ["option"] = true/false, to set options.
 -- options

@@ -1,0 +1,8 @@
+## Interface: 70000
+## Title: |cffFF0000x|rCT Config
+## Notes: X Combat Text Configuration Tool
+## Author: Affli
+## Version: 1.9d
+## RequiredDeps: xCT
+
+xCT_config.lua
