@@ -2,7 +2,9 @@
 ## Title: |cffFF0000x|rCT Config
 ## Notes: X Combat Text Configuration Tool
 ## Author: Affli
-## Version: 1.9d
+## Version: 2.0a
+## SavedVariables: xCT_Shared
+## SavedVariablesPerCharacter: xCT_Private
 ## RequiredDeps: xCT
 
 xCT_config.lua

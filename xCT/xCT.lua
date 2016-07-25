@@ -25,19 +25,23 @@ end
 if(ct.mergeaoespam)then
 	ct.aoespam={}
 	-- See class-specific config for merged spells.
+	ct.aoespam[127802]=true -- Touch of the grave
 end
 ---------------------------------------------------------------------------------
 -- class config, overrides general
+
 if ct.myclass=="WARLOCK" then
 	if(ct.mergeaoespam)then
-		ct.aoespam[27243]=true		-- Seed of Corruption (DoT)
-		ct.aoespam[27285]=true		-- Seed of Corruption (Explosion)
-		ct.aoespam[87385]=true		-- Seed of Corruption (Explosion Soulburned)
-		ct.aoespam[172]=true		-- Corruption
-		ct.aoespam[87389]=true		-- Corruption (Soulburn: Seed of Corruption)
+		ct.aoespam[27285]=true		-- Seed of Corruption Explosion
+		--ct.aoespam[172]=true		-- Corruption
+		ct.aoespam[146739]=true		-- Corruption working
 		ct.aoespam[30108]=true		-- Unstable Affliction
-		ct.aoespam[348]=true		-- Immolate
-		ct.aoespam[980]=true		-- Agony
+		ct.aoespam[63106]=true		-- Siphon Life
+		ct.aoespam[689]=true 		-- Drain Life
+		ct.aoespam[29722]=true 		-- Incinirate (F&B)
+		ct.aoespam[348]=true		-- Immolate (Direct)
+		ct.aoespam[157736]=true		-- Immolate (DoT)
+		ct.aoespam[980]=true		-- Agony working
 		ct.aoespam[85455]=true		-- Bane of Havoc
 		ct.aoespam[85421]=true		-- Burning Embers
 		ct.aoespam[42223]=true		-- Rain of Fire
@@ -913,11 +917,11 @@ if(ct.mergeaoespam)then
 				for k,v in pairs(SQ) do
 					if not SQ[k]["locked"] and SQ[k]["queue"]>0 and SQ[k]["utime"]+ct.mergeaoespamtime<=utime then
 						if SQ[k]["count"]>1 then
-							count=" |cffFFFFFF x "..SQ[k]["count"].."|r"
+							count=" (|cffFFFFFF"..SQ[k]["count"].."|r)"
 						else
 							count=""
 						end
-						xCT4:AddMessage(SQ[k]["queue"]..SQ[k]["msg"]..count, unpack(SQ[k]["color"]))
+						xCT4:AddMessage(SQ[k]["queue"]..count..SQ[k]["msg"], unpack(SQ[k]["color"]))
 						SQ[k]["queue"]=0
 						SQ[k]["count"]=0
 					end
