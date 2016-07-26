@@ -14,7 +14,7 @@ ns.config = {
 	["critprefix"] = "|cffFF0000*|r",	-- symbol that will be added before amount, if you deal critical strike/heal. leave "" for empty. default is red *
 	["critpostfix"] = "|cffFF0000*|r",	-- postfix symbol, "" for empty.
 	["icons"] = true,		-- show outgoing damage icons
-	["iconsize"] = 28,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size if it's set to "auto"
+	["iconsize"] = 30,		-- icon size of spells in outgoing damage frame, also has effect on dmg font size if it's set to "auto"
 	["petdamage"] = true,		-- show your pet damage.
 	["dotdamage"] = true,		-- show damage from your dots. someone asked an option to disable lol.
 	["treshold"] = 1,		-- minimum damage to show in outgoing damage frame
@@ -22,7 +22,7 @@ ns.config = {
 
 -- appearence
 	["font"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	-- "Fonts\\ARIALN.ttf" is default WoW font.
-	["fontsize"] = 12,
+	["fontsize"] = 14,
 	["fontstyle"] = "OUTLINE",	-- valid options are "OUTLINE", "MONOCHROME", "THICKOUTLINE", "OUTLINE,MONOCHROME", "THICKOUTLINE,MONOCHROME"
 	["damagefont"] = "Interface\\Addons\\xCT\\HOOGE.TTF",	 -- "Fonts\\FRIZQT__.ttf" is default WoW damage font
 	["damagefontsize"] = "auto",	-- size of xCT damage font. use "auto" to set it automatically depending on icon size, or use own value, 16 for example. if it's set to number value icons will change size.

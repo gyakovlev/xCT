@@ -14,7 +14,8 @@ Thanks Rostok for some fixes and healing code.
 local addon, ns=...
 ct=ns.config
 ct.myname, _ = UnitName("player")
-ct.myclass=select(2,UnitClass("player"))
+ct.myclass = select(2,UnitClass("player"))
+ct.myrace = select(2,UnitRace("player"))
 ---------------------------------------------------------------------------------
 -- outgoing healing filter, hide this spammy shit, plx
 if(ct.healing)then
@@ -25,6 +26,10 @@ end
 if(ct.mergeaoespam)then
 	ct.aoespam={}
 	-- See class-specific config for merged spells.
+	ct.aoespam[127802]=true -- Touch of the grave
+end
+
+if ct.myrace == "Scourge" then -- this is undead actually.
 	ct.aoespam[127802]=true -- Touch of the grave
 end
 ---------------------------------------------------------------------------------
@@ -71,10 +76,6 @@ elseif ct.myclass=="DRUID"then
 		ct.aoespam[33763]=true		-- Lifebloom
 		ct.aoespam[44203]=true		-- Tranquility
 		ct.aoespam[81269]=true		-- Efflorescence
-		-- Deathwing healer mace
-		ct.aoespam[109847]=true		-- MAW LFR
-		ct.aoespam[107835]=true		-- MAW NORMAL
-		ct.aoespam[109849]=true		-- MAW HEROIC
 		-- Damager spells
 		ct.aoespam[8921]=true		-- Moonfire
 		ct.aoespam[93402]=true		-- Sunfire
@@ -108,10 +109,6 @@ elseif ct.myclass=="PALADIN"then
 		ct.aoespam[85222]=true		-- Light of Dawn
 		ct.aoespam[86452]=true		-- Holy radiance HoT
 		ct.aoespam[82327]=true		-- Holy Radiance
-		-- Deathwing healer mace
-		ct.aoespam[109847]=true		-- MAW LFR
-		ct.aoespam[107835]=true		-- MAW NORMAL
-		ct.aoespam[109849]=true		-- MAW HEROIC
 	end
 elseif ct.myclass=="PRIEST"then
 	if(ct.mergeaoespam)then
@@ -142,10 +139,6 @@ elseif ct.myclass=="PRIEST"then
 	if(ct.healing)then
 		ct.healfilter[2944]=true 	-- Devouring Plague (Healing)
 		ct.healfilter[15290]=true	-- Vampiric Embrace
-		-- Deathwing healer mace
-		ct.aoespam[109847]=true		-- MAW LFR
-		ct.aoespam[107835]=true		-- MAW NORMAL
-		ct.aoespam[109849]=true		-- MAW HEROIC
 	end
 elseif ct.myclass=="SHAMAN"then
 	if(ct.mergeaoespam)then
@@ -159,10 +152,6 @@ elseif ct.myclass=="SHAMAN"then
 		ct.aoespam[73921]=true		-- Healing Rain
 		ct.aoespam[52042]=true		-- Healing Stream Totem
 		ct.aoespam[1064]=true		-- Chain Heal
-		-- Deathwing healer mace
-		ct.aoespam[109847]=true		-- MAW LFR
-		ct.aoespam[107835]=true		-- MAW NORMAL
-		ct.aoespam[109849]=true		-- MAW HEROIC
 	end
 elseif ct.myclass=="MAGE"then
 	if(ct.mergeaoespam)then
@@ -250,6 +239,7 @@ local function LimitLines()
 end
 
 -- scrollable frames
+-- TODO: add option to disable scrolling while in combat
 local function SetScroll()
 	for i=1,#ct.frames do
 		ct.frames[i]:EnableMouseWheel(true)
